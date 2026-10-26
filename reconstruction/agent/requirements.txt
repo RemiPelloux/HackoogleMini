@@ -1,0 +1,31 @@
+# Track A voice bot — install in the project venv or a new one
+# pip install -r reconstruction/agent/requirements.txt
+
+# Cast output (already in project venv)
+pychromecast>=14.0
+
+# STT
+faster-whisper>=1.0
+
+# Wake word
+openwakeword>=0.6
+
+# Audio I/O
+sounddevice>=0.4
+numpy>=1.24
+
+# TTS (piper binary is installed separately — see README)
+# apt install piper  /  pip install piper-tts
+
+# LLM backend
+ollama>=0.3        # thin Python client for the Ollama REST API
+
+# MCP tool calls
+mcp>=1.0           # Anthropic MCP Python SDK
+
+# HTTP server for TTS audio (tiny stdlib-based, no extra dep)
+# (uses http.server from stdlib)
+
+# BLE (already in project venv)
+bleak>=0.22
+dbus-next>=0.2

@@ -1,0 +1,344 @@
+{
+  "address": "4D:64:D0:63:0A:E2",
+  "connected": true,
+  "services": [
+    {
+      "uuid": "00001800-0000-1000-8000-00805f9b34fb",
+      "handle": 20,
+      "description": "Generic Access Profile",
+      "characteristics": [
+        {
+          "uuid": "00002a00-0000-1000-8000-00805f9b34fb",
+          "handle": 21,
+          "properties": [
+            "read"
+          ],
+          "description": "Device Name"
+        },
+        {
+          "uuid": "00002aa6-0000-1000-8000-00805f9b34fb",
+          "handle": 25,
+          "properties": [
+            "read"
+          ],
+          "description": "Central Address Resolution"
+        },
+        {
+          "uuid": "00002a01-0000-1000-8000-00805f9b34fb",
+          "handle": 23,
+          "properties": [
+            "read"
+          ],
+          "description": "Appearance"
+        }
+      ]
+    },
+    {
+      "uuid": "00001801-0000-1000-8000-00805f9b34fb",
+      "handle": 1,
+      "description": "Generic Attribute Profile",
+      "characteristics": [
+        {
+          "uuid": "00002a05-0000-1000-8000-00805f9b34fb",
+          "handle": 2,
+          "properties": [
+            "indicate"
+          ],
+          "description": "Service Changed"
+        }
+      ]
+    },
+    {
+      "uuid": "0000fea0-0000-1000-8000-00805f9b34fb",
+      "handle": 40,
+      "description": "Google",
+      "characteristics": [
+        {
+          "uuid": "127c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 51,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1c7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 69,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1d7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 101,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "147c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 85,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "156c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 55,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "167c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 103,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "197c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 57,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "22216033-f99b-412b-afca-670fd4bedff5",
+          "handle": 95,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1e7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 89,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "007c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 41,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "017c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 43,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0428fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 79,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1b6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 67,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0728fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 105,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0028fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 73,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1a7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 61,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0328fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 77,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "157c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 53,
+          "properties": [
+            "read",
+            "notify"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1a6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 63,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1b7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 65,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "037c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 45,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0828fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 107,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "d3d14f85-133d-4f19-a1c1-a471b2c23826",
+          "handle": 93,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0d7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 49,
+          "properties": [
+            "read"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0528fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 81,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0228fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 75,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0128fe40-002f-11e5-87d0-0002a5d5c51b",
+          "handle": 87,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1e6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 91,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "2dab7a51-4bc8-4349-9624-46f1411fd030",
+          "handle": 97,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "196c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 59,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "1c6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 71,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "0c7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 47,
+          "properties": [
+            "read",
+            "notify"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "137c6160-fab2-11e4-9fbb-0002a5d5c51b",
+          "handle": 83,
+          "properties": [
+            "write"
+          ],
+          "description": "Unknown"
+        },
+        {
+          "uuid": "e5b59e5a-774f-49d7-9de0-7504b099ec50",
+          "handle": 99,
+          "properties": [
+            "read",
+            "write"
+          ],
+          "description": "Unknown"
+        }
+      ]
+    }
+  ]
+}

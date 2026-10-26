@@ -1,0 +1,55 @@
+Device 4D:64:D0:63:0A:E2 (random)
+	Name: GoogleHome4983
+	Alias: GoogleHome4983
+	Paired: no
+	Bonded: no
+	Trusted: no
+	Blocked: no
+	Connected: no
+	LegacyPairing: no
+	CablePairing: no
+	UUID: Google                    (0000fea0-0000-1000-8000-00805f9b34fb)
+	ServiceData.0000fea0-0000-1000-8000-00805f9b34fb:
+  03 fa 8f ca 35 5c 46 6f 20 20 20 9e 43           ....5\Fo   .C   
+	RSSI: 0xffffffd4 (-44)
+	AdvertisingFlags:
+  02                                               .               
+-----
+Device 06:3A:61:32:43:D5 not available
+DeviceSet 06:3A:61:32:43:D5 not available
+[[0;93mCHG[0m] Device 72:6C:7C:28:EF:7F RSSI is nil
+[[0;93mCHG[0m] Device 42:6E:64:4E:C0:91 TxPower is nil
+[[0;93mCHG[0m] Device 42:6E:64:4E:C0:91 RSSI is nil
+[[0;93mCHG[0m] Device 4F:4E:5D:70:A6:87 RSSI is nil
+[[0;93mCHG[0m] Device D3:5C:BE:C4:08:59 RSSI is nil
+[[0;93mCHG[0m] Device 52:B1:BE:12:3C:9E TxPower is nil
+[[0;93mCHG[0m] Device 52:B1:BE:12:3C:9E RSSI is nil
+[[0;93mCHG[0m] Device 04:E4:B6:DB:F9:47 RSSI is nil
+[[0;93mCHG[0m] Device 28:B4:46:77:06:E8 RSSI is nil
+[[0;93mCHG[0m] Device 53:9F:E2:AD:D4:74 RSSI is nil
+[[0;93mCHG[0m] Device 51:97:78:93:8C:20 TxPower is nil
+[[0;93mCHG[0m] Device 51:97:78:93:8C:20 RSSI is nil
+[[0;93mCHG[0m] Device DC:0D:30:21:35:22 RSSI is nil
+[[0;93mCHG[0m] Device 4D:64:D0:63:0A:E2 RSSI is nil
+[[0;93mCHG[0m] Device 58:58:CF:DC:64:E5 TxPower is nil
+[[0;93mCHG[0m] Device 58:58:CF:DC:64:E5 RSSI is nil
+[[0;93mCHG[0m] Device 65:B8:31:53:4E:48 RSSI is nil
+[[0;93mCHG[0m] Device 45:2E:18:95:DC:0B TxPower is nil
+[[0;93mCHG[0m] Device 45:2E:18:95:DC:0B RSSI is nil
+[[0;93mCHG[0m] Device 7C:F7:16:C5:5A:F4 RSSI is nil
+[[0;93mCHG[0m] Device 6C:EF:B7:3A:A9:8D TxPower is nil
+[[0;93mCHG[0m] Device 6C:EF:B7:3A:A9:8D RSSI is nil
+[[0;93mCHG[0m] Device 7A:52:61:4B:D4:2E TxPower is nil
+[[0;93mCHG[0m] Device 7A:52:61:4B:D4:2E RSSI is nil
+[[0;93mCHG[0m] Device A4:DA:32:05:5F:DD TxPower is nil
+[[0;93mCHG[0m] Device A4:DA:32:05:5F:DD RSSI is nil
+[[0;93mCHG[0m] Device B8:E3:EE:77:CF:D9 RSSI is nil
+[[0;93mCHG[0m] Device 47:E3:A5:F9:31:8E RSSI is nil
+[[0;93mCHG[0m] Controller E0:C9:32:11:DB:E9 Discovering: no
+-----
+Device 24:8B:07:9F:76:BD not available
+DeviceSet 24:8B:07:9F:76:BD not available
+-----
+Device 69:72:9F:6A:A1:2F not available
+DeviceSet 69:72:9F:6A:A1:2F not available
+-----

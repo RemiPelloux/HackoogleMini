@@ -1,0 +1,4 @@
+pychromecast>=14.0
+bleak>=0.22
+zeroconf>=0.130
+dbus-next>=0.2

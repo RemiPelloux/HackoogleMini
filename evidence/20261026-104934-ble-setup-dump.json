@@ -1,0 +1,256 @@
+{
+  "address": "45:DE:33:A7:C9:BF",
+  "advertised_name": "GoogleHome4983",
+  "collected": "2026-10-26T10:50:14",
+  "characteristics": {
+    "00002a05-0000-1000-8000-00805f9b34fb": {
+      "handle_ref": "char0002",
+      "uuid": "00002a05-0000-1000-8000-00805f9b34fb",
+      "flags": "as 1 \"indicate\""
+    },
+    "00002a00-0000-1000-8000-00805f9b34fb": {
+      "handle_ref": "char0015",
+      "uuid": "00002a00-0000-1000-8000-00805f9b34fb",
+      "flags": "as 1 \"read\"",
+      "len": 14,
+      "hex": "476f6f676c65486f6d6534393833"
+    },
+    "00002a01-0000-1000-8000-00805f9b34fb": {
+      "handle_ref": "char0017",
+      "uuid": "00002a01-0000-1000-8000-00805f9b34fb",
+      "flags": "as 1 \"read\"",
+      "len": 2,
+      "hex": "0000"
+    },
+    "00002aa6-0000-1000-8000-00805f9b34fb": {
+      "handle_ref": "char0019",
+      "uuid": "00002aa6-0000-1000-8000-00805f9b34fb",
+      "flags": "as 1 \"read\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "007c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0029",
+      "uuid": "007c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 1,
+      "hex": "0d"
+    },
+    "017c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char002b",
+      "uuid": "017c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 14,
+      "hex": "476f6f676c65486f6d6534393833"
+    },
+    "037c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char002d",
+      "uuid": "037c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "0c7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char002f",
+      "uuid": "0c7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"notify\"",
+      "len": 1,
+      "hex": "0a"
+    },
+    "0d7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0031",
+      "uuid": "0d7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 0,
+      "hex": ""
+    },
+    "127c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0033",
+      "uuid": "127c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 147,
+      "hex": "7b226175746f5f7265626f6f74223a747275652c2263757272656e745f6f7065726174696f6e223a225550444154455f5354415455535f49444c45222c226c6173745f636865636b65645f74696d65223a2230222c226e65775f73697a65223a2230222c226e65775f76657273696f6e223a22302e302e302e30222c2272656164795f746f5f6170706c79223a66616c73657d"
+    },
+    "157c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0035",
+      "uuid": "157c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"notify\"",
+      "len": 359,
+      "hex": "1f8b08000000000000039d935d6bc2301885ff4bae3be847d226e74e9c824c86379b17324a9aa63350fc6a751be27f5f4528adc986f4b225e7c993e4bcab3391bbb434554db03a93acaa4c4e40988216880228892206e7c423c541ef8f7aa37e08421a871ea9cce7469669a94fba247862c9c5fb9b20fa041686be4588f9e5c3fbd7c1dab2f9755b3d52fba35c1cb6b556b5d96e96a630cdfaaf9d4ce5b15e1324b70f65766b7d20a05757d7c973892c42e24370f81968fe80378fbbde2e821568bd27a3c5ebe42d5dcea6b341be3a0463901c6104ad1017f72f15d82fc5a3aeaf8b60055adf97e9389dcfde07b9528a9c8251c40c316feee7015741bbae2e8215685de7e6a4b3ed77d32be10f124e3854882082d410cdd6f72566bea30c4957d845b00296b0a0cfc38419479023e760128a4159371c25f610f9bda97310ac80253c66e361c25a0fa86fd0abaf8360055ae1eb9ca54d877bb2415fb6c1ff0253da78ae17050000",
+      "gunzip": "[{\"ap_list\":[{\"bssid\":\"5c:e9:31:ca:f6:88\",\"frequency\":2462,\"signal_level\":-57},{\"bssid\":\"5c:e9:31:ca:f6:89\",\"frequency\":5220,\"signal_level\":-68}],\"bssid\":\"5c:e9:31:ca:f6:88\",\"signal_level\":-57,\"ssid\":\"AcquaProtectionWifi\",\"wpa_auth\":7,\"wpa_cipher\":4},{\"ap_list\":[{\"bssid\":\"da:b3:70:98:0b:4d\",\"frequency\":5220,\"signal_level\":-86}],\"bssid\":\"da:b3:70:98:0b:4d\",\"signal_level\":-86,\"ssid\":\"EAPNEU_WIFI\",\"wpa_auth\":7,\"wpa_cipher\":4},{\"ap_list\":[{\"bssid\":\"e2:55:a8:23:ec:6f\",\"frequency\":2412,\"signal_level\":-83}],\"bssid\":\"e2:55:a8:23:ec:6f\",\"signal_level\":-83,\"ssid\":\"KFC_LIV\",\"wpa_auth\":7,\"wpa_cipher\":4},{\"ap_list\":[{\"bssid\":\"44:d4:54:65:68:98\",\"frequency\":2412,\"signal_level\":-94}],\"bssid\":\"44:d4:54:65:68:98\",\"signal_level\":-94,\"ssid\":\"Livebox-6890\",\"wpa_auth\":7,\"wpa_cipher\":4},{\"ap_list\":[{\"bssid\":\"78:c2:13:ae:94:d9\",\"frequency\":5500,\"signal_level\":-87}],\"bssid\":\"78:c2:13:ae:94:d9\",\"signal_level\":-87,\"ssid\":\"Livebox-94D0\",\"wpa_auth\":7,\"wpa_cipher\":4},{\"ap_list\":[{\"bssid\":\"58:1d:d8:5a:c5:c8\",\"frequency\":2437,\"signal_level\":-50}],\"bssid\":\"58:1d:d8:5a:c5:c8\",\"signal_level\":-50,\"ssid\":\"Livebox-C5C0\",\"wpa_auth\":7,\"wpa_cipher\":4},{\"ap_list\":[{\"bssid\":\"ee:55:a8:23:ec:6f\",\"frequency\":2412,\"signal_level\":-81}],\"bssid\":\"ee:55:a8:23:ec:6f\",\"signal_level\":-81,\"ssid\":\"WIFI_KFC\",\"wpa_auth\":1,\"wpa_cipher\":1}]"
+    },
+    "156c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0037",
+      "uuid": "156c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "197c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0039",
+      "uuid": "197c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 512,
+      "hex": "1f8b08000000000000038d54cb72db2014fd950eeb2823cbc856b48b9dbadd74d31f60105c2cc608288fb849c6ff5ea4d8ad1391b62b8d38e73e38f75c5e5017a5e2446a6150fb8218f581bc1e3978945e1a8d5ab4bc5dd7b778d52c57153add209e10065731967652c920c18fffd47be903d581f868ad7101386a838b708368e4d2909ebb6b4850e57f633e3a67a2e664301c32ac4ec13c6da7220463424fce49a43efc07cb44c7fe9a6d0631652227fbd4a1f51fa0938233884b6f157dca5c4864c5e8f920897520c091baec9fff41e9e5be27e26d4f179a09de9a4c4b7d0863008468e7a0d4360632504df730406e9407004b2ec9a30e521166b406963873f6105590247a701f60aca72958bd6afb01c72af899929fcb246b666630119f8dceccd558d0efa77316c98e668723b974318b75d0999c880e061380f0c80e52ef73b8a64316f1c0a283b3fe90562979f1bdd2e7ee1287680847e392abbdccc8fb8691017392a6150d1901fd930f308ccb91961084484ae76c1525114a5a9bbddb3467f831078e52c8b47d212d1f7dcc8c68c21deca3a2c1b827c2cd40a526cab0c355ed89f52ef67459cecbe394ce5159de6db7bb7a576d70b5693ed778f35097e96fb35e2c5777d5034aeb47d95489a5fb86e9cb2145eebea33fabd38da28f87f76db36bb7f7edb26eeb6d8b578933504628e70e7c7afb10c66db96ecb4dfb50",
+      "gunzip_error": "Compressed file ended before the end-of-stream marker was reached"
+    },
+    "196c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char003b",
+      "uuid": "196c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "1a7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char003d",
+      "uuid": "1a7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 512,
+      "hex": "1f8b0800000000000003a557d9aeabd811fd95e8bcd291998c714b79d8c00633da6006431cb598e7d90c26ea7f0ff79cdbd155d249d48a1f57b10b7655adb5ca7fff88e2390fe35ff226693f7efefb473705551efe52c6ef8f9f3f545164d85466810ec1e165cf5665e4a7a109b44aa03df95816f6806a4ee5cc1c3a82052b6d8d48d1b163d7a022d7a46264e58c1fce5aa5e686de2fb53bc6779ec959e0f6b9a48e2341e5582a358768650d455b09b5ca2eefae38f1cbd58a2dfbb5b2761408642584b2d4cbef806b04a91e9d36b21dfe8a0666406259b90ca0236f29614d8fc20b375981470f92d7b6863c35e411fd8a464394ef85f2aebb62694fe74a317abf92bb941a5dfd44a8724e24e5a15b90e918bf890d4359ceed312e8d083109a33bdd3867180ebc6679f88bce5f524cdec447c01e2730f56d1e2b981a53fcd81da7761236eaf4f2ab07faea47365633cae6adf2e5bb47aa10eb528b5362bd98514b5f594f8317cf761791033a603e7efde963ccd3e65b03c27878e5491efaaf78efc09fbffd182888da9f586898222fb2c0849fe8b3d9dbc36d1bcb82214ec1223220150593538f775bb255800aecbd17ee6240703a64d8c502aa28c8aa3e2eacee72b6ae0bcf062e926d6dd054f75700cc822c58641de747dff1e6b03e76ae091d95d13f63ccb268a673c682c6c87c874cedbaaa9e4df4e3e974910dfc3c7bf8",
+      "gunzip_error": "Compressed file ended before the end-of-stream marker was reached"
+    },
+    "1a6c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char003f",
+      "uuid": "1a6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "1b7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0041",
+      "uuid": "1b7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 512,
+      "hex": "1f8b0800000000000003a55cdf6fdcc6b5fe57167a52d008b6133b49f326298eedc8b2054b76905e148bb3cb11395a72663be448918a007653b469503fb4bda95134289240b12d2751fcebe2c6f9f9b0c9ab213fd9c17da18b22f7dea245ff859e9921d73b5c7239bb8b3812497fe77c3373ce9c736638f4cf6762d9ed729110af19f23684249e79f13f7e3ee3d1b81bc276334e0465fecc8b33100520e8cf2469cc351ebffddee3b7fefcf8ad4f1ebffde799a7678c9cc6ccbcf17499ac8096927b74edfb5f3ebaf7e8d6a3ebdfbffd68cf9214e5922d19fa2094ecc1ad076f1f7c7170e7e0e6838b0f2e1d7c7ef0d9a07ccbaf9027cc8790a27c7af5e3f4ead7e9d55fa4576fe38525ccca85db9040080c85f555efbd41a136940b25eda077dd0cd3b797c977ef279481251797cb79c0388d510a2fe2cea08457c104614822601ecabc446412b7034b8a944bf982b451e2fe3bf7bfc0fffefbfe57f7efddfffcfec783a224ac20647e08d8c6d9737c1b6444e6ce33fa14ea3a8ecf691c3466f11efda8b184708f474f593ad9dc89851ab5bddf2490c44a6b5ca67615ff96c445ade757cbb592b80b3ee3212a5297bd5b3cb4242bccd0179b9d8f7a7bc6e143402392a7063435664fab671c34a60d76a3e2b9a3477e5ca53ee18c12e55304afa9259794cb748988b5177e7fe9d1359c3c77fee7b78362eb15eeb14e59e651b1",
+      "gunzip_error": "Compressed file ended before the end-of-stream marker was reached"
+    },
+    "1b6c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0043",
+      "uuid": "1b6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "1c7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0045",
+      "uuid": "1c7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 46,
+      "hex": "1f8b0800000000000003ab56ca2f2889cfcc53b2aa562a2e492c2956b24a4bcc294eadad050072f62d2e1a000000",
+      "gunzip": "{\"opt_in\":{\"stats\":false}}"
+    },
+    "1c6c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0047",
+      "uuid": "1c6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "0028fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char0049",
+      "uuid": "0028fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0228fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char004b",
+      "uuid": "0228fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0328fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char004d",
+      "uuid": "0328fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0428fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char004f",
+      "uuid": "0428fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0528fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char0051",
+      "uuid": "0528fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "137c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0053",
+      "uuid": "137c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "147c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0055",
+      "uuid": "147c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0128fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char0057",
+      "uuid": "0128fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 2,
+      "hex": "4652"
+    },
+    "1e7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0059",
+      "uuid": "1e7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 0,
+      "hex": ""
+    },
+    "1e6c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char005b",
+      "uuid": "1e6c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "d3d14f85-133d-4f19-a1c1-a471b2c23826": {
+      "handle_ref": "char005d",
+      "uuid": "d3d14f85-133d-4f19-a1c1-a471b2c23826",
+      "flags": "as 1 \"read\"",
+      "len": 1,
+      "hex": "01"
+    },
+    "22216033-f99b-412b-afca-670fd4bedff5": {
+      "handle_ref": "char005f",
+      "uuid": "22216033-f99b-412b-afca-670fd4bedff5",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 65,
+      "hex": "04ca0d7bcb3f75e11a156066d4eb8c858f5c52aec551b78b3e94c5e489ae3da39bba65523628163ccd4162434556a80079d6ab22808e711bad52c77bb37e52e727"
+    },
+    "2dab7a51-4bc8-4349-9624-46f1411fd030": {
+      "handle_ref": "char0061",
+      "uuid": "2dab7a51-4bc8-4349-9624-46f1411fd030",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 16,
+      "hex": "48a83e73f3f5361a8a0597912dc2fead"
+    },
+    "e5b59e5a-774f-49d7-9de0-7504b099ec50": {
+      "handle_ref": "char0063",
+      "uuid": "e5b59e5a-774f-49d7-9de0-7504b099ec50",
+      "flags": "as 2 \"read\" \"write\"",
+      "len": 0,
+      "hex": ""
+    },
+    "1d7c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0065",
+      "uuid": "1d7c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"read\"",
+      "len": 1,
+      "hex": "00"
+    },
+    "167c6160-fab2-11e4-9fbb-0002a5d5c51b": {
+      "handle_ref": "char0067",
+      "uuid": "167c6160-fab2-11e4-9fbb-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0728fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char0069",
+      "uuid": "0728fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    },
+    "0828fe40-002f-11e5-87d0-0002a5d5c51b": {
+      "handle_ref": "char006b",
+      "uuid": "0828fe40-002f-11e5-87d0-0002a5d5c51b",
+      "flags": "as 1 \"write\""
+    }
+  }
+}
