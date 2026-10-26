@@ -1,0 +1,120 @@
+
+== previous Wi-Fi connection: Livebox-C5C0
+
+== scanning for a Google setup AP
+
+== setup AP SSID: 'GoogleHome4983.o,'
+Connection 'gh-setup-3202342' (2d9aeb1b-c842-4391-adb2-653f2d1f9d51) successfully added.
+
+== joining ...
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/14)
+
+== our address: 192.168.255.253   gateway: 192.168.255.249
+
+== probing candidate setup hosts on :8443 (https) and :8008 (eureka_info)
+   https://192.168.255.249:8443  -> 200
+   http://192.168.255.249:8008  -> 200
+   https://192.168.255.1:8443  -> no-response
+   http://192.168.255.1:8008  -> no-response
+   https://192.168.255.249:8443  -> 200
+   http://192.168.255.249:8008  -> 200
+   https://192.168.44.1:8443  -> no-response
+   http://192.168.44.1:8008  -> no-response
+   https://8.8.8.8:8443  -> no-response
+   http://8.8.8.8:8008  -> no-response
+
+== fetching full eureka_info from every host that answered
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133839-eureka-192.168.255.249-8443.json (1346 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   detail.model_name = Google Home Mini
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133839-eureka-192.168.255.249-8008.json (1137 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133839-eureka-192.168.255.249-8443.json (1346 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   detail.model_name = Google Home Mini
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133839-eureka-192.168.255.249-8008.json (1137 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+
+== enumerating setup API on 192.168.255.249 (GET only, read-only)
+# probing https://192.168.255.249:8443 (GET only)
+   200    1137B  /setup/eureka_info keys=['bssid', 'build_version', 'cast_build_revision', 'connected', 'ethernet_connected', 'has_update', 'hotspot_bssid', 'locale', 'location', 'mac_address', 'name', 'opt_in']
+   200    1346B  /setup/eureka_info?options=detail keys=['bssid', 'build_version', 'cast_build_revision', 'connected', 'detail', 'ethernet_connected', 'has_update', 'hotspot_bssid', 'locale', 'location', 'mac_address', 'name']
+   200    1904B  /setup/eureka_info?options=detail&params=setup_state,device_info keys=['device_info']
+   404       0B  /eureka_info
+   200    1192B  /setup/scan_results keys=list
+   405       0B  /setup/scan_wifi
+   200   15984B  /setup/supported_timezones keys=list
+   405       0B  /setup/get_app_device_id
+   404       0B  /setup/get_offer
+   500       0B  /setup/offer
+   404       0B  /setup/network_settings
+   404       0B  /setup/check_connectivity
+   404       0B  /setup/test_internet_connectivity
+   404       0B  /setup/system_time
+   404       0B  /setup/bluetooth_status
+   404       0B  /setup/get_bluetooth_info
+   404       0B  /setup/device_info
+   404       0B  /setup/capabilities
+   404       0B  /setup/setup_state
+   404       0B  /setup/icon.png
+   404       0B  /setup/devices
+   404       0B  /setup/connected_devices
+   404       0B  /setup/get_debug_info
+   404       0B  /setup/debug_info
+   404       0B  /setup/log
+   404       0B  /setup/version
+   404       0B  /setup/about
+
+# saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133839-setup-api.json
+
+== done -- evidence prefix: evidence/20261026-133839-*
+
+== restored: Livebox-C5C0
