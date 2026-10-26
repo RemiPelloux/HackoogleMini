@@ -18,6 +18,7 @@ Usage:
   scripts/provision-wifi.py --ssid gh-lab --pass ghlab12345 --keep   # stay attached
 """
 import argparse
+import base64
 import json
 import os
 import ssl
@@ -150,13 +151,40 @@ def main():
               f"freq={target.get('frequency')} wpa_auth={target.get('wpa_auth')} "
               f"wpa_cipher={target.get('wpa_cipher')}", file=sys.stderr)
 
+        # PSK must be RSA-PKCS1v1.5-encrypted with the device's public key
+        st_ei, ei = api(base, "/setup/eureka_info")
+        if not isinstance(ei, dict):
+            print(f"!! could not fetch eureka_info: {ei}", file=sys.stderr)
+            return 5
+        pub_b64 = ei.get("device_info", {}).get("public_key") or ei.get("public_key")
+        if not pub_b64:
+            print("!! no public_key in eureka_info — falling back to plaintext 'password'",
+                  file=sys.stderr)
+            enc_passwd = None
+        else:
+            try:
+                from Cryptodome.PublicKey import RSA
+                from Cryptodome.Cipher import PKCS1_v1_5
+                key = RSA.import_key(base64.b64decode(pub_b64))
+                cipher = PKCS1_v1_5.new(key)
+                enc_passwd = base64.b64encode(
+                    cipher.encrypt(args.password.encode())).decode()
+                print(f"[*] PSK encrypted with device public key (PKCS1v15)", file=sys.stderr)
+            except ImportError:
+                print("!! pycryptodome not installed — falling back to plaintext 'password'\n"
+                      "   pip install pycryptodome", file=sys.stderr)
+                enc_passwd = None
+
         payload = {
             "ssid": target["ssid"],
-            "password": args.password,
             "wpa_auth": target.get("wpa_auth", 7),
             "wpa_cipher": target.get("wpa_cipher", 4),
             "bssid": target["bssid"],
         }
+        if enc_passwd:
+            payload["enc_passwd"] = enc_passwd
+        else:
+            payload["password"] = args.password
         st, body = api(base, "/setup/connect_wifi", payload, timeout=40)
         print(f"[*] POST /setup/connect_wifi -> {st} {body!s:.200}", file=sys.stderr)
 

