@@ -11,6 +11,7 @@ Read in this order:
 3. **`notes/architecture.md`** — what "replace the agent" means and the realistic
    options, with the latency budget.
 4. **`notes/firmware-plan.md`** — how to get firmware and what to analyse in it.
+5. **`notes/mitm-capture.md`** — capturing the Mini's web traffic with mitmproxy
 
 ## Status
 
@@ -23,6 +24,7 @@ Read in this order:
 | Large BLE payloads | ✅ resolved — no longer needed, the setup AP returns full data (U1) |
 | Exact model name | ✅ `product_name: mushroom` ⇒ Marvell Armada 1500 Mini Plus (U2) |
 | LAN / Cast reachability | ❌ device has no IP yet (`wpa_configured: false`) |
+| Network traffic | ✅ boot traffic of a **second** Mini (3.78.540761) decrypted via mitmproxy; Assistant uses internal S3 gRPC (`findings.md` F19) |
 | USB / UART / JTAG | ❌ none available on H0A — NAND access only (U5, F9) |
 | Firmware obtained | ❌ not yet — **the blocking prerequisite** |
 | Firmware pipeline | ✅ verified end-to-end on a synthetic image |

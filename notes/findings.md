@@ -23,7 +23,7 @@ local LLM that can call arbitrary MCP servers.
 | SSDP UDN | `ad8442f8-f004-f4f4-44cb-ac11eb2d26f6` |
 | LAN addr | none — device is not on Wi-Fi (`wpa_configured: false`) |
 | Country / locale | `FR`, `fr` |
-| Evidence | `evidence/20261026-*` |
+| Evidence | `evidence/20261026-*` (F19's capture is from a **different** Mini, see there) |
 
 ## Findings
 
@@ -480,6 +480,16 @@ After root (Track B1), the two files that matter:
 `libassistant.so` calls `google.assistant.embedded.v1alpha2.EmbeddedAssistant.Assist` at
 `embeddedassistant.googleapis.com:443` (TLS, BoringSSL). Audio format: 16 kHz, 16-bit, mono.
 
+> **Contradicted 2026-11-07 (F19), on a second Mini (build 3.78.540761, not the
+> 3.75.468362 target):** on the wire that device does **not** use EmbeddedAssistant
+> v1alpha2. Assistant traffic is Google-internal **S3**:
+> `speech.s3.S3StubbyClientConnectorService/S3Bidi` on `assistant-s3-pa.googleapis.com`,
+> plus `google.internal.speech.S3OnePlatform/Assistant` on `embeddedassistant.googleapis.com`
+> for Voice Match enrollment. 16 kHz is confirmed (audio config field = 16000.0). The S3
+> schema is not public, so a v1alpha2-speaking replacement endpoint would not be understood.
+> The target unit is presumably the same, since it is the same `libassistant` client
+> family, but that is not observed on 3.75.468362.
+
 Three post-root intercept strategies, ordered by invasiveness:
 
 1. **LD_PRELOAD hook** (`reconstruction/payload/libassist_hook.c`): intercepts `write()`
@@ -651,6 +661,15 @@ python3 scripts/provision-wifi.py --ssid gh-lab --pass ghlab12345
 
 ### F18. OTA payload extraction — software path to the cast_shell binary
 
+> **Update 2026-11-07 (F19, second Mini on 3.78.540761):** the update check format is now
+> known. It is Omaha JSON (`POST tools.google.com/service/update2/json`,
+> `updater: GoogleTvEureka`, `board: joplin-b4`, appid
+> `{6117439b-1508-4065-9e69-2a006d8f7730}`), with no signature or auth header. For
+> `version: 540761` Google answers **`noupdate`**, so 3.78.540761 is the current stable build.
+> The 3.75.468362 target should be offered an update with a `payload_url`. Untested, and it
+> could also be tried off-device by sending this request with `version: 468362` instead of
+> letting the target check in, which would risk auto-updating it.
+
 No public binary exists for `cast_shell` on this build. No community NAND dump.
 The only software-only acquisition path:
 
@@ -683,6 +702,10 @@ to find the exact Chromium version string and `system()` PLT offset.
 
 The Cast LAUNCH JS execution primitive works regardless of SQLite version.
 Magellan is almost certainly patched (build 3.75.x ≈ 2023–2024, Chrome 71 fix was 2018).
+
+> **Data point (F19):** a *second* Mini on build 3.78.540761 reports `Chrome/92.0.4515.0`,
+> `CrKey/1.56.500000`. The target on 3.75.468362 is older; its Chrome version is still
+> unmeasured.
 
 **Step 1 — Get the Chrome version (TODAY, no provisioning):**
 ```bash
@@ -729,3 +752,44 @@ Cast receiver environment. They may expose:
 **Reconnaissance page** — extend `probe.html` to enumerate all `chrome.cast.*` and
 `cast.framework.*` properties and exfil the list. This maps the JS API surface
 available to an arbitrary Cast receiver for further attack surface research.
+
+---
+
+## Network capture (2026-11-07)
+
+### F19. Boot traffic of a second Mini decrypted with mitmproxy — Assistant speaks S3
+
+**Device:** this capture is from a **different** Google Home Mini (`mushroom`, board
+`joplin-b4`, build **3.78.540761**, `de-DE`, already set up on the home network), **not**
+the unprovisioned `GoogleHome4983` target (3.75.468362, `FR`). Results describe the
+current-firmware Mini and carry over to the target only where noted.
+
+Setup, method and full results: `notes/mitm-capture.md`. Evidence:
+`evidence/mitm-boot-mini2.flows` (sanitized, absolute times shifted by a secret random
+offset) and `evidence/mitm-boot-mini2-decoded.txt`. Flow numbers `[n]` refer to those files.
+
+- **TLS interception from the network works.** All 30 device flows to redirected hosts
+  (`*.googleapis.com`, `tools.google.com`) were decrypted, including the Assistant gRPC
+  streams, so the device accepts the emudhra-issued leaf. Reading Assistant traffic does
+  **not** need root. Exception: `lycraservice-pa` (Nest settings sync), where Google
+  rejects the proxy's upstream connection, probably because the host wants the device's
+  mTLS client cert (unverified).
+- **Versions of the captured Mini:** build 3.78.540761, Chrome 92.0.4515.0 /
+  CrKey 1.56.500000, libassistant 16.60.15.918100692. The update server says `noupdate`
+  [0], so this is the current stable build. It gives the Omaha request format for F18 and
+  a reference point for Piste 9. It says nothing about the target's own kernel/Chrome
+  (F7, F16 unchanged).
+- **Assistant protocol is internal S3, not EmbeddedAssistant v1alpha2** (contradicts F13
+  and `ondevice-plan.md` for current firmware; presumably also true for the target). It
+  uses one OAuth token per linked user (scope `androidathome`), plus a fixed API key baked
+  into the firmware.
+- **The boot message declares the device's client-op capabilities** [8]: `tts.OUTPUT`,
+  `led.SET_LED_ANIMATION`, `device.UPDATE_VOLUME`, `timer.*`, `alarm.*`, `media.*`,
+  `client.SEND_CONVERSATION_REQUEST`, … This is the command set a replacement agent would
+  have to emit.
+- **The Mini runs Home Assistant's Local Home SDK app** [17] and forwards smart-home
+  intents to HA's webhook over the LAN.
+
+Limitations: boot only, no voice query (the audio leg of `S3Bidi` is unobserved); field
+names are unknown (tag numbers only); `mtalk.google.com` (FCM, port 5228) and
+`dl.google.com` were not captured.
