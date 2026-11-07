@@ -225,7 +225,9 @@ model* — see `notes/architecture.md`.
 - **U2 — RESOLVED.** `product_name: "mushroom"` and `model_name: "Google Home Mini"`
   (E1) prove gen 1 `H0A`, i.e. Marvell Armada 1500 Mini Plus (88DE3006), ARMv7 LE —
   exactly what `scripts/ghidra-headless.sh` already targets.
-- **U3 — no firmware image yet.** Nothing from this device has been analysed.
+- **U3 — PARTIALLY RESOLVED (F20).** The full 3.78.540761 `joplin-b4` OTA is downloaded
+  and unpacked (rootfs, kernel, ramdisk). The target's own 3.75.468362 image is still missing.
+  Earlier status: no firmware image yet.
   `scripts/fw-analyze.sh` and `scripts/ghidra-headless.sh` are verified end-to-end on
   a synthetic image only. Blocking prerequisite for everything except Piste 6.
 - **U4 — verified boot exists; the bypass route is identified, not proven.** Published
@@ -793,3 +795,46 @@ offset) and `evidence/mitm-boot-mini2-decoded.txt`. Flow numbers `[n]` refer to 
 Limitations: boot only, no voice query (the audio leg of `S3Bidi` is unobserved); field
 names are unknown (tag numbers only); `mtalk.google.com` (FCM, port 5228) and
 `dl.google.com` were not captured.
+
+### F20. Firmware obtained: full OTA for 3.78.540761 via a spoofed Omaha check
+
+**Device:** the request came from the **second Mini** (3.78.540761), not the target. The
+image is the generic `joplin-b4` stable build. It is **not** the target's 3.75.468362.
+
+Method (F18 idea, now tested): `scripts/omaha_spoof.py` (mitmproxy addon) rewrites
+`app.version` / `os.version` in the device's `tools.google.com/service/update2/json` check
+to `468362`. Google answered `status: ok` with a **full** (not delta) OTA. The offer was
+the same 3.78.540761 build that the device already runs. Evidence:
+`evidence/20261107-omaha-spoof-468362.json` (serial redacted).
+
+- Offer: `codebase` `https://redirector.gvt1.com/edgedl/googletv-eureka/stable-channel/ota.540761.tz_stable-channel.joplin-b4.306c410f30d96e6fdc4aa221a027510d17adf9ef.zip`,
+  95 990 069 bytes, sha256 `79180a03…72d32` (matches), `RebootNow: true`. The URL is public:
+  no auth and no device binding, so anyone can download it.
+- `scripts/fetch-ota.sh` downloads, verifies and unpacks it into `target/ota-540761/` (zip)
+  and `work/ota-540761/` (unpacked). Inventory and hashes:
+  `evidence/20261107-ota-540761-inventory.txt`.
+- Format: Android recovery-style signed zip (SignApk, `otacert` O=Chromecast, 2017–2037),
+  with `updater-script`. It contains `system.img` (SquashFS 4.0 zlib → rootfs), `boot.img`,
+  `bootloader`, `post-bootloader`, `tz_en`. It is **not** an A/B `payload.bin`, so
+  `delta_generator` (F18) is not needed.
+- Rootfs: `chrome/cast_shell` (66 MB, ARM32 PIE, `Chrome/92.0.4515.0`, `CrKey/3.78.540761`),
+  `chrome/bin/assistant` (386 KB, carries the libassistant source paths), `iot_audio`,
+  `iot_audio_capture`, `ml_framework`, `update_engine`, `process_manager`,
+  `lib/libcast_assistant_1.0.so`. **There is no separate `libassistant.so`** (contradicts
+  F13's file layout for this build); where libassistant actually lives
+  (`cast_shell` vs `bin/assistant`) is still open.
+- `boot.img`: a 332-byte signature header, then an Android boot image. The kernel is
+  **Linux 3.8.13+**, built **Fri Sep 20 2024** (XZ zImage). The ramdisk holds `/dmtable`:
+  `verity` over `mtdblock7` with a sha256 root hash, and `init.rc` mounts `/dev/mapper/system`.
+  **This confirms U4's dm-verity for this build.**
+- The kernel is still 3.8.13 as of a 2024 build. Whether the YAFFS2 fix (Piste 2 / F7) is
+  backported is **open**. That can now be checked statically in `work/ota-540761/Image`.
+
+Side effect: in the spoofed run the response was passed through un-neutralized. The second
+Mini then reported Omaha event `eventtype 13, eventresult 1` (download started) [8], so it
+probably re-downloaded and re-flashed the same 3.78 build. That is harmless, but
+`omaha_spoof.py` now neutralizes by default.
+
+Limitations: this is 3.78, not the target's 3.75. To get 3.75 we would need an older
+`codebase` URL. Omaha only ever offers the current build; guessing old URLs needs the
+40-hex suffix, which is unknown.

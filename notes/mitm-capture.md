@@ -216,3 +216,11 @@ traits: `a11y_trait`, `alarm_volume_settings`, `assistant_volume_settings`,
 - No voice query, so the audio leg of `S3Bidi` (framing, codec) is still unobserved. Next
   capture: say a wake word plus a short query while recording.
 - Protobuf field names are unknown. Everything above is tag numbers plus string context.
+
+## Getting the firmware: spoofed Omaha check (`scripts/omaha_spoof.py`)
+
+Load the addon next to `forward_by_host.py`. It rewrites the device's update check to
+claim an older build (`--set omaha_fake_version=468362`). It logs the offer (codebase URL,
+size, sha256) to `omaha_log`, and by default replaces it with `noupdate` before the device
+sees it (`omaha_neutralize=true`). Then run
+`scripts/fetch-ota.sh <codebase> <sha256> <build>`. The result is in findings F20.
