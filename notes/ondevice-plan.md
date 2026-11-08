@@ -73,6 +73,15 @@ it means we do not have to invent a wire format:
 | Auth | OAuth token derived from the device identity (the RSA key + X.509 cert we already have) |
 | Hotword | on-device (small NN), before any audio leaves the box |
 
+> **Contradicted by capture (2026-11-07, `findings.md` F19, `notes/mitm-capture.md`), on a
+> second Mini running 3.78.540761:** the table above is the *public* Assistant SDK, and that
+> device does not use it. On the wire it speaks Google-internal **S3**: `speech.s3.S3StubbyClientConnectorService/S3Bidi` on
+> `assistant-s3-pa.googleapis.com`, authenticated with per-user OAuth tokens (scope
+> `androidathome`) plus an API key. 16 kHz input is confirmed; output format is not yet
+> observed. Option 2 below therefore cannot reuse the device's existing protocol as-is:
+> a replacement must either implement the undocumented S3 messages or bring its own client.
+> Not yet observed on the 3.75.468362 target itself.
+
 Three ways in, cheapest first:
 
 1. **Hostname redirect + our CA.** Patch the resolved host in `cast_shell` /

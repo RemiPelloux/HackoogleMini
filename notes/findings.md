@@ -23,7 +23,7 @@ local LLM that can call arbitrary MCP servers.
 | SSDP UDN | `ad8442f8-f004-f4f4-44cb-ac11eb2d26f6` |
 | LAN addr | none — device is not on Wi-Fi (`wpa_configured: false`) |
 | Country / locale | `FR`, `fr` |
-| Evidence | `evidence/20261026-*` |
+| Evidence | `evidence/20261026-*` (F19's capture is from a **different** Mini, see there) |
 
 ## Findings
 
@@ -225,7 +225,9 @@ model* — see `notes/architecture.md`.
 - **U2 — RESOLVED.** `product_name: "mushroom"` and `model_name: "Google Home Mini"`
   (E1) prove gen 1 `H0A`, i.e. Marvell Armada 1500 Mini Plus (88DE3006), ARMv7 LE —
   exactly what `scripts/ghidra-headless.sh` already targets.
-- **U3 — no firmware image yet.** Nothing from this device has been analysed.
+- **U3 — PARTIALLY RESOLVED (F20).** The full 3.78.540761 `joplin-b4` OTA is downloaded
+  and unpacked (rootfs, kernel, ramdisk). The target's own 3.75.468362 image is still missing.
+  Earlier status: no firmware image yet.
   `scripts/fw-analyze.sh` and `scripts/ghidra-headless.sh` are verified end-to-end on
   a synthetic image only. Blocking prerequisite for everything except Piste 6.
 - **U4 — verified boot exists; the bypass route is identified, not proven.** Published
@@ -238,6 +240,12 @@ model* — see `notes/architecture.md`.
   has no accessible serial/debug pads (BGA only) and micro-USB is power-only (F2).
   **The UART boot-log shortcut is not available**; the only board-level route is
   physical NAND access (Piste 2).
+- **U6 — NEW (F27). Are the Mini's micro-USB D+/D- lines routed/tappable?** The
+  post-bootloader contains a full USB host + mass-storage boot path (`Booting from
+  NAND failed, booting from USB`). Micro-USB is "power-only" in normal operation (F2),
+  but if the data lines reach the SoC on the H0A PCB, the bootloader USB parsers
+  (Piste 11) become reachable without opening the NAND. Needs a PCB probe / continuity
+  test. Gates whether Piste 11 is a software-only or NAND-access attack.
 - The two non-gzip blobs (`22216033…` 65 B, `2dab7a51…` 16 B) are high-entropy and
   undecoded — most likely handshake nonce/key material.
 - Collection is stateful: **the setup service disappears once the device is
@@ -480,6 +488,16 @@ After root (Track B1), the two files that matter:
 `libassistant.so` calls `google.assistant.embedded.v1alpha2.EmbeddedAssistant.Assist` at
 `embeddedassistant.googleapis.com:443` (TLS, BoringSSL). Audio format: 16 kHz, 16-bit, mono.
 
+> **Contradicted 2026-11-07 (F19), on a second Mini (build 3.78.540761, not the
+> 3.75.468362 target):** on the wire that device does **not** use EmbeddedAssistant
+> v1alpha2. Assistant traffic is Google-internal **S3**:
+> `speech.s3.S3StubbyClientConnectorService/S3Bidi` on `assistant-s3-pa.googleapis.com`,
+> plus `google.internal.speech.S3OnePlatform/Assistant` on `embeddedassistant.googleapis.com`
+> for Voice Match enrollment. 16 kHz is confirmed (audio config field = 16000.0). The S3
+> schema is not public, so a v1alpha2-speaking replacement endpoint would not be understood.
+> The target unit is presumably the same, since it is the same `libassistant` client
+> family, but that is not observed on 3.75.468362.
+
 Three post-root intercept strategies, ordered by invasiveness:
 
 1. **LD_PRELOAD hook** (`reconstruction/payload/libassist_hook.c`): intercepts `write()`
@@ -651,6 +669,15 @@ python3 scripts/provision-wifi.py --ssid gh-lab --pass ghlab12345
 
 ### F18. OTA payload extraction — software path to the cast_shell binary
 
+> **Update 2026-11-07 (F19, second Mini on 3.78.540761):** the update check format is now
+> known. It is Omaha JSON (`POST tools.google.com/service/update2/json`,
+> `updater: GoogleTvEureka`, `board: joplin-b4`, appid
+> `{6117439b-1508-4065-9e69-2a006d8f7730}`), with no signature or auth header. For
+> `version: 540761` Google answers **`noupdate`**, so 3.78.540761 is the current stable build.
+> The 3.75.468362 target should be offered an update with a `payload_url`. Untested, and it
+> could also be tried off-device by sending this request with `version: 468362` instead of
+> letting the target check in, which would risk auto-updating it.
+
 No public binary exists for `cast_shell` on this build. No community NAND dump.
 The only software-only acquisition path:
 
@@ -683,6 +710,10 @@ to find the exact Chromium version string and `system()` PLT offset.
 
 The Cast LAUNCH JS execution primitive works regardless of SQLite version.
 Magellan is almost certainly patched (build 3.75.x ≈ 2023–2024, Chrome 71 fix was 2018).
+
+> **Data point (F19):** a *second* Mini on build 3.78.540761 reports `Chrome/92.0.4515.0`,
+> `CrKey/1.56.500000`. The target on 3.75.468362 is older; its Chrome version is still
+> unmeasured.
 
 **Step 1 — Get the Chrome version (TODAY, no provisioning):**
 ```bash
@@ -729,3 +760,603 @@ Cast receiver environment. They may expose:
 **Reconnaissance page** — extend `probe.html` to enumerate all `chrome.cast.*` and
 `cast.framework.*` properties and exfil the list. This maps the JS API surface
 available to an arbitrary Cast receiver for further attack surface research.
+
+### Piste 11 — Post-bootloader parser audit (USB image + mkbootimg header) — no key, no device to start
+
+Extends Piste 5 with concrete targets from F26/F27. The `post-bootloader.joplin-b4`
+is **plaintext, signed Thumb-ARM** (~120 KB) — fully auditable. Goal: a
+memory-corruption bug in a parser that runs **before/around** the RSA/SHA1 check, so a
+crafted input runs our own (unsigned) code with no signing key. Targets, in order:
+1. The USB image loader (`Failed to read CPU image header from USB`,
+   `Reading %d blocks from USB device`) and the USB descriptor parsers (which already
+   have hand-rolled bounds checks → `USB IF descriptor overflowed buffer!`).
+2. The mkbootimg/figo header parser (`Invalid mkbootimg header!`, `mkbootimg bootargs:
+   %s`, `Generated bootargs: %s`) — attacker-influenced length/offset/cmdline fields.
+3. Any anti-rollback/version check (for Piste 12) — none visible in the image headers
+   (F25), so confirm presence/absence here.
+**Method:** load `zip/post-bootloader.joplin-b4` into Ghidra as raw ARM (strip the
+figo header + RSA sig; find the code base from the reset/vector layout), then
+decompile the three parsers. No device needed. Reachability of (1) depends on U6.
+Reference bug class: Nest Hub U-Boot stack overflow (fredericb.info, 2022).
+
+### Piste 12 — Signed downgrade to a vulnerable kernel via NAND write
+
+If Piste 11 shows the post-bootloader enforces **no fused rollback counter**, then an
+older *Google-signed* kernel (e.g. one whose 3.8.13 build still has the YAFFS2 bug,
+pre-fix) can be written straight to `mtd6` with a NAND programmer and will pass
+verification. That revives Piste 2 on demand. Note the OTA/`updater-script` anti-
+downgrade (`ro.build.date.utc` assert, F28) is **software-only** and bypassed by a
+raw NAND write. **Blockers:** (a) confirm no bootloader rollback check (Piste 11);
+(b) obtain an old signed `boot.img` — the Omaha CDN only offers the current build and
+the 40-hex URL suffix for old builds is unknown (F20); a NAND dump of an old unit or an
+archived image would supply it. **Needs NAND access either way.**
+
+---
+
+## Network capture (2026-11-07)
+
+### F19. Boot traffic of a second Mini decrypted with mitmproxy — Assistant speaks S3
+
+**Device:** this capture is from a **different** Google Home Mini (`mushroom`, board
+`joplin-b4`, build **3.78.540761**, `de-DE`, already set up on the home network), **not**
+the unprovisioned `GoogleHome4983` target (3.75.468362, `FR`). Results describe the
+current-firmware Mini and carry over to the target only where noted.
+
+Setup, method and full results: `notes/mitm-capture.md`. Evidence:
+`evidence/mitm-boot-mini2.flows` (sanitized, absolute times shifted by a secret random
+offset) and `evidence/mitm-boot-mini2-decoded.txt`. Flow numbers `[n]` refer to those files.
+
+- **TLS interception from the network works.** All 30 device flows to redirected hosts
+  (`*.googleapis.com`, `tools.google.com`) were decrypted, including the Assistant gRPC
+  streams, so the device accepts the emudhra-issued leaf. Reading Assistant traffic does
+  **not** need root. Exception: `lycraservice-pa` (Nest settings sync), where Google
+  rejects the proxy's upstream connection, probably because the host wants the device's
+  mTLS client cert (unverified).
+- **Versions of the captured Mini:** build 3.78.540761, Chrome 92.0.4515.0 /
+  CrKey 1.56.500000, libassistant 16.60.15.918100692. The update server says `noupdate`
+  [0], so this is the current stable build. It gives the Omaha request format for F18 and
+  a reference point for Piste 9. It says nothing about the target's own kernel/Chrome
+  (F7, F16 unchanged).
+- **Assistant protocol is internal S3, not EmbeddedAssistant v1alpha2** (contradicts F13
+  and `ondevice-plan.md` for current firmware; presumably also true for the target). It
+  uses one OAuth token per linked user (scope `androidathome`), plus a fixed API key baked
+  into the firmware.
+- **The boot message declares the device's client-op capabilities** [8]: `tts.OUTPUT`,
+  `led.SET_LED_ANIMATION`, `device.UPDATE_VOLUME`, `timer.*`, `alarm.*`, `media.*`,
+  `client.SEND_CONVERSATION_REQUEST`, … This is the command set a replacement agent would
+  have to emit.
+- **The Mini runs Home Assistant's Local Home SDK app** [17] and forwards smart-home
+  intents to HA's webhook over the LAN.
+
+Limitations: boot only, no voice query (the audio leg of `S3Bidi` is unobserved); field
+names are unknown (tag numbers only); `mtalk.google.com` (FCM, port 5228) and
+`dl.google.com` were not captured.
+
+### F20. Firmware obtained: full OTA for 3.78.540761 via a spoofed Omaha check
+
+**Device:** the request came from the **second Mini** (3.78.540761), not the target. The
+image is the generic `joplin-b4` stable build. It is **not** the target's 3.75.468362.
+
+Method (F18 idea, now tested): `scripts/omaha_spoof.py` (mitmproxy addon) rewrites
+`app.version` / `os.version` in the device's `tools.google.com/service/update2/json` check
+to `468362`. Google answered `status: ok` with a **full** (not delta) OTA. The offer was
+the same 3.78.540761 build that the device already runs. Evidence:
+`evidence/20261107-omaha-spoof-468362.json` (serial redacted).
+
+- Offer: `codebase` `https://redirector.gvt1.com/edgedl/googletv-eureka/stable-channel/ota.540761.tz_stable-channel.joplin-b4.306c410f30d96e6fdc4aa221a027510d17adf9ef.zip`,
+  95 990 069 bytes, sha256 `79180a03…72d32` (matches), `RebootNow: true`. The URL is public:
+  no auth and no device binding, so anyone can download it.
+- `scripts/fetch-ota.sh` downloads, verifies and unpacks it into `target/ota-540761/`
+  (`zip/`, `rootfs/`, `ramdisk/`, `kernel.bin`, `Image` next to the zip). Inventory and hashes:
+  `evidence/20261107-ota-540761-inventory.txt`.
+- Format: Android recovery-style signed zip (SignApk, `otacert` O=Chromecast, 2017–2037),
+  with `updater-script`. It contains `system.img` (SquashFS 4.0 zlib → rootfs), `boot.img`,
+  `bootloader`, `post-bootloader`, `tz_en`. It is **not** an A/B `payload.bin`, so
+  `delta_generator` (F18) is not needed.
+- Rootfs: `chrome/cast_shell` (66 MB, ARM32 PIE, `Chrome/92.0.4515.0`, `CrKey/3.78.540761`),
+  `chrome/bin/assistant` (386 KB, carries the libassistant source paths), `iot_audio`,
+  `iot_audio_capture`, `ml_framework`, `update_engine`, `process_manager`,
+  `lib/libcast_assistant_1.0.so`. **There is no separate `libassistant.so`** (contradicts
+  F13's file layout for this build); where libassistant actually lives
+  (`cast_shell` vs `bin/assistant`) is still open.
+- `boot.img`: a 332-byte signature header, then an Android boot image. The kernel is
+  **Linux 3.8.13+**, built **Fri Sep 20 2024** (XZ zImage). The ramdisk holds `/dmtable`:
+  `verity` over `mtdblock7` with a sha256 root hash, and `init.rc` mounts `/dev/mapper/system`.
+  **This confirms U4's dm-verity for this build.**
+- The kernel is still 3.8.13 as of a 2024 build. Whether the YAFFS2 fix (Piste 2 / F7) is
+  backported is **open**. That can now be checked statically in `target/ota-540761/Image`.
+
+Side effect: in the spoofed run the response was passed through un-neutralized. The second
+Mini then reported Omaha event `eventtype 13, eventresult 1` (download started) [8], so it
+probably re-downloaded and re-flashed the same 3.78 build. That is harmless, but
+`omaha_spoof.py` now neutralizes by default.
+
+Limitations: this is 3.78, not the target's 3.75. To get 3.75 we would need an older
+`codebase` URL. Omaha only ever offers the current build; guessing old URLs needs the
+40-hex suffix, which is unknown.
+
+### F21. What the 3.78 firmware tells us: the Assistant sits behind a local gRPC seam
+
+Source: the OTA from F20 (`target/ota-540761/`). This is the **second Mini's** build, 3.78.540761.
+It is **not** the target's 3.75. Evidence: `evidence/20261108-ota-540761-grpc-surface.txt`
+(gRPC paths, configs, init entries) and `evidence/20261108-libhvc-recovered-protos.txt`
+(recovered schemas, from `scripts/recover_lite_protos.py`).
+
+- **Process split.** Observed:
+  - `init.rc` starts `service assistant` = `/system/chrome/bin/assistant` (386 KB host), as uid `chrome`.
+  - The Assistant engine (S3 client, libassistant) is **`chrome/libhvc_perception_joplin.so`**
+    (16 MB). It is the only file containing the `S3Bidi` / `S3OnePlatform` strings.
+    `cast_shell` (66 MB) does not contain them.
+  - `assistant_bootup_config.json` makes the engine serve gRPC on unix sockets:
+    `/tmp/grpc/libassist_grpc.socket`, `libassist_audio_input.socket`,
+    `libassist_audio_output.socket`, plus `libassist_uds_audio_{input,output}.socket`.
+  - `libas_customer.use_client_audio_service: true`: the engine takes mic audio from the
+    embedder (`cast_shell`) over gRPC.
+- **Local API (strings).**
+  - The engine serves `assistant.api.*`: `ConversationService` (21 methods, e.g.
+    `SendTextQuery`, `StartInteraction`, `ExecuteInteractionDelta`), `AlarmTimerService`
+    (20), `ConfigSettingsService`, `AudioUtilsService` (`PlayTtsText`), `BootupSettingsService`
+    (`SetS3ApiKey`), `EventNotificationService`, …
+  - `cast_shell` additionally serves embedder services: `ClientAudioService`,
+    `EmbedderUtilityService`, `SecureFileService`, `DeviceActionService`, `ActionService`.
+- **Schemas are recoverable without symbols (inference, partly verified).**
+  - The assistant protos use protobuf **lite** (no embedded descriptors;
+    `scripts/find_proto_descriptors.py` finds only Nest-trait/perfetto ones). The engine
+    library's table-driven parser data (`TcParseTable`) still holds field numbers, wire
+    kinds, cardinality and sub-message pointers.
+  - `recover_lite_protos.py` decodes **563** (first version; 1080 after F24 fixes) `assistant.*`/`speech.*`/… messages
+    (847 tables, 4488 fields, every field number resolved). Examples:
+    `SendTextQueryRequest { string 1 }`, `PlayTtsTextRequest { string 1; string 2 }`,
+    `PlayTtsTextResponse { bool 1 }`.
+  - **Limits:**
+    - Field **names** are absent (lite).
+    - 483 sub-message references stay unnamed (cross-library or runtime-filled aux slots).
+    - The type-card bit layout is assumed from protobuf ≥ v27 and **not verified** against
+      the exact protobuf revision. `string` vs `bytes` and enum vs int are uncertain.
+    - `cast_shell` yields 0 tables (older Chromium-92 protobuf, different layout).
+- **Hardening facts.**
+  - `ro.build.have_selinux=false`.
+  - `cast_shell` and `assistant` share uid `chrome` (group `grpc`).
+  - rootfs is SquashFS under dm-verity (F20); `/data` is a bind of the writable YAFFS2 `/cache`.
+  - Root-running network daemons: `dhcpcd-6.8.2`, plus `wpa_supplicant` / `hostapd`
+    `v2.6-devel-3.78` and `dnsmasq-2.78`.
+  - The kernel `Image` keeps **kallsyms** (function names, e.g. `yaffs2_scan_backwards`),
+    so the Piste 2 YAFFS2 fix question can be settled in Ghidra with names.
+- **Modules.**
+  - `modular_updater/prebuilt_images/localhome.squashfs` = `localhomeplatform_binary`
+    (Local Home / smart-home mesh, seccomp policy, 103 full descriptors).
+  - The signed `modular_manifest.pb` also names an `assistant` module v1.61 that is not
+    in the OTA (downloaded at runtime?). **Unknown.**
+
+**Implication for the goal (inference):** a local-LLM agent does not have to reimplement
+Google's cloud S3 protocol. On the device, it can take the place of the `assistant`
+process and serve `assistant.api.*` on `/tmp/grpc/libassist_grpc.socket` (plus
+the audio sockets) to an unmodified `cast_shell`. That only needs code execution as uid
+`chrome` at runtime (not root, not a modified rootfs), but it would not persist across
+reboots because of dm-verity. Still needs proof on a device. The call sequence `cast_shell`
+expects (boot handshake, which methods are mandatory) has to come from Ghidra on
+`cast_shell` / `libhvc_perception_joplin.so`.
+
+### F22. YAFFS2 object-confusion bug (Piste 2) is **patched** in the 3.78 kernel
+
+Evidence: `evidence/20261108-kernel-3.78-yaffs-fix.txt`. Source: `target/ota-540761/Image`, symbolized with `vmlinux-to-elf` → `work/vmlinux-3.78.elf`
+(25 362 kallsyms symbols, base `0xc0008000`). Reference for the bug: courk, "Running Custom
+Code on a Google Home Mini (Part 2)", https://courk.cc/running-custom-code-google-home-mini-part2
+(read 2026-11-08). Its tested kernel was `3.8.13+ … Fri Jun 7 2019`. The post says the 2014
+upstream fix is in newer Google kernels.
+
+- Observed: `yaffs_retype_obj` exists (`0xc028d180`, 348 B). Its only caller is
+  `yaffs2_scan_backwards` at `0xc02942c4` (`yaffs2_scan_chunk` is inlined).
+- Observed: the code just before the call is exactly the fixed mismatch branch.
+  `ldrb [in]; tst #0x80` (`!in->valid`), `ldr [in,#0x64]` (`variant_type`) compared with
+  `oh ? oh->type : tags.extra_obj_type`, then an optional trace (`tst #0x40000000`,
+  YAFFS_TRACE_ERROR, "yaffs tragedy: Bad type" string present), then
+  `in = yaffs_retype_obj(in, type)`. The vulnerable 2019 code only logged and then set
+  `variant_type`, leaving the union alone.
+- Conclusion: **Piste 2 does not work against a 3.78 kernel.** Unknown: the target's own
+  3.75.468362 kernel. Its build date is not known, but if it was built after the
+  2019 kernel courk tested it is probably patched too. Only its own image (or a NAND dump)
+  can tell. Reflashing the target to an old vulnerable kernel is not possible through
+  verified OTA (`updater-script` asserts the build date does not go backwards).
+
+### F23. Bootup contract between `cast_shell` and the Assistant engine (3.78)
+
+Source: strings and gRPC paths in `cast_shell` / `libhvc_perception_joplin.so`
+(`evidence/20261108-ota-540761-grpc-surface.txt`), schemas in
+`evidence/20261108-libhvc-recovered-protos.txt`. These are static strings only. The **order** is
+inferred from log messages, not from traced code.
+
+Client implementation: `chromecast/internal/assistant/app/{assistant_impl,
+assistant_service_client_impl, cast_assistant_service}.cc`,
+`event_handlers/bootup_manager.cc`, `assistant_health_checker.cc`. Inferred sequence:
+1. `init` runs `try_start_assistant.sh` → `setprop ctl.start assistant`. The engine serves
+   gRPC on `/tmp/grpc/libassist_grpc.socket`.
+2. `cast_shell` starts `Cast.Assistant.Bootup.Start` and caches everything until "Libassistant
+   server is ready": config string, S3 API key, user token list, internal options,
+   connection status, volume, pipeline gains, user settings.
+3. `cast_shell` registers as the engine's customer with
+   `CustomerRegistrationService/RegisterCustomer` (`{string 1; repeated map 2}`, probably its
+   own service endpoints). The log says "detected libassistant is down. Re-registering…",
+   so the client survives engine restarts.
+4. It flushes the caches: `BootupSettingsService/SetConfigString`, `SetS3ApiKey {string 1}`,
+   `SetAuthInfo {enum 1; repeated msg 2}`, `SetInternalOptions`,
+   `SystemService/UpdateConnectionStatus|UpdateVolumeState|UpdateMicMuteState`, …
+5. It subscribes with `EventNotificationService/RegisterEventHandler` (22-field request:
+   which event classes to receive), `RegisterHeartbeatHandler`, `RegisterGcmHandler`, and
+   `RegistrationService/Register{EmbedderUtilityService,CallService,NightModeState,…}`.
+6. "Assistant bootup complete" / `Cast.Assistant.Bootup.End`. Otherwise
+   `assistant-bootup-timeout-secs` → "Bootup timeout hit."
+
+Runtime calls from `cast_shell` to the engine: `ConversationService/{StartInteraction,
+StopInteraction, SendTextQuery, SendClientInput, SendVoicelessInteraction, SetCapabilities,
+SetDeviceProperties, UpdateDeviceState, RegisterActionHandler, RegisterDeviceActionHandler,
+StopAllTts}`, `AudioUtilsService/{PlayTts, PlayTtsText, PlayReadyMessage, EnableListening}`,
+`AlarmTimerService/*`, `ConfigSettingsService/*`.
+The engine calls back into `cast_shell`'s services: `ClientAudioService/{Get,Set}{Volume,
+Muted}, SetAudioFocus`, `EmbedderUtilityService`, `SecureFileService`, device/action handlers.
+
+Implication: a replacement engine must at least accept `RegisterCustomer`, the
+`BootupSettingsService` setters, `RegisterEventHandler` (and stream events back), the
+heartbeat, and the audio services (F24). The rest can return empty or OK at first.
+**Which methods are hard requirements is unknown.** That needs the client's response
+handling (Ghidra/capstone on `cast_shell`) or a test on the device.
+
+### F24. Audio path: protobuf messages over unix sockets ("UDS transport")
+
+- Engine side (`libhvc/internal/services/platform/uds_audio_{input,output}_service.cc`):
+  "Creating UDS audio socket for path: …". It serves either gRPC or UDS for each direction,
+  never both (`!(grpc_audio_input_service_ && uds_audio_input_service_)`). The paths come
+  from `assistant_bootup_config.json`: `/tmp/grpc/libassist_uds_audio_input.socket`,
+  `libassist_uds_audio_output.socket`. The socket owner is set to `opal_socket_group`
+  (`wayland`).
+- Client side (`cast_shell`, `chromecast/internal/assistant/shared/uds_transport/`):
+  - `UdsAudioInputSender` sends an "initial request" with a `SourceType` and then streams
+    mic audio as `StreamAudioInputRequest` (paused/resumed on demand).
+  - `UdsAudioOutputClient` sends a registration `StreamAudioOutputRequest` and receives
+    `StreamAudioOutputResponse` (`INITIAL`, data, `STOP`).
+- Recovered schemas (field names unknown, roles inferred):
+  - `StreamAudioInputRequest`: `enum 4` (source type?), `msg 5` (`AudioBuffer`?), `enum 6`.
+  - `AudioBuffer`: `bytes 1` (PCM?), `int64 2` (timestamp?), `int32 3`.
+  - `AudioBufferFormat`: `int32 1` (sample rate?), `enum 2` (encoding), `int32 3` (channels?).
+  - `StreamAudioOutputResponse`: `enum 1` (type: INITIAL/DATA/STOP?), `enum 2`, `msg 3`,
+    `int32 4`, `bytes 5`, `bytes 6`, `int64 7`, `msg 9`.
+  - `OutputStreamFormat`: `enum 1`, `int64 2`, `int32 3`.
+  - mitm R3 saw a 16000.0 sample rate on the cloud side.
+- **Unknown:** how messages are framed on the socket (length prefix? `SOCK_SEQPACKET`?),
+  and the actual sample format. Both are needed before a replacement can read mic audio.
+  Next: disassemble `UdsAudioInputSender` send path, or capture the socket on a device.
+
+Tooling added: `scripts/recover_lite_protos.py` now checks each table and tries both
+name-padding alignments. It decodes **1080 messages / 5607 fields** from
+`libhvc_perception_joplin.so`. 915 sub-message references remain unnamed, and some small
+"aux" values (e.g. `msg_0x2`) are not pointers, so the aux format is only partly understood.
+
+### F25. Signed-image header formats in the OTA (static observation)
+
+From the first 96 bytes of each image in `target/ota-540761/zip/`:
+- `bootloader.joplin-b4` (prebootloader, 128 KB): header begins `01 00 00 00 37 c2 00 01`
+  then immediately high-entropy data. Distinct format from the others — this is the
+  stage the Marvell BootROM loads and (per courk F-chain) is verified against an
+  OTP-fused key. Not patchable.
+- `post-bootloader.joplin-b4`, `tz_en.joplin-b4`, `boot.img` all share one container:
+  `01 00 00 00` then a little-endian **`0xC0DE`** magic (`de c0`) at offset 4, a type/
+  flag byte, a length field, then an RSA-signature-sized high-entropy block before the
+  payload. This is the signed-image wrapper each prior stage checks (postbootloader
+  verifies kernel; TZ/postbootloader verified by the bootloader).
+- No plaintext version/anti-rollback counter is visible in these headers; whether a
+  fused rollback counter is enforced is **open** — answer it by decompiling
+  `post-bootloader.joplin-b4` (Google released its source; Piste 5).
+
+### F26. Secure-boot architecture, fully mapped from the OTA images
+
+Static analysis of `target/ota-540761/zip/*` (headers, entropy, strings).
+Evidence: `evidence/20261108-postbootloader-secureboot.txt`.
+
+**Image container ("figo" / Marvell secure image).** All chain images start with
+`01 00 00 00` then LE magic **`0xC0DE`** (`de c0`) at offset 4, a type byte (0x00
+kernel/postbootloader, 0x02 TZ), a 16-byte hash/IV field (non-zero only for the
+encrypted TZ), image length at offset 40, then an RSA-signature-sized block, then the
+payload. The post-bootloader itself prints `figo magic = %x, figo_off, figo_len`.
+
+**Encryption split (from body entropy):**
+- `bootloader.joplin-b4` (prebootloader) — entropy ~8.0 → **signed AND encrypted**.
+- `tz_en.joplin-b4` (TrustZone) — entropy ~8.0 → **signed AND encrypted** (carries IV).
+- `post-bootloader.joplin-b4` — entropy ~5–6 → **signed, NOT encrypted**. It is
+  plaintext Thumb-ARM and therefore the one auditable stage (Piste 5 is viable).
+- `boot.img` — figo header, then a standard `ANDROID!` boot image (kernel + ramdisk).
+
+**Key store (strings in post-bootloader):** a hardware keystore with indexed keys —
+`RSA KEY INDEX:%1X`, `Load No.%d RSA Public Key into User Key DTCM Area`, plus
+`RKEK CRC`, `AESK0 CRC`, `SIGNK7 CRC`. Keys are loaded into on-chip DTCM. There is a
+**Customer Key Store** (`Loading Secure Customer Key Store is finished`,
+`Warning: Invalid key store!`), flashed by `/bin/flash_custk`. The keystore is itself
+anchored to the SoC's fused RKEK, so you cannot swap in your own public key without
+the Marvell root key.
+
+**Verification chain confirmed:** Marvell ARMADA 1500 Mini-Plus BootROM (fused RKEK)
+→ prebootloader (enc) → TZ (enc) → post-bootloader verifies the kernel:
+`bootimg SHA1 verify fail`, `Boot image verify header failed!`, `Verify k_buff image
+failed!`, `no need to load kernel keys`. Kernel integrity is **SHA1**, key is RSA.
+Rootfs is dm-verity (F20). → **Replacing any pre-kernel stage needs the Google/Marvell
+signing key; replacing the kernel needs the key OR a bug in post-bootloader.**
+
+### F27. USB-boot image path in the post-bootloader — a real parser attack surface
+
+The post-bootloader contains a full USB-EHCI host + mass-storage stack and an image
+loader that runs **before** (and around) signature verification:
+- `Detected button press -- booting from USB`
+- `Booting from NAND failed, booting from USB....!` (USB is the NAND-failure fallback)
+- `Failed to read CPU image header from USB`, `Reading %d blocks from USB device`
+- USB descriptor parsing with its own bounds checks (`USB IF descriptor overflowed
+  buffer!`, `Too many USB interfaces!`, `Invalid USB EP length`) — i.e. hand-rolled
+  parsers, the classic bootloader-overflow class (cf. Nest Hub U-Boot bug, Piste 5).
+- An `mkbootimg`/figo header parser (`Invalid mkbootimg header!`, `mkbootimg bootargs:
+  %s`, `Generated bootargs: %s`) that reads attacker-influenced fields.
+
+Loaded USB images are still verified (`Verify k_buff image failed!`), so a *valid*
+boot still needs the signing key. The exploitable target is a **memory-corruption bug
+in one of these parsers, reached before/independent of the signature check** — this is
+the most promising no-key route to running our own kernel.
+
+Hardware caveat: the Mini's micro-USB is "power-only" (F2) — D+/D- are not used in
+normal operation, but the SoC's USB-boot path clearly exists in code. Whether the data
+lines are routed/tappable on the H0A PCB is an open hardware question (new U6).
+Triggered by: a button held at boot, or NAND made to fail to boot.
+
+### F28. OTA / userland flashing layer (no new bypass)
+
+- `/bin/flash_image` and `/bin/flash_custk` are generic userland MTD raw writers
+  (ELF ARM PIE) — they `ioctl` `/dev/mtd*` directly. Post-root they let you write any
+  partition, **but** the written image is still verified by the stage above at next
+  boot, so they are a post-exploit primitive, not a bypass.
+- `chrome/update_engine` verifies the OTA with **RSA-PSS + SHA-256** (`rsassaPss`,
+  `sha256WithRSAEncryption`) and enforces `targetversionprefix` (anti-downgrade at the
+  update layer). No weakness observed; the OTA path stays closed.
+- `/bin/flash_bootloader` (called by the recovery `updater-script`) is **not** in the
+  main rootfs — it ships in the recovery ramdisk (`boot/recovery.img`); worth pulling
+  if the bootloader-flash routine is of interest.
+
+### F29. UDS audio framing and mic-message layout (client side, 3.78) — resolves the F24 framing unknown
+
+Evidence: `evidence/20261108-uds-audio-framing-ml_framework.txt`. Source: Ghidra 12.2 headless on
+`chrome/bin/ml_framework`. It is a 3.3 MB binary that links the same
+`chromecast/internal/assistant/shared/uds_transport/` code as `cast_shell`
+(`uds_audio_input_sender.cc`, `uds_client_socket.cc`). Field offsets are cross-checked
+against libhvc's own `TcParseTable` entries. Static only; nothing was run.
+
+- **Socket.** A plain `AF_UNIX` stream connect to a filesystem path (`sun_family = 1`,
+  path copied without a leading NUL, so it is not the abstract namespace) (`FUN_001fadc4`).
+  Writes and reads go through Chromium's socket `Write`/`Read`, with no extra header.
+- **Framing (observed).** Each protobuf message is sent as
+  `[u16 big-endian payload length][serialized message]`. `FUN_001faa48` builds the 2-byte
+  BE header and appends the payload. `FUN_001f99d4` serializes (`SerializeAsString`) and
+  then calls Send. The reader (`FUN_001fa99c`) waits for `2 + len` bytes, then takes exactly
+  `len` bytes. Consequences:
+  - The maximum message size is 65,535 bytes.
+  - Inference: the reader resets its buffer after one message, so a server should write
+    one frame per message and not coalesce frames.
+  - The same `uds_client_socket.cc` serves `UdsAudioOutputClient`, so output
+    (`StreamAudioOutputRequest/Response`) is very likely framed the same way.
+    Not checked separately.
+- **`StreamAudioInputRequest` (client → engine), observed field use:**
+  - `f4` enum = `SourceType` (set in every request).
+  - `f5` = `AudioInputData`:
+    - `f1` = `AudioBufferFormat`. It is filled when the format changes and in the first
+      chunk: `f1` int32 **sample_rate**, `f2` enum **sample_format**, `f3` int32 **num_channels**.
+      Names come from the adjacent log labels.
+    - `f3` = `AudioBuffer`: `f1` bytes **PCM data**, `f2` int64 (timestamp?), `f3` int32
+      (frame count? taken from a virtual getter).
+    - `AudioInputData.f2` (enum) and `f4` (bool) are not written by this sender.
+  - `f6` enum: set to `0` when the first observer registers and to `1` when the last one
+    leaves. It is also sent as `0` in the initial request if observers exist. Meaning unknown
+    (observer/feedback on/off?).
+- **`sample_format` values (observed table + `+1` mapping):** `1 = INTERLEAVED_S16`,
+  `2 = INTERLEAVED_S32`, `3 = INTERLEAVED_F32` (`0` presumably unspecified). The concrete
+  rate/format/channels come from the audio source at runtime. **Unknown statically.**
+  F19's 16000 Hz cloud-side rate suggests 16 kHz, but that is not proof for the socket.
+- **`StreamAudioInputResponse` (engine → client)** (`FUN_001f9c8c`). Interpretation of the
+  state machine: `f1 = 1` pauses streaming and `f1 = 2` resumes it. Audio chunks are only
+  sent while the sender is in its streaming state. `f2` is a sub-message whose fields go to
+  observers. Not decoded.
+- **Implication (inference):** a replacement engine can listen on
+  `/tmp/grpc/libassist_uds_audio_input.socket`, accept the stream connection, read
+  `u16 BE`-length-prefixed `StreamAudioInputRequest`s, and hand `AudioBuffer.f1` PCM to a
+  local STT. It can answer with `StreamAudioInputResponse{f1}` to pause or resume the mic.
+- **Still open:**
+  - Server-side confirmation: done, see F31.
+  - Whether the server must reply before the client streams. Interpretation: the sender
+    streams right after the initial request.
+  - `f6` meaning, the runtime sample format, and output-side message order.
+
+Tooling: Ghidra 12.2 + OpenJDK 25 are now installed (`/opt/ghidra`). The new script
+`scripts/ghidra/DecompileByString.java` decompiles only the functions that reference matching
+strings (or `@addr` lists) plus their callees. Projects live in `work/ghidra/`.
+
+### F30. The `assistant` host is a thin launcher; the engine's only public API is `NewLibassistantEntrypoint`
+
+Evidence: `evidence/20261108-assistant-host-entrypoint.txt`. Sources: `readelf` dynamic symbols
+of `chrome/bin/assistant` (386 KB) and `libhvc_perception_joplin.so`, plus Ghidra 12.2 on `assistant`.
+
+- **Observed.** `libhvc` exports 61 GLOBAL symbols:
+  - one `LIBASSISTANT_1.0` symbol, `NewLibassistantEntrypoint`;
+  - the `LIBPERCEPTION_MUSHROOM_1.0` perception / `ml_framework` API (`Perception::Create`,
+    `InputManager::Create`, `EventHandler::Create`, …);
+  - embedded device-config blobs;
+  - compiler helper routines (`__aeabi_*`).
+
+  From `libhvc`, `assistant` imports only `NewLibassistantEntrypoint` (plus the
+  `__aeabi_*` helpers).
+- **Observed.** The one direct caller of the import is a wrapper (`0x2e6d0`) that calls
+  `NewLibassistantEntrypoint(nullptr)` and returns its result. The wrapper has no direct
+  branch callers and no stored pointers, so it is reached indirectly. How it is reached is
+  **unknown**.
+- **Observed (strings + decompiled `main`, `libhvc/internal/exe/main.cc`):**
+  - `--config_string_file_path` is mandatory ("Missing --config_string_file_path").
+  - The file is parsed as JSON ("Config string JSON parsing failed").
+  - `main` reads or sets the keys `enable_audio_input_service`, `enable_audio_output_service`,
+    `use_client_audio_service` and `enable_audio_loopback`.
+  - It sets `GRPC_POLL_STRATEGY`.
+  - It has `--uid`/`--gid` privilege-drop flags ("If root, switch to this group id").
+  - `FUN_0002cfd8` builds a platform object with five providers (`exe_audio_input_provider_impl`,
+    `exe_audio_output_provider_impl`, `exe_file_provider_impl`, `exe_network_provider_impl`,
+    `exe_system_provider_impl`).
+  - `hvc_manager_owner.cc` owns the engine instance. `signal_handler.cc` handles signals.
+- **Inference for the goal.** The engine is entirely inside `libhvc`, behind one factory call
+  configured by a JSON string. The host only supplies platform services. So there are two
+  replacement points:
+  - (a) replace the whole `assistant` process. This means serving the gRPC + UDS sockets
+    of F21/F24/F29 ourselves; it is the cleaner option.
+  - (b) keep `assistant` and swap `libhvc` for a stub `.so` that exports
+    `NewLibassistantEntrypoint`. That would need the returned object's vtable ABI, which is
+    not recovered yet. It would also need the rootfs file to change, which dm-verity blocks.
+
+  (a) stays the recommended path.
+- **Still open:** what `NewLibassistantEntrypoint` returns (decompile in `libhvc`, analysis
+  running), and the config JSON schema beyond the keys above (`assistant_bootup_config.json`, F23).
+
+### F31. Engine side confirms the UDS framing; what `NewLibassistantEntrypoint` returns
+
+Evidence: `evidence/20261108-libhvc-uds-server-and-entrypoint.txt`. Source: Ghidra 12.2 full
+analysis of `libhvc_perception_joplin.so` (~25 min), Ghidra address = file VA + 0x10000.
+
+- **Framing confirmed on the server (observed).**
+  - `libhvc/internal/services/platform/uds_connection.cc` frames outgoing messages with
+    `FUN_0064159c`. It is the same code as the client's `FUN_001faa48` (F29): a 2-byte
+    big-endian length, then the payload. `UdsConnection::Send` (`FUN_006406a8`) frames,
+    enqueues and starts the writer. The writer passes the buffers to the socket unchanged.
+  - The connection allocates a **0xffff-byte** receive buffer, which fits the u16 limit.
+  - So both directions on `libassist_uds_audio_{input,output}.socket` use
+    `[u16 BE len][protobuf]`. The server-side *reader* was not decompiled (no string anchor).
+  - `uds_server_socket.cc` accepts connections and gives each one an increasing id.
+  - `UdsAudioInputService` passes the decoded requests to a delegate object.
+  - The socket addresses come from config keys `libas_uds_input_server_address` /
+    `libas_uds_output_server_address` (strings).
+- **`NewLibassistantEntrypoint(arg)` (observed, disassembly).** It allocates an 8-byte object
+  `{vtable, arg}` and returns it. The host passes `arg = nullptr` (F30). Vtable at file VA
+  `0xe59880`:
+  - slots 0/1 are destructors;
+  - slot 2 initializes (looks up a value; if it is 0, sets the name `LibAssistant`), then
+    parses config and builds the engine core;
+  - slot 3 is a factory: it allocates a 0x14-byte object holding `arg`;
+  - slot 4 casts to a secondary base (`p ? p+4 : 0`);
+  - slot 5 returns 0.
+
+  Method names and arguments are **unknown**. The interface is small (about 4 methods), but
+  each method leads straight into engine internals. Replacing `libhvc` (option b in F30) would
+  mean recreating objects whose layouts we do not have. That supports option (a): replace the
+  `assistant` process and speak the socket protocols, which are now fully framed (F29/F31).
+
+### F32. Engine config schema, audio-output protocol, input control, and what gates `cast_shell` bootup
+
+Evidence: `evidence/20261108-config-output-bootup.txt`. Tools:
+- `scripts/pcrel_string_refs.py` (new). It resolves Thumb `ldr`+`add pc` string references,
+  which Ghidra leaves unresolved, so they can be read in code order. It takes about 10 s even
+  on the 65 MB `cast_shell`.
+- `DecompileByString.java` `@!addr`. It rebuilds functions that Ghidra had decoded as ARM
+  instead of Thumb.
+
+**1. Launch and config (observed).**
+- `init.rc:655` runs `assistant --config_string_file_path=/system/chrome/assistant_bootup_config.json`
+  as `user chrome`, `group chrome inet grpc graphics`, with caps `SYS_NICE SYS_RESOURCE`.
+  The service is `disabled` and is started on demand (F23).
+- libhvc's parser (file VA `0x78b93c`…) reads these sections:
+  - `libas_server`: addresses, `enable_grpc_uid_security`, `grpc_uid`, `enable_*_service`.
+  - `libas_customer`, `max_integration`, `cast_lite`.
+  - `device`: board/model ids, `mute_is_switch`.
+  - `discovery`, `volume`, `logging`, `file`, `crash`, `debug`, `speech`.
+  - `internal`: about 50 keys, among them `transport_type`, **`s3_grpc_server_uri`**,
+    `backend_type`, `api_key`, `enable_signed_out_mode`, `user_agent`, `geller_url`,
+    `enable_*_module`, `phenotype_flag_overwrites`, `testing.*`.
+  - `audio_input`: mic/eraser/opus/SODA/hold-to-talk options.
+  - `audio_output`: `enable_streaming_tts`, `min_buffer_audio_ms`, `audio_parser_read_size`.
+  - `platform`.
+- `config_string_builder.cc` then overrides a subset of keys with values received over gRPC
+  ("Overriding config string param X from A to B"), probably those sent via
+  `BootupSettingsService/SetConfigString`.
+- **For the goal (inference):** the cloud endpoint is a config value
+  (`internal.s3_grpc_server_uri` → `speech.s3_grpc_server_uri`). The built-in hosts are
+  `assistant-streaming-s3-pa.googleapis.com:443`, `embeddedassistant.googleapis.com:443`
+  and `autopush-assistant-s3-pa.sandbox.googleapis.com:443`, and there are phenotype flags
+  `S3GrpcTransport__use_s3__localhost_uri` / `__use_streaming_speech_s3_uri`.
+  The file on disk is dm-verity protected. **Whether `cast_shell`'s `SetConfigString` can
+  change `s3_grpc_server_uri` is unknown.** If it can, an unmodified engine could be
+  pointed at a local S3 server. The DNS + CA route of F19 does the same thing from the
+  network side.
+
+**2. Audio output socket protocol (observed, engine side).** Both directions use the F29 framing.
+- Engine → client after connect: `StreamAudioOutputResponse{f1 = 6}` ("Sending
+  OBSERVE_EMITTING_STATE", `FUN_0063f678`), sent once someone is observing.
+- Client → engine registration: `StreamAudioOutputRequest{f2 = 1, f1 = [encodings]}`.
+  - Every encoding must be ≤ 5 ("Unsupported encoding").
+  - Only the first registration counts ("Ignoring the non-first initial…").
+  - `cast_shell` fills the list at runtime from its audio backend, so the values are
+    **unknown** statically.
+- Client → engine `{f2 = 6, f7 = bool}`: the client reports whether it is emitting
+  audio; the value goes to `RegisterAudioEmittingStateCallback` observers.
+- Per TTS stream, engine → client: `Response{f1 = 1, f2 = stream type (0..2), f4 = stream id,
+  f3 = OutputStreamFormat, f9 = OutputStreamFormat}`.
+  - `OutputStreamFormat` = `{f1 encoding (0..5), f2 int64 (sample rate?), f3 int32 (channels?)}`.
+  - The meaning of the two formats is unknown.
+- **The client pulls the audio.** It sends `{f2 = 2, f6 = id, f4 = N bytes, f5 = int64 timestamp}`.
+  The engine's sender fills up to N bytes and replies; the reply carries the audio in the
+  `bytes f5/f6` fields (the reply builder was not decompiled, so this is an inference).
+- Client → engine per stream:
+  - `f2 = 3` is END_OF_STREAM;
+  - `f2 = 4` is ERROR, with `f3` = error code (0..2);
+  - `f2 = 5` means unknown (it calls a delegate method with a callback).
+
+**3. Audio input control (observed on both sides; resolves F29's open points).**
+- `StreamAudioInputResponse.f1`: **1 = PAUSE, 2 = RESUME**. The engine sends RESUME when its
+  first internal mic consumer registers and PAUSE when the last one leaves
+  (`FUN_0063e3d8`/`FUN_0063e4ac`). So the engine turns the mic stream on and off as it needs it.
+- `StreamAudioInputRequest.f4` SourceType is dispatched as 1, **2 = loopback** (the playback
+  reference, which needs a loopback receiver), and 3. Anything else gives "Unknown source type".
+- `StreamAudioInputResponse.f2` has the `AudioInputData` layout (format, AudioBuffer, enum).
+  Together with the "Erased raw audio" observer API, it most likely carries echo-cancelled
+  mic audio back to client observers. The client's `f6` (0 when its first observer
+  appears, 1 when the last leaves) is then the subscribe/unsubscribe flag for it. This is
+  an inference.
+- Sample rate and format are runtime values (`ml_framework` "AudioCaptureService sample_rate:").
+  `cast_audio_input.json` selects mics `[0, 1]`. **The exact rate needs a capture on a device.**
+
+**4. What `cast_shell` waits for at boot (answers F23's open question, at the level of signals).**
+- `BootupManagerImpl` (`0x1ed2200`…) waits for: authentication received, language set,
+  night-mode state, ALSA silence played, last reboot source, privacy mode, and CCS config
+  linked. Each missing one is logged with "…, keep waiting".
+- The **critical** signals are `silence_played_`, `last_reboot_src_notified_` and
+  `privacy_mode_notified_` ("Critical signal(s) missing.", optional crash via
+  `enable_crash_on_missing_critical_bootup_signal`). These three are local to `cast_shell`
+  (ALSA, reboot file, mic-mute file), not engine replies.
+- "Assistant ready" needs `assistant_ready_ && ccs_config_linked_ && received_authentication_
+  && bootup_finished_`. There is an escape, `MarkShouldIgnoreAuthentication`.
+- **Fallback:** "Bootup timeout hit." logs the reason and continues. The timeout is armed
+  with a `movs r1,#0x1e` constant, so the default is probably **30 s** (inference).
+- **Implication (inference):** a replacement engine does not need to fake Google auth to get
+  `cast_shell` through bootup. It needs to serve the gRPC/UDS sockets and accept the setters.
+  Missing engine-sourced signals cost one timeout and degrade "ready" handling; they do not
+  block boot. The engine-event → handler mapping (which proto event sets
+  `received_authentication_`, language, etc.) stays **unknown**. It needs `cast_shell`'s
+  event dispatch decompiled, or a device test.
+
+**Remaining unknowns after this pass (not decidable statically):**
+- runtime mic format and the output encoding values;
+- the engine-event → bootup-signal mapping;
+- whether `SetConfigString` can override `s3_grpc_server_uri`;
+- the meaning of output `f2 = 5`.
+
+All of them need either a device or large-scale `cast_shell` decompilation. The way the
+wrapper `0x2e6d0` gets called (F30) is unresolved, but it does not affect option (a).
+
+Addendum to F32 §1 (observed): `config_string_builder.cc` explicitly overrides only these keys
+from gRPC values:
+- device/discovery ids, `base_oda_resources_dir`, `clearcut_counter_flush_window_secs`,
+  `cast_device_id`;
+- `enable_libconnect`, the usonia flags, `insufficient_power_mode`, the module flags,
+  `product_name`, `virtual_release_channel`, `device_model`, `manufacturer`;
+- `effects_profile_id`, `enable_streaming_tts`, `min_buffer_audio_ms`,
+  `audio_parser_read_size`.
+
+It then runs "Failed to validate static params in config string", which suggests some keys
+are static after the first parse. `s3_grpc_server_uri` is **not** in the explicit
+override list, so it is probably fixed by the on-disk JSON unless `SetConfigString`
+replaces the whole string (unknown).

@@ -1,0 +1,32 @@
+# 3.78.540761 kernel (Linux 3.8.13+, built Fri Sep 20 2024), symbolized via vmlinux-to-elf, base 0xc0008000
+# yaffs_retype_obj @ 0xc028d180; only caller: yaffs2_scan_backwards @ 0xc0293bcc (call at 0xc02942c4)
+# Pattern = upstream fix: if (!in->valid && in->variant_type != (oh ? oh->type : tags.extra_obj_type)) { trace; in = yaffs_retype_obj(in, type); }
+0xc0294268 ldr r3, [fp, #-0x88] 
+0xc029426c ldrb r3, [r3] 
+0xc0294270 tst r3, #0x80 
+0xc0294274 bne #0xc0294698 
+0xc0294278 ldr r3, [fp, #-0xb0] 
+0xc029427c str r3, [fp, #-0xa4] 
+0xc0294280 ldr r3, [fp, #-0xa4] 
+0xc0294284 ldr r2, [fp, #-0x88] 
+0xc0294288 cmp r3, #0 
+0xc029428c ldr r2, [r2, #0x64] 
+0xc0294290 ldrne r3, [r3] 
+0xc0294294 ldreq r3, [fp, #-0x40] 
+0xc0294298 cmp r2, r3 
+0xc029429c beq #0xc02942dc 
+0xc02942a0 ldr r3, [r7] 
+0xc02942a4 tst r3, #0x40000000 
+0xc02942a8 bne #0xc0294b10 
+0xc02942ac ldr r3, [fp, #-0xa4] 
+0xc02942b0 ldr r0, [fp, #-0x88] 
+0xc02942b4 cmp r3, #0 
+0xc02942b8 str ip, [fp, #-0xbc] 
+0xc02942bc ldrne r1, [r3] 
+0xc02942c0 ldreq r1, [fp, #-0x40] 
+0xc02942c4 bl #0xc028d180 yaffs_retype_obj
+0xc02942c8 ldr ip, [fp, #-0xbc] 
+0xc02942cc ldrb r3, [r0] 
+0xc02942d0 str r0, [fp, #-0x88] 
+0xc02942d4 tst r3, #0x80 
+0xc02942d8 bne #0xc0294438 

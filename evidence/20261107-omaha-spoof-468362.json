@@ -1,0 +1,79 @@
+{
+ "source": "second Mini (3.78.540761, NOT target GoogleHome4983); mitmproxy with scripts/omaha_spoof.py-equivalent edit claiming version 468362; serial and daystart redacted",
+ "exchanges": [
+  {
+   "flow": 0,
+   "request": {
+    "gupdate": {
+     "app": {
+      "appid": "{6117439b-1508-4065-9e69-2a006d8f7730}",
+      "board": "joplin-b4",
+      "extra_version": "0",
+      "force_update": "false",
+      "hardware_class": "Google Home Mini",
+      "lang": "en-US",
+      "mac_addr": "",
+      "manufacturer": "Google Inc.",
+      "ping": {
+       "active": true
+      },
+      "serial_num": "SERIAL1___",
+      "system_release_channel": "stable-channel",
+      "track": "stable-channel",
+      "updatecheck": {
+       "targetversionprefix": ""
+      },
+      "version": "468362"
+     },
+     "ismachine": true,
+     "os": {
+      "platform": "Linux",
+      "sp": "",
+      "version": "468362"
+     },
+     "protocol": "2.0",
+     "updater": "GoogleTvEureka",
+     "updaterversion": "0.1.1.1",
+     "xmlns": "http://www.google.com/update2/response"
+    }
+   },
+   "response_raw": ")]}'\n{\"gupdate\":{\"server\":\"prod\",\"protocol\":\"2.0\",\"xmlns\":\"http://www.google.com/update2/response\",\"daystart\":{\"elapsed_seconds\":0,\"elapsed_days\":0},\"app\":[{\"appid\":\"{6117439b-1508-4065-9e69-2a006d8f7730}\",\"cohort\":\"1::\",\"status\":\"ok\",\"cohortname\":\"\",\"ping\":{\"status\":\"ok\"},\"updatecheck\":{\"hash_sha256\":\"79180a0312bc8e583d5120894a80c20ffef046b83c5a7731d0d960da70572d32\",\"RebootNow\":\"true\",\"size\":95990069,\"needsadmin\":\"false\",\"codebase\":\"https://redirector.gvt1.com/edgedl/googletv-eureka/stable-channel/ota.540761.tz_stable-channel.joplin-b4.306c410f30d96e6fdc4aa221a027510d17adf9ef.zip\",\"Foreground\":\"false\",\"fp\":\"1.79180a0312bc8e583d5120894a80c20ffef046b83c5a7731d0d960da70572d32\",\"DownloadRate\":\"0\",\"hash\":\"MGxBDzDZbm/cSqIhoCdRDRet+e8\\u003d\",\"DisplayVersion\":\"540761\",\"status\":\"ok\"}}]}}"
+  },
+  {
+   "flow": 8,
+   "request": {
+    "gupdate": {
+     "app": {
+      "appid": "{6117439b-1508-4065-9e69-2a006d8f7730}",
+      "board": "joplin-b4",
+      "event": {
+       "eventresult": 1,
+       "eventtype": 13
+      },
+      "extra_version": "0",
+      "force_update": "false",
+      "hardware_class": "Google Home Mini",
+      "lang": "en-US",
+      "mac_addr": "",
+      "manufacturer": "Google Inc.",
+      "serial_num": "SERIAL1___",
+      "system_release_channel": "stable-channel",
+      "track": "stable-channel",
+      "version": "468362"
+     },
+     "ismachine": true,
+     "os": {
+      "platform": "Linux",
+      "sp": "",
+      "version": "468362"
+     },
+     "protocol": "2.0",
+     "updater": "GoogleTvEureka",
+     "updaterversion": "0.1.1.1",
+     "xmlns": "http://www.google.com/update2/response"
+    }
+   },
+   "response_raw": ")]}'\n{\"gupdate\":{\"server\":\"prod\",\"protocol\":\"2.0\",\"xmlns\":\"http://www.google.com/update2/response\",\"daystart\":{\"elapsed_seconds\":0,\"elapsed_days\":0},\"app\":[{\"appid\":\"{6117439b-1508-4065-9e69-2a006d8f7730}\",\"status\":\"ok\",\"event\":[{\"status\":\"ok\"}]}]}}"
+  }
+ ]
+}
