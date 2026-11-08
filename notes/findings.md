@@ -1163,7 +1163,7 @@ against libhvc's own `TcParseTable` entries. Static only; nothing was run.
   `u16 BE`-length-prefixed `StreamAudioInputRequest`s, and hand `AudioBuffer.f1` PCM to a
   local STT. It can answer with `StreamAudioInputResponse{f1}` to pause or resume the mic.
 - **Still open:**
-  - Server-side confirmation in `libhvc` (Ghidra run in progress).
+  - Server-side confirmation: done, see F31.
   - Whether the server must reply before the client streams. Interpretation: the sender
     streams right after the initial request.
   - `f6` meaning, the runtime sample format, and output-side message order.
@@ -1171,3 +1171,192 @@ against libhvc's own `TcParseTable` entries. Static only; nothing was run.
 Tooling: Ghidra 12.2 + OpenJDK 25 are now installed (`/opt/ghidra`). The new script
 `scripts/ghidra/DecompileByString.java` decompiles only the functions that reference matching
 strings (or `@addr` lists) plus their callees. Projects live in `work/ghidra/`.
+
+### F30. The `assistant` host is a thin launcher; the engine's only public API is `NewLibassistantEntrypoint`
+
+Evidence: `evidence/20261108-assistant-host-entrypoint.txt`. Sources: `readelf` dynamic symbols
+of `chrome/bin/assistant` (386 KB) and `libhvc_perception_joplin.so`, plus Ghidra 12.2 on `assistant`.
+
+- **Observed.** `libhvc` exports 61 GLOBAL symbols:
+  - one `LIBASSISTANT_1.0` symbol, `NewLibassistantEntrypoint`;
+  - the `LIBPERCEPTION_MUSHROOM_1.0` perception / `ml_framework` API (`Perception::Create`,
+    `InputManager::Create`, `EventHandler::Create`, …);
+  - embedded device-config blobs;
+  - compiler helper routines (`__aeabi_*`).
+
+  From `libhvc`, `assistant` imports only `NewLibassistantEntrypoint` (plus the
+  `__aeabi_*` helpers).
+- **Observed.** The one direct caller of the import is a wrapper (`0x2e6d0`) that calls
+  `NewLibassistantEntrypoint(nullptr)` and returns its result. The wrapper has no direct
+  branch callers and no stored pointers, so it is reached indirectly. How it is reached is
+  **unknown**.
+- **Observed (strings + decompiled `main`, `libhvc/internal/exe/main.cc`):**
+  - `--config_string_file_path` is mandatory ("Missing --config_string_file_path").
+  - The file is parsed as JSON ("Config string JSON parsing failed").
+  - `main` reads or sets the keys `enable_audio_input_service`, `enable_audio_output_service`,
+    `use_client_audio_service` and `enable_audio_loopback`.
+  - It sets `GRPC_POLL_STRATEGY`.
+  - It has `--uid`/`--gid` privilege-drop flags ("If root, switch to this group id").
+  - `FUN_0002cfd8` builds a platform object with five providers (`exe_audio_input_provider_impl`,
+    `exe_audio_output_provider_impl`, `exe_file_provider_impl`, `exe_network_provider_impl`,
+    `exe_system_provider_impl`).
+  - `hvc_manager_owner.cc` owns the engine instance. `signal_handler.cc` handles signals.
+- **Inference for the goal.** The engine is entirely inside `libhvc`, behind one factory call
+  configured by a JSON string. The host only supplies platform services. So there are two
+  replacement points:
+  - (a) replace the whole `assistant` process. This means serving the gRPC + UDS sockets
+    of F21/F24/F29 ourselves; it is the cleaner option.
+  - (b) keep `assistant` and swap `libhvc` for a stub `.so` that exports
+    `NewLibassistantEntrypoint`. That would need the returned object's vtable ABI, which is
+    not recovered yet. It would also need the rootfs file to change, which dm-verity blocks.
+
+  (a) stays the recommended path.
+- **Still open:** what `NewLibassistantEntrypoint` returns (decompile in `libhvc`, analysis
+  running), and the config JSON schema beyond the keys above (`assistant_bootup_config.json`, F23).
+
+### F31. Engine side confirms the UDS framing; what `NewLibassistantEntrypoint` returns
+
+Evidence: `evidence/20261108-libhvc-uds-server-and-entrypoint.txt`. Source: Ghidra 12.2 full
+analysis of `libhvc_perception_joplin.so` (~25 min), Ghidra address = file VA + 0x10000.
+
+- **Framing confirmed on the server (observed).**
+  - `libhvc/internal/services/platform/uds_connection.cc` frames outgoing messages with
+    `FUN_0064159c`. It is the same code as the client's `FUN_001faa48` (F29): a 2-byte
+    big-endian length, then the payload. `UdsConnection::Send` (`FUN_006406a8`) frames,
+    enqueues and starts the writer. The writer passes the buffers to the socket unchanged.
+  - The connection allocates a **0xffff-byte** receive buffer, which fits the u16 limit.
+  - So both directions on `libassist_uds_audio_{input,output}.socket` use
+    `[u16 BE len][protobuf]`. The server-side *reader* was not decompiled (no string anchor).
+  - `uds_server_socket.cc` accepts connections and gives each one an increasing id.
+  - `UdsAudioInputService` passes the decoded requests to a delegate object.
+  - The socket addresses come from config keys `libas_uds_input_server_address` /
+    `libas_uds_output_server_address` (strings).
+- **`NewLibassistantEntrypoint(arg)` (observed, disassembly).** It allocates an 8-byte object
+  `{vtable, arg}` and returns it. The host passes `arg = nullptr` (F30). Vtable at file VA
+  `0xe59880`:
+  - slots 0/1 are destructors;
+  - slot 2 initializes (looks up a value; if it is 0, sets the name `LibAssistant`), then
+    parses config and builds the engine core;
+  - slot 3 is a factory: it allocates a 0x14-byte object holding `arg`;
+  - slot 4 casts to a secondary base (`p ? p+4 : 0`);
+  - slot 5 returns 0.
+
+  Method names and arguments are **unknown**. The interface is small (about 4 methods), but
+  each method leads straight into engine internals. Replacing `libhvc` (option b in F30) would
+  mean recreating objects whose layouts we do not have. That supports option (a): replace the
+  `assistant` process and speak the socket protocols, which are now fully framed (F29/F31).
+
+### F32. Engine config schema, audio-output protocol, input control, and what gates `cast_shell` bootup
+
+Evidence: `evidence/20261108-config-output-bootup.txt`. Tools:
+- `scripts/pcrel_string_refs.py` (new). It resolves Thumb `ldr`+`add pc` string references,
+  which Ghidra leaves unresolved, so they can be read in code order. It takes about 10 s even
+  on the 65 MB `cast_shell`.
+- `DecompileByString.java` `@!addr`. It rebuilds functions that Ghidra had decoded as ARM
+  instead of Thumb.
+
+**1. Launch and config (observed).**
+- `init.rc:655` runs `assistant --config_string_file_path=/system/chrome/assistant_bootup_config.json`
+  as `user chrome`, `group chrome inet grpc graphics`, with caps `SYS_NICE SYS_RESOURCE`.
+  The service is `disabled` and is started on demand (F23).
+- libhvc's parser (file VA `0x78b93c`…) reads these sections:
+  - `libas_server`: addresses, `enable_grpc_uid_security`, `grpc_uid`, `enable_*_service`.
+  - `libas_customer`, `max_integration`, `cast_lite`.
+  - `device`: board/model ids, `mute_is_switch`.
+  - `discovery`, `volume`, `logging`, `file`, `crash`, `debug`, `speech`.
+  - `internal`: about 50 keys, among them `transport_type`, **`s3_grpc_server_uri`**,
+    `backend_type`, `api_key`, `enable_signed_out_mode`, `user_agent`, `geller_url`,
+    `enable_*_module`, `phenotype_flag_overwrites`, `testing.*`.
+  - `audio_input`: mic/eraser/opus/SODA/hold-to-talk options.
+  - `audio_output`: `enable_streaming_tts`, `min_buffer_audio_ms`, `audio_parser_read_size`.
+  - `platform`.
+- `config_string_builder.cc` then overrides a subset of keys with values received over gRPC
+  ("Overriding config string param X from A to B"), probably those sent via
+  `BootupSettingsService/SetConfigString`.
+- **For the goal (inference):** the cloud endpoint is a config value
+  (`internal.s3_grpc_server_uri` → `speech.s3_grpc_server_uri`). The built-in hosts are
+  `assistant-streaming-s3-pa.googleapis.com:443`, `embeddedassistant.googleapis.com:443`
+  and `autopush-assistant-s3-pa.sandbox.googleapis.com:443`, and there are phenotype flags
+  `S3GrpcTransport__use_s3__localhost_uri` / `__use_streaming_speech_s3_uri`.
+  The file on disk is dm-verity protected. **Whether `cast_shell`'s `SetConfigString` can
+  change `s3_grpc_server_uri` is unknown.** If it can, an unmodified engine could be
+  pointed at a local S3 server. The DNS + CA route of F19 does the same thing from the
+  network side.
+
+**2. Audio output socket protocol (observed, engine side).** Both directions use the F29 framing.
+- Engine → client after connect: `StreamAudioOutputResponse{f1 = 6}` ("Sending
+  OBSERVE_EMITTING_STATE", `FUN_0063f678`), sent once someone is observing.
+- Client → engine registration: `StreamAudioOutputRequest{f2 = 1, f1 = [encodings]}`.
+  - Every encoding must be ≤ 5 ("Unsupported encoding").
+  - Only the first registration counts ("Ignoring the non-first initial…").
+  - `cast_shell` fills the list at runtime from its audio backend, so the values are
+    **unknown** statically.
+- Client → engine `{f2 = 6, f7 = bool}`: the client reports whether it is emitting
+  audio; the value goes to `RegisterAudioEmittingStateCallback` observers.
+- Per TTS stream, engine → client: `Response{f1 = 1, f2 = stream type (0..2), f4 = stream id,
+  f3 = OutputStreamFormat, f9 = OutputStreamFormat}`.
+  - `OutputStreamFormat` = `{f1 encoding (0..5), f2 int64 (sample rate?), f3 int32 (channels?)}`.
+  - The meaning of the two formats is unknown.
+- **The client pulls the audio.** It sends `{f2 = 2, f6 = id, f4 = N bytes, f5 = int64 timestamp}`.
+  The engine's sender fills up to N bytes and replies; the reply carries the audio in the
+  `bytes f5/f6` fields (the reply builder was not decompiled, so this is an inference).
+- Client → engine per stream:
+  - `f2 = 3` is END_OF_STREAM;
+  - `f2 = 4` is ERROR, with `f3` = error code (0..2);
+  - `f2 = 5` means unknown (it calls a delegate method with a callback).
+
+**3. Audio input control (observed on both sides; resolves F29's open points).**
+- `StreamAudioInputResponse.f1`: **1 = PAUSE, 2 = RESUME**. The engine sends RESUME when its
+  first internal mic consumer registers and PAUSE when the last one leaves
+  (`FUN_0063e3d8`/`FUN_0063e4ac`). So the engine turns the mic stream on and off as it needs it.
+- `StreamAudioInputRequest.f4` SourceType is dispatched as 1, **2 = loopback** (the playback
+  reference, which needs a loopback receiver), and 3. Anything else gives "Unknown source type".
+- `StreamAudioInputResponse.f2` has the `AudioInputData` layout (format, AudioBuffer, enum).
+  Together with the "Erased raw audio" observer API, it most likely carries echo-cancelled
+  mic audio back to client observers. The client's `f6` (0 when its first observer
+  appears, 1 when the last leaves) is then the subscribe/unsubscribe flag for it. This is
+  an inference.
+- Sample rate and format are runtime values (`ml_framework` "AudioCaptureService sample_rate:").
+  `cast_audio_input.json` selects mics `[0, 1]`. **The exact rate needs a capture on a device.**
+
+**4. What `cast_shell` waits for at boot (answers F23's open question, at the level of signals).**
+- `BootupManagerImpl` (`0x1ed2200`…) waits for: authentication received, language set,
+  night-mode state, ALSA silence played, last reboot source, privacy mode, and CCS config
+  linked. Each missing one is logged with "…, keep waiting".
+- The **critical** signals are `silence_played_`, `last_reboot_src_notified_` and
+  `privacy_mode_notified_` ("Critical signal(s) missing.", optional crash via
+  `enable_crash_on_missing_critical_bootup_signal`). These three are local to `cast_shell`
+  (ALSA, reboot file, mic-mute file), not engine replies.
+- "Assistant ready" needs `assistant_ready_ && ccs_config_linked_ && received_authentication_
+  && bootup_finished_`. There is an escape, `MarkShouldIgnoreAuthentication`.
+- **Fallback:** "Bootup timeout hit." logs the reason and continues. The timeout is armed
+  with a `movs r1,#0x1e` constant, so the default is probably **30 s** (inference).
+- **Implication (inference):** a replacement engine does not need to fake Google auth to get
+  `cast_shell` through bootup. It needs to serve the gRPC/UDS sockets and accept the setters.
+  Missing engine-sourced signals cost one timeout and degrade "ready" handling; they do not
+  block boot. The engine-event → handler mapping (which proto event sets
+  `received_authentication_`, language, etc.) stays **unknown**. It needs `cast_shell`'s
+  event dispatch decompiled, or a device test.
+
+**Remaining unknowns after this pass (not decidable statically):**
+- runtime mic format and the output encoding values;
+- the engine-event → bootup-signal mapping;
+- whether `SetConfigString` can override `s3_grpc_server_uri`;
+- the meaning of output `f2 = 5`.
+
+All of them need either a device or large-scale `cast_shell` decompilation. The way the
+wrapper `0x2e6d0` gets called (F30) is unresolved, but it does not affect option (a).
+
+Addendum to F32 §1 (observed): `config_string_builder.cc` explicitly overrides only these keys
+from gRPC values:
+- device/discovery ids, `base_oda_resources_dir`, `clearcut_counter_flush_window_secs`,
+  `cast_device_id`;
+- `enable_libconnect`, the usonia flags, `insufficient_power_mode`, the module flags,
+  `product_name`, `virtual_release_channel`, `device_model`, `manufacturer`;
+- `effects_profile_id`, `enable_streaming_tts`, `min_buffer_audio_ms`,
+  `audio_parser_read_size`.
+
+It then runs "Failed to validate static params in config string", which suggests some keys
+are static after the first parse. `s3_grpc_server_uri` is **not** in the explicit
+override list, so it is probably fixed by the on-disk JSON unless `SetConfigString`
+replaces the whole string (unknown).

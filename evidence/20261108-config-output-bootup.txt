@@ -1,0 +1,1150 @@
+# Engine config schema, audio-output protocol, input control semantics, cast_shell bootup gating (3.78.540761)
+# e5b51734e664324c59ccb68bd68e484dadcb472c37ac384ff7ac013e8177d7d3 libhvc_perception_joplin.so
+# a7f5bc35dc42a10f602492564adfb3705cb1750f15b5490ce2ab3bbb39df81b2 cast_shell
+# Tools: scripts/pcrel_string_refs.py (Thumb ldr+add-pc string resolution), Ghidra 12.2 (DecompileByString.java @!addr = force Thumb), capstone
+# Addresses: pcrel output = file VA; Ghidra = file VA + 0x10000 (libhvc)
+
+## A. init.rc (ramdisk/init.rc:655)
+service assistant /bin/logwrapper /system/chrome/bin/assistant --config_string_file_path=/system/chrome/assistant_bootup_config.json
+    writepid /sys/fs/cgroup/memcpuacct/assistant/cgroup.procs
+    # TODO(esum): Try to remove these capabilities. Don't see why the assistant
+    # needs them but want to match cast_receiver for now to minimize the chance
+    # of a regression.
+    capabilities SYS_NICE SYS_RESOURCE
+    user chrome
+    group chrome inet grpc graphics
+    class service
+    disabled
+
+## B. chrome/assistant_bootup_config.json
+{"debug": {"server_port": 0, "remote_debug_server_address": "unix:/tmp/grpc/debug_endpoint_broker_server.socket"}, "device": {"mute_is_switch": false}, "file": {"root_path": "/data/chrome/chirp"}, "internal": {"disable_log_files": true, "enable_log_timestamps": false, "override_ready_message": true, "enable_audio_feedback_data_logging": true, "surface_type": "GOOGLE_HOME", "assistant_max_feedback_report_data_secs": 90, "assistant_resource_type": "joplin", "enable_mdd_download": false}, "libas_customer": {"use_file_services": true, "use_client_audio_service": true}, "libas_server": {"libas_server_address": "unix:/tmp/grpc/libassist_grpc.socket,unix:/tmp/grpc/libassist_audio_input.socket,unix:/tmp/grpc/libassist_audio_output.socket", "libas_uds_input_server_address": "/tmp/grpc/libassist_uds_audio_input.socket", "libas_uds_output_server_address": "/tmp/grpc/libassist_uds_audio_output.socket", "opal_socket_group": "wayland"}, "volume": {"number_of_volume_levels": 10, "number_of_volume_steps": 10, "very_low_volume_percentage": 5, "low_volume_percentage": 10, "medium_volume_percentage": 40, "high_volume_percentage": 70, "very_high_volume_percentage": 90}, "cast_lite": {"local_cloudcast_endpoint": "unix:/tmp/grpc/iot_cast_local_cloudcast_service.socket", "cast_lite_control_path": "/tmp/cast-control-lite"}}
+
+## C. libhvc config parser key references in code order (file VA 0x78b900-0x78e400)
+  0x078b93c  Unable to parse config JSON string
+  0x078b960  Config JSON string is empty
+  0x078b9aa  libas_server
+  0x078b9ba  libas_server_address
+  0x078b9ec  libas_uds_input_server_address
+  0x078ba0a  libas_uds_output_server_address
+  0x078ba28  opal_socket_group
+  0x078ba44  enable_grpc_uid_security
+  0x078ba66  grpc_uid
+  0x078ba86  enable_audio_input_service
+  0x078baa0  enable_audio_output_service
+  0x078baba  enable_audio_loopback
+  0x078bad4  enable_system_service
+  0x078baee  enable_display_service
+  0x078bb08  enable_stellar_assistant
+  0x078bb22  enable_vision_context_service
+  0x078bb42  libas_customer
+  0x078bb50  libas_customer_service_address
+  0x078bb6c  use_file_services
+  0x078bb86  use_client_audio_service
+  0x078bba2  max_integration
+  0x078bbb0  max_server_address
+  0x078bbcc  cast_lite
+  0x078bbda  cast_lite_control_path
+  0x078bbf6  local_cloudcast_endpoint
+  0x078bc0e  device
+  0x078bc1a  board_name
+  0x078bc34  board_revision
+  0x078bc4e  embedder_build_info
+  0x078bc68  embedder_package_build_info
+  0x078bc82  model_id
+  0x078bc9e  model_revision
+  0x078bcba  mute_is_switch
+  0x078bcd8  discovery
+  0x078bce6  display_name
+  0x078bd04  oem_device_id
+  0x078bd1e  enable_mdns
+  0x078bd38  enable_multi_user
+  0x078bd54  volume
+  0x078bd62  number_of_volume_steps
+  0x078bd80  number_of_volume_levels
+  0x078be56  very_low_volume_percentage
+  0x078be72  low_volume_percentage
+  0x078be8e  medium_volume_percentage
+  0x078beaa  high_volume_percentage
+  0x078bec6  very_high_volume_percentage
+  0x078bee2  default_volume_percentage
+  0x078befc  disable_builtin_volume_update
+  0x078bf1c  logging
+  0x078bf2a  output_type
+  0x078bf4a  level
+  0x078bf6a  directory
+  0x078bf86  cast_log
+  0x078bfa2  ota_log
+  0x078bfbe  max_size_kb
+  0x078bfde  file
+  0x078bfec  root_path
+  0x078c006  crash
+  0x078c014  uploader_path
+  0x078c032  dump_directory
+  0x078c04e  crash_report_key
+  0x078c068  override_opt_in_option
+  0x078c086  debug
+  0x078c094  server_port
+  0x078c0b2  local_server_grpc_address
+  0x078c0d0  remote_debug_server_address
+  0x078c0ea  speech
+  0x078c0f8  allow_language_geo_override
+  0x078c112  internal
+  0x078c11e  base_oda_resources_dir
+  0x078c13e  disable_log_files
+  0x078c158  enable_log_timestamps
+  0x078c172  enable_logging
+  0x078c18c  logging_opt_in
+  0x078c1a6  logging_vmodule
+  0x078c1c6  fcm_heartbeat_interval_ms
+  0x078c1e4  clearcut_url
+  0x078c1fe  clearcut_counter_flush_window_secs
+  0x078c218  disable_mic_mute_tts
+  0x078c234  override_ready_message
+  0x078c2f2  transport_type
+  0x078c316  s3_grpc_server_uri
+  0x078c338  surface_type
+  0x078c352  cast_device_id
+  0x078c36c  is_primary_cast_device
+  0x078c38a  client_instance_id
+  0x078c3a4  user_agent
+  0x078c3be  enable_libas_v2
+  0x078c3da  enable_libconnect
+  0x078c3f6  libconnect_port
+  0x078c412  enable_usonia_doorbell_chime
+  0x078c42c  enable_usonia_visitor_announcement
+  0x078c446  insufficient_power_mode
+  0x078c460  enable_conversation_module
+  0x078c47a  enable_alarm_module
+  0x078c494  enable_timer_module
+  0x078c4ae  phenotype_flag_overwrites
+  0x078c4cc  enable_signed_out_mode
+  0x078c4e6  api_key
+  0x078c500  backend_type
+  0x078c522  product_name
+  0x078c53c  virtual_release_channel
+  0x078c556  device_model
+  0x078c570  manufacturer
+  0x078c58a  usonia_require_authenticated_ids
+  0x078c5a4  allow_personal_results_override
+  0x078c5be  delay_start_completion_until_system_time_update
+  0x078c5d8  skip_device_id_verification_for_speaker_id_enabling
+  0x078c5f2  geller_url
+  0x078c60c  assistant_resource_type
+  0x078c628  enable_mdd_download
+  0x078c644  enable_bootup_checkin_finish_instantly
+  0x078c65e  use_delegated_fcm
+  0x078c678  lazy_load_resources
+  0x078c692  enable_abseil_flogger_bridge
+  0x078c6ae  testing
+  0x078c6ba  disable_client_op_execution
+  0x078c6d4  mock_user_latitude
+  0x078c794  mock_user_longitude
+  0x078c7c8  audio_input
+  0x078c7d2  should_send_speaker_id_selection_info
+  0x078c7f2  sources
+  0x078c906  mic_type
+  0x078c926  mic_manufacturer
+  0x078c93c  mic_model
+  0x078c950  mic_version
+  0x078c964  mic_sensitivity
+  0x078c97a  selected_channels
+  0x078c990  disable_hotword
+  0x078c9a8  enable_eraser
+  0x078c9bc  eraser_max_probe_lag_ms
+  0x078c9d2  eraser_align_by_timestamp
+  0x078c9e6  enable_eraser_toggling
+  0x078c9fa  report_cleaner_params
+  0x078ca0e  enable_opus_encoding
+  0x078ca22  encoding_bitrate_kbps
+  0x078ca36  enable_stopword
+  0x078ca4a  enable_soda
+  0x078ca5e  soda_max_cached_audio_ms
+  0x078ca72  ref_channel_effective_bands
+  0x078ca88  enable_high_quality_resampler
+  0x078ca9e  enable_limit_mic_reopen
+  0x078cab2  max_mic_reopen_requests
+  0x078caca  mic_reopen_window_size
+  0x078cade  enable_suspend
+  0x078cb0c  ref_channel_effective_bands contains an odd number of elements
+  0x078cb26  s3_flac_encoder_blocksize
+  0x078cb42  target_s3request_period_ms
+  0x078cb58  enable_hold_to_talk
+  0x078cb82  enable_hold_to_talk must have disable_hotword set to true
+  0x078cbe2  'audio_input.sources' is not an array
+  0x078cc48  audio_output
+  0x078cc58  effects_profile_id
+  0x078cc7a  enable_streaming_tts
+  0x078cc98  min_buffer_audio_ms
+  0x078ccb6  audio_parser_read_size
+  0x078ccd0  platform
+  0x078cce0  platform
+  0x078cd5a  platform_config
+  0x078cdc4  'platform' is not an object
+  0x078d2ce  Received unknown BackendType from gRPC
+  0x078d57e  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d586  [FTL] 
+  0x078d58e  Overriding config string param 
+  0x078d596  board_name
+  0x078d59e   from 
+  0x078d5ba   to 
+  0x078d5ee  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d5f6  [FTL] 
+  0x078d5fe  Overriding config string param 
+  0x078d606  board_revision
+  0x078d60e   from 
+  0x078d62a   to 
+  0x078d6a0  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d6a8  [FTL] 
+  0x078d6b0  Overriding config string param 
+  0x078d6b8  embedder_build_info
+  0x078d6c0   from 
+  0x078d6dc   to 
+  0x078d712  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d71a  [FTL] 
+  0x078d722  Overriding config string param 
+  0x078d72a  embedder_package_build_info
+  0x078d732   from 
+  0x078d74e   to 
+  0x078d784  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d78c  [FTL] 
+  0x078d794  Overriding config string param 
+  0x078d79c  model_id
+  0x078d7a4   from 
+  0x078d7c0   to 
+  0x078d7f6  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d800  [FTL] 
+  0x078d808  Overriding config string param 
+  0x078d810  model_revision
+  0x078d818   from 
+  0x078d830   to 
+  0x078d85c  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d864  [FTL] 
+  0x078d86c  Overriding config string param 
+  0x078d874  display_name
+  0x078d87c   from 
+  0x078d898   to 
+  0x078d8ce  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d8d6  [FTL] 
+  0x078d8de  Overriding config string param 
+  0x078d8e6  oem_device_id
+  0x078d8ee   from 
+  0x078d90a   to 
+  0x078d940  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d948  [FTL] 
+  0x078d950  Overriding config string param 
+  0x078d958  base_oda_resources_dir
+  0x078d960   from 
+  0x078d97c   to 
+  0x078d9b4  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078d9be  [FTL] 
+  0x078d9c6  Overriding config string param 
+  0x078d9ce  clearcut_counter_flush_window_secs
+  0x078d9d6   from 
+  0x078d9ee   to 
+  0x078da1a  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078da22  [FTL] 
+  0x078da2a  Overriding config string param 
+  0x078da32  cast_device_id
+  0x078da3a   from 
+  0x078da56   to 
+  0x078db6a  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078db74  [FTL] 
+  0x078db7c  Overriding config string param 
+  0x078db84  enable_libconnect
+  0x078db8c   from 
+  0x078dba4   to 
+  0x078dbd4  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078dbde  [FTL] 
+  0x078dbe6  Overriding config string param 
+  0x078dbee  enable_usonia_doorbell_chime
+  0x078dbf6   from 
+  0x078dc0e   to 
+  0x078dc3e  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078dc48  [FTL] 
+  0x078dc50  Overriding config string param 
+  0x078dc58  enable_usonia_visitor_announcement
+  0x078dc60   from 
+  0x078dc78   to 
+  0x078dcaa  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078dcb4  [FTL] 
+  0x078dcbc  Overriding config string param 
+  0x078dcc4  insufficient_power_mode
+  0x078dccc   from 
+  0x078dce4   to 
+  0x078dd16  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078dd20  [FTL] 
+  0x078dd28  Overriding config string param 
+  0x078dd30  enable_conversation_module
+  0x078dd38   from 
+  0x078dd50   to 
+  0x078dd82  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078dd8c  [FTL] 
+  0x078dd94  Overriding config string param 
+  0x078dd9c  enable_alarm_module
+  0x078dda4   from 
+  0x078ddbc   to 
+  0x078ddee  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078ddf8  [FTL] 
+  0x078de00  Overriding config string param 
+  0x078de08  enable_timer_module
+  0x078de10   from 
+  0x078de28   to 
+  0x078de58  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078de60  [FTL] 
+  0x078de68  Overriding config string param 
+  0x078de70  product_name
+  0x078de78   from 
+  0x078de94   to 
+  0x078decc  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078ded4  [FTL] 
+  0x078dedc  Overriding config string param 
+  0x078dee4  virtual_release_channel
+  0x078deec   from 
+  0x078df08   to 
+  0x078e01a  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e022  [FTL] 
+  0x078e02a  Overriding config string param 
+  0x078e032  device_model
+  0x078e03a   from 
+  0x078e056   to 
+  0x078e090  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e09a  [FTL] 
+  0x078e0a2  Overriding config string param 
+  0x078e0aa  manufacturer
+  0x078e0b2   from 
+  0x078e0ce   to 
+  0x078e108  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e112  [FTL] 
+  0x078e11a  Overriding config string param 
+  0x078e122  usonia_require_authenticated_ids
+  0x078e12a   from 
+  0x078e142   to 
+  0x078e172  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e17a  [FTL] 
+  0x078e182  Overriding config string param 
+  0x078e18a  effects_profile_id
+  0x078e192   from 
+  0x078e1ae   to 
+  0x078e1e6  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e1f0  [FTL] 
+  0x078e1f8  Overriding config string param 
+  0x078e200  enable_streaming_tts
+  0x078e208   from 
+  0x078e220   to 
+  0x078e24e  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e258  [FTL] 
+  0x078e260  Overriding config string param 
+  0x078e268  min_buffer_audio_ms
+  0x078e270   from 
+  0x078e288   to 
+  0x078e2b6  libhvc/internal/hvc/config/config_string_builder.cc
+  0x078e2c0  [FTL] 
+  0x078e2c8  Overriding config string param 
+  0x078e2d0  audio_parser_read_size
+  0x078e2d8   from 
+  0x078e2f0   to 
+
+## D. S3 endpoint strings (strings -t x)
+  22823 S3GrpcTransport__enable_native_s3_proto_types
+  237d2 S3GrpcTransport__disable_pipeline_mode
+  472fa S3GrpcTransport__use_streaming_speech_s3_uri
+  481d7 assistant-streaming-s3-pa.googleapis.com:443
+  54c2c speech.s3_grpc_server_uri
+  56fb1 S3GrpcTransport__grpc_deadline_sec
+  631cb TransportType::kStubby should only be used in tests.
+  69917 embeddedassistant.googleapis.com:443
+  6ec42 geller-pa.googleapis.com:443
+  70187 autopush-assistant-s3-pa.sandbox.googleapis.com:443
+  8f254 S3GrpcTransport__enable_s3_grpc_transport
+  98311 S3GrpcTransport__always_include_auth_tokens
+  b0810 assistantfrontend-pa.googleapis.com:443
+  d78c1 S3GrpcTransport__use_s3__localhost_uri
+
+## E. libhvc uds_audio_{input,output}_service strings in code order (file VA 0x62c000-0x630600)
+  0x062c0b2  ThreadHealthChecker
+  0x062c1c4  ~ThreadHealthChecker
+  0x062c2fa  GrpcCompletionQueueDriver
+  0x062c40c   gRPC CQ returned null next tag. Skipping...
+  0x062c43c   Completion queue is shutting down
+  0x062c486   Completion queue shut down unexpectedly
+  0x062c58e  clock_gettime failed
+  0x062c614  UdsAudioInputThread
+  0x062c6de  UdsAudioInputService
+  0x062c746  audio_thread_.StartWithOptions(options)
+  0x062c812  InitOnAudioThread
+  0x062c93a  ~UdsAudioInputService
+  0x062ca18  DestroyOnAudioThread
+  0x062cab0  AddErasedRawAudioInputObserver
+  0x062cb1c  RemoveErasedRawAudioInputObserver
+  0x062cc16  ScheduleResponse
+  0x062cc94  Write queue not available for AudioInputReceiver
+  0x062cd9a  Client connected with id = 
+  0x062cde0  OnClientConnected
+  0x062ce7a  Client disconnected with id = 
+  0x062cfd6  OnReadCompleted
+  0x062d044  Failed to parse StreamAudioInputRequest
+  0x062d070  OnReadCompleted
+  0x062d0a6  iter != client_connection_map_.end()
+  0x062d0ba  loopback_receiver_
+  0x062d0c2  Loopback message received but Loopback receiver is null
+  0x062d0e2  Unknown source type: 
+  0x062d344  Initialization complete
+  0x062defa  response_cb_
+  0x062e028  Resuming AudioInput
+  0x062e290  AudioBufferFormat num_channels = 
+  0x062e29e  , sample_rate = 
+  0x062e2ac  , sample_format = 
+  0x062e424  Observer added for source type = 
+  0x062e4e8  Observer removed for source type = 
+  0x062e56e  Pausing AudioInput
+  0x062e89a  AudioBufferFormat num_channels = 
+  0x062e8b6  , sample_rate = 
+  0x062e8d2  , sample_format = 
+  0x062edc8  No writable data for an input buffer
+  0x062ee48  UdsAudioOutputThread
+  0x062ee96  UdsAudioOutputService
+  0x062eefe  audio_thread_.StartWithOptions(options)
+  0x062ef5e  InitOnAudioThread
+  0x062f086  ~UdsAudioOutputService
+  0x062f15c  DestroyOnAudioThread
+  0x062f1e6  CreateAudioOutput called before client is connected
+  0x062f228  Creating AudioOutputSender with id = 
+  0x062f2f0  Sender with id = 
+  0x062f2fe   dose not exist.
+  0x062f39c  Failed to add the sender as an observer because of duplicated id : 
+  0x062f416  Failed to erase the sender as the id does no exist.
+  0x062f4da  ScheduleResponse
+  0x062f5a6  ScheduleRead
+  0x062f6a0  Sending OBSERVE_EMITTING_STATE
+  0x062f756  Connected to the client
+  0x062f78a  OnClientConnected
+  0x062f7e8  !client_connection_
+  0x062f83c  Disconnected from the client
+  0x062f8c8  OnReadCompleted
+  0x062f956  Failed to parse StreamAudioOutputRequest
+  0x062fa68  Received audio output handler registration request
+  0x062fac6  Ignoring the StreamAudioOutputRequest 
+  0x062fae8  Ignoring the non-first initial StreamAudioOutputRequest.
+  0x062fb46  Initialization completed
+  0x062fb68  Unsupported encoding: 
+  0x062fe06  Unknown stream type: 
+  0x062fe8c  Unknown stream encoding: 
+  0x06300fc  StreamAudioOutputRequest::END_OF_STREAM
+  0x0630124  StreamAudioOutputRequest::ERROR
+  0x0630156  Unknown error: 
+  0x0630292  Super Slow Response: 
+  0x06302aa  Slow Response: 
+
+## F. Proto field offsets (libhvc TcParseTable): (offset, hasbit, typecard)
+StreamAudioOutputRequest  f1 rep-enum 0x10 | f2 enum 0x20 hb1 | f3 enum 0x24 hb2 | f4 int32 0x30 hb4 | f5 int64 0x28 hb3 | f6 int32 0x34 hb5 | f7 bool 0x38 hb6
+OutputStreamFormat        f1 enum 0x18 hb1 | f2 int64 0x10 hb0 | f3 int32 0x1c hb2
+StreamAudioOutputResponse f1 enum 0x20 hb4 | f2 enum 0x24 hb5 | f3 msg 0x18 hb2 | f4 int32 0x30 hb7 | f5 bytes 0x10 hb0 | f6 bytes 0x14 hb1 | f7 int64 0x28 hb6 | f9 msg 0x1c hb3
+
+## Ghidra 0063f994  output: request dispatcher (f2 1=INITIAL, 6=emitting state, else per-stream by f6)
+/* ==== 0063f994  FUN_0063f994  ANCHOR [@63f994] ==== */
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* WARNING: Restarted to delay deadcode elimination for space: stack */
+
+undefined8 FUN_0063f994(int param_1,int param_2)
+
+{
+  int *piVar1;
+  int *piVar2;
+  undefined1 *puVar3;
+  undefined4 uVar4;
+  int iVar5;
+  int *piVar6;
+  uint unaff_r4;
+  undefined4 *puVar7;
+  int iVar8;
+  uint unaff_r5;
+  undefined4 *puVar9;
+  uint *puVar10;
+  undefined8 uVar11;
+  undefined1 auStack_b0 [128];
+  uint *puVar12;
+  
+  piVar1 = (int *)**(int **)(_DAT_0063fb80 + 0x63f9a6);
+  if (*(int *)(param_2 + 8) << 0x1e < 0) {
+    if (*(int *)(param_2 + 0x20) == 6) {
+      if (*(int *)(param_2 + 8) << 0x19 < 0) {
+        puVar10 = (uint *)(param_1 + 0x44);
+        FUN_00e31bd8(puVar10);
+        *(short *)(param_1 + 0x54) = *(byte *)(param_2 + 0x38) + 0x100;
+        puVar7 = *(undefined4 **)(param_1 + 0x4c);
+        for (puVar9 = *(undefined4 **)(param_1 + 0x48); puVar9 != puVar7; puVar9 = puVar9 + 3) {
+          puVar3 = (undefined1 *)FUN_003ac664((short *)(param_1 + 0x54));
+          if ((code *)puVar9[1] != (code *)0x0) {
+            (*(code *)puVar9[1])(*puVar9,*puVar3);
+          }
+        }
+        piVar6 = (int *)**(undefined4 **)(_DAT_0063fb9c + 0x63fa3c);
+        piVar2 = piVar1;
+        if (piVar6 != piVar1) goto LAB_0063fa54;
+        iVar8 = **(int **)(DAT_00e32d24 + 0xe32cdc);
+        puVar12 = puVar10;
+        if ((*puVar10 & 0x1e ^ 10) < 6) {
+          puVar12 = (uint *)0x0;
+          iVar5 = FUN_004aeea0(puVar10,auStack_b0 + 0x98,*puVar10 & 0xffffffd7,3);
+          if (iVar5 != 0) goto LAB_00e32d04;
+        }
+        FUN_00e31fc8(puVar10,0);
+LAB_00e32d04:
+        if (**(int **)(DAT_00e32d28 + 0xe32d0c) != iVar8) {
+                    /* WARNING: Subroutine does not return */
+          __stack_chk_fail();
+        }
+        return CONCAT44(piVar6,puVar12);
+      }
+    }
+    else {
+      if (*(int *)(param_2 + 0x20) == 1) {
+        uVar4 = FUN_00e2aca4(auStack_b0 + 0x84,_DAT_0063fb84 + 0x63fa64,0xf8);
+        FUN_0034636c(uVar4,_DAT_0063fb88 + 0x63fa6c);
+        FUN_00e2aee8();
+        FUN_00e2acb6(auStack_b0 + 0x84);
+        DataMemoryBarrier(0x1b);
+        if ((*(byte *)(param_1 + 0x14) & 1) == 0) {
+          *(undefined4 *)(param_1 + 0x1c) = *(undefined4 *)(param_1 + 0x18);
+          for (iVar8 = 0; iVar8 < *(int *)(param_2 + 0x14); iVar8 = iVar8 + 1) {
+            unaff_r4 = FUN_00387a60(param_2,iVar8);
+            if (5 < unaff_r4) {
+              uVar4 = FUN_00e2b1fa(auStack_b0 + 0x84,_DAT_0063fbb0 + 0x63fb64,0x3f);
+              uVar4 = FUN_0034636c(uVar4,_DAT_0063fbb4 + 0x63fb6c);
+              FUN_0037bd48(uVar4,auStack_b0 + 0x80);
+              FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+              FUN_00e2b258(auStack_b0 + 0x84);
+            }
+            FUN_003458f4((undefined4 *)(param_1 + 0x18),auStack_b0 + 0x84);
+            unaff_r5 = unaff_r4;
+          }
+          DataMemoryBarrier(0x1b);
+          *(undefined1 *)(param_1 + 0x14) = 1;
+          DataMemoryBarrier(0x1b);
+          if (*(int *)(param_1 + 0x10) != 0) {
+            FUN_003a36a0((int *)(param_1 + 0x10));
+          }
+          FUN_00e31bd8(param_1 + 0x44);
+          if ((*(int *)(param_1 + 0x48) != *(int *)(param_1 + 0x4c)) &&
+             (DataMemoryBarrier(0x1b), (*(byte *)(param_1 + 0x56) & 1) == 0)) {
+            FUN_0063f678(param_1);
+          }
+          FUN_00e32cd0(param_1 + 0x44);
+          uVar4 = FUN_00e2aca4(auStack_b0 + 0x84,_DAT_0063fb94 + 0x63fb42,0x111);
+          FUN_0034636c(uVar4,_DAT_0063fb98 + 0x63fb4a);
+        }
+        else {
+          uVar4 = FUN_00e2acaa(auStack_b0 + 0x84,_DAT_0063fb8c + 0x63fae4,0xfb);
+          FUN_0034636c(uVar4,_DAT_0063fb90 + 0x63faec);
+        }
+      }
+      else {
+        piVar2 = (int *)func_0x0063f290(param_1,*(undefined4 *)(param_2 + 0x34));
+        if (piVar2 != (int *)0x0) {
+          piVar6 = piVar1;
+          if ((int *)**(undefined4 **)(_DAT_0063fba0 + 0x63f9e8) == piVar1) {
+                    /* WARNING: Could not recover jumptable at 0x0063f9fa. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+            uVar11 = (**(code **)(*piVar2 + 8))(piVar2,param_2);
+            return uVar11;
+          }
+          goto LAB_0063fa54;
+        }
+        uVar4 = FUN_00e2acaa(auStack_b0 + 0x84,_DAT_0063fba4 + 0x63fac2,0x122);
+        uVar4 = FUN_0034636c(uVar4,_DAT_0063fba8 + 0x63faca);
+        unaff_r4 = *(uint *)(param_2 + 0x20);
+        FUN_0037bd48(uVar4,auStack_b0 + 0x80);
+      }
+      FUN_00e2aee8();
+      FUN_00e2acb6(auStack_b0 + 0x84);
+    }
+  }
+  piVar6 = (int *)**(int **)(_DAT_0063fbac + 0x63f9b8);
+  piVar2 = piVar1;
+  if (piVar6 == piVar1) {
+    return CONCAT44(unaff_r5,unaff_r4);
+  }
+LAB_0063fa54:
+                    /* WARNING: Subroutine does not return */
+  __stack_chk_fail(piVar2,piVar6);
+}
+
+
+REPORT: Discarding changes to the following read-only file: /libhvc_perception_joplin.so (HeadlessAnalyzer)
+
+## Ghidra 0064001c  output: per-stream request switch (f2 2=pull f4 bytes, 3=END_OF_STREAM, 4=ERROR f3, 5=?)
+/* ==== 0064001c  FUN_0064001c  ANCHOR [@6400fc] ==== */
+
+void FUN_0064001c(int param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  code *pcVar2;
+  undefined4 uVar3;
+  int *piVar4;
+  undefined4 *puVar5;
+  int iVar6;
+  uint uVar7;
+  undefined4 uVar8;
+  int aiStack_4c [2];
+  code *pcStack_44;
+  uint uStack_40;
+  undefined4 uStack_3c;
+  undefined4 uStack_38;
+  undefined4 uStack_34;
+  int aiStack_30 [2];
+  code *pcStack_28;
+  int iStack_24;
+  
+  iStack_24 = **(int **)(DAT_0064016c + 0x64002e);
+  if (-1 < (int)((uint)*(byte *)(param_2 + 8) << 0x1e)) goto switchD_00640042_default;
+  switch(*(undefined4 *)(param_2 + 0x20)) {
+  case 2:
+    uVar7 = *(uint *)(param_2 + 0x30);
+    piVar4 = (int *)(param_1 + 0xc);
+    iVar6 = *piVar4;
+    if ((uint)(*(int *)(param_1 + 0x10) - iVar6) < uVar7) {
+      FUN_003df118(piVar4,uVar7);
+      iVar6 = *piVar4;
+      uVar7 = *(uint *)(param_2 + 0x30);
+    }
+    *(uint *)(param_1 + 0x18) = uVar7;
+    uVar3 = *(undefined4 *)(param_2 + 0x28);
+    uVar8 = *(undefined4 *)(param_2 + 0x2c);
+    puVar5 = *(undefined4 **)(param_1 + 0x24);
+    FUN_00e3bb4c(&uStack_3c);
+    uVar1 = FUN_00640310(aiStack_30,DAT_00640170 + 0x640092,0,param_1,uStack_3c,uStack_38,uStack_34)
+    ;
+    pcVar2 = *(code **)*puVar5;
+    (*pcVar2)(puVar5,iVar6,uVar7,pcVar2,uVar3,uVar8,uVar1);
+    if (aiStack_30[0] == 0) goto switchD_00640042_default;
+    pcStack_44 = pcStack_28;
+    break;
+  case 3:
+    uVar1 = FUN_00e2aca4(&uStack_3c,DAT_00640174 + 0x6400f8,0x97);
+    FUN_0034636c(uVar1,DAT_00640178 + 0x640100);
+    FUN_00e2aee8();
+    FUN_00e2acb6(&uStack_3c);
+    pcStack_44 = *(code **)(**(int **)(param_1 + 0x24) + 8);
+    break;
+  case 4:
+    uVar1 = FUN_00e2aca4(&uStack_3c,DAT_0064017c + 0x640120,0x9b);
+    FUN_0034636c(uVar1,DAT_00640180 + 0x640128);
+    FUN_00e2aee8();
+    FUN_00e2acb6(&uStack_3c);
+    uStack_40 = *(uint *)(param_2 + 0x24);
+    if (2 < uStack_40) {
+      uVar1 = FUN_00e2b1fa(&uStack_3c,DAT_0064018c + 0x640152,0x44);
+      uVar1 = FUN_0034636c(uVar1,DAT_00640190 + 0x64015a);
+      FUN_0037bd48(uVar1,&uStack_40);
+      FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+      FUN_00e2b258(&uStack_3c);
+    }
+    (**(code **)(**(int **)(param_1 + 0x24) + 0xc))();
+    goto switchD_00640042_default;
+  case 5:
+    piVar4 = *(int **)(param_1 + 0x24);
+    FUN_00640410(aiStack_4c,DAT_00640184 + 0x6400be,0,param_1);
+    (**(code **)(*piVar4 + 4))(piVar4,aiStack_4c);
+    if (aiStack_4c[0] == 0) goto switchD_00640042_default;
+    break;
+  default:
+    goto switchD_00640042_default;
+  }
+  (*pcStack_44)();
+switchD_00640042_default:
+  if (**(int **)(DAT_00640188 + 0x6400da) != iStack_24) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## Ghidra 0063fcfc  output: stream announcement Response{f1=1,f2=type<=2,f4=id,f3/f9=format}
+/* ==== 0063fcfc  FUN_0063fcfc  ANCHOR [@63fe06] ==== */
+
+void FUN_0063fcfc(int *param_1,uint param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5
+                 ,undefined4 param_6,undefined4 param_7,undefined4 param_8,undefined4 param_9,
+                 int param_10,int *param_11)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int *piVar3;
+  uint local_c0;
+  undefined4 uStack_bc;
+  undefined4 local_b8;
+  undefined4 uStack_b4;
+  undefined4 local_b0;
+  undefined4 local_ac;
+  undefined4 local_a8;
+  undefined4 local_a4;
+  undefined1 auStack_a0 [8];
+  undefined1 auStack_98 [56];
+  undefined1 auStack_60 [8];
+  uint local_58;
+  undefined4 local_40;
+  uint local_3c;
+  int local_30;
+  int local_24;
+  
+  local_24 = **(int **)(DAT_0063fe1c + 0x63fd12);
+  *(undefined1 *)(param_1 + 10) = 0;
+  param_1[2] = param_2;
+  param_1[8] = (int)param_11;
+  local_a4 = param_9;
+  iVar2 = DAT_0063fe20 + 0x63fd5c;
+  local_a8 = param_8;
+  *param_1 = DAT_0063fe20 + 0x63fd3c;
+  param_1[3] = 0;
+  param_1[4] = *(int *)((undefined1  [16])0x0 + (undefined1  [16])0x4);
+  param_1[5] = *(int *)((undefined1  [16])0x0 + (undefined1  [16])0x8);
+  param_1[6] = *(int *)((undefined1  [16])0x0 + (undefined1  [16])0xc);
+  local_ac = param_7;
+  param_1[7] = param_10;
+  param_1[1] = iVar2;
+  local_b0 = param_6;
+  uStack_b4 = param_5;
+  local_c0 = param_2;
+  uStack_bc = param_3;
+  local_b8 = param_4;
+  (**(code **)(*param_11 + 0x10))(param_11,param_1 + 1,param_10);
+  *(undefined1 *)(param_1 + 10) = 1;
+  FUN_00637c30(auStack_60);
+  local_30 = param_1[7];
+  local_40 = 1;
+  if (2 < param_2) {
+    local_58 = local_58 | 0x90;
+    uVar1 = FUN_00e2b1fa(auStack_a0,DAT_0063fe28 + 0x63fe02,0x22);
+    uVar1 = FUN_0034636c(uVar1,DAT_0063fe2c + 0x63fe0a);
+    FUN_0037bd48(uVar1,&local_c0);
+    FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+    FUN_00e2b258(auStack_a0);
+  }
+  local_58 = local_58 | 0xb0;
+  local_3c = param_2;
+  uVar1 = FUN_0063feb4(auStack_60);
+  FUN_0063fe30(uVar1,&uStack_bc);
+  uVar1 = FUN_0063fec0(auStack_60);
+  FUN_0063fe30(uVar1,&local_b0);
+  piVar3 = (int *)param_1[8];
+  FUN_00637960(auStack_98,auStack_60);
+  (**(code **)(*piVar3 + 0x1c))(piVar3,auStack_98);
+  FUN_0064c768(auStack_98);
+  FUN_0064c768(auStack_60);
+  if (**(int **)(DAT_0063fe24 + 0x63fde2) != local_24) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail(local_24);
+  }
+  return;
+}
+
+## Ghidra 0063fe30  output: OutputStreamFormat fill (encoding<=5)
+/* ==== 0063fe30  FUN_0063fe30  ANCHOR [@63fe8c] ==== */
+
+undefined8 FUN_0063fe30(int param_1,uint *param_2,undefined4 param_3)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint *puStack_1c;
+  undefined4 uStack_18;
+  int local_14;
+  
+  local_14 = **(int **)(DAT_0063fea4 + 0x63fe3c);
+  *(uint *)(param_1 + 0x1c) = param_2[2];
+  uVar2 = *(uint *)(param_1 + 8);
+  *(uint *)(param_1 + 8) = uVar2 | 4;
+  uVar3 = param_2[1];
+  *(uint *)(param_1 + 8) = uVar2 | 5;
+  *(uint *)(param_1 + 0x10) = uVar3;
+  *(int *)(param_1 + 0x14) = (int)uVar3 >> 0x1f;
+  puStack_1c = param_2;
+  uStack_18 = param_3;
+  if (5 < *param_2) {
+    uVar1 = FUN_00e2b1fa(&puStack_1c,DAT_0063feac + 0x63fe88,0x36);
+    uVar1 = FUN_0034636c(uVar1,DAT_0063feb0 + 0x63fe90);
+    FUN_0037bd48(uVar1,param_2);
+    FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+    FUN_00e2b258(&puStack_1c);
+  }
+  *(uint *)(param_1 + 0x18) = *param_2;
+  *(uint *)(param_1 + 8) = uVar2 | 7;
+  if (**(int **)(DAT_0063fea8 + 0x63fe70) != local_14) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return CONCAT44(param_2,param_1);
+}
+
+## Ghidra 0063f678  output: Response{f1=6} OBSERVE_EMITTING_STATE
+/* ==== 0063f678  FUN_0063f678  ANCHOR [@63f6a0] ==== */
+
+void FUN_0063f678(int *param_1)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_90 [56];
+  undefined1 auStack_58 [8];
+  uint uStack_50;
+  undefined4 uStack_38;
+  int iStack_1c;
+  
+  iStack_1c = **(int **)(DAT_0063f710 + 0x63f68e);
+  uVar1 = FUN_00e2aca4(auStack_58,DAT_0063f714 + 0x63f69c,0x12a);
+  FUN_0034636c(uVar1,DAT_0063f718 + 0x63f6a4);
+  FUN_00e2aee8();
+  FUN_00e2acb6(auStack_58);
+  FUN_00637c30(auStack_58);
+  uStack_38 = 6;
+  uStack_50 = uStack_50 | 0x10;
+  FUN_00637960(auStack_90,auStack_58);
+  (**(code **)(*param_1 + 0x1c))(param_1,auStack_90);
+  FUN_0064c768(auStack_90);
+  DataMemoryBarrier(0x1b);
+  *(undefined1 *)((int)param_1 + 0x56) = 1;
+  DataMemoryBarrier(0x1b);
+  FUN_0064c768(auStack_58);
+  if (**(int **)(DAT_0063f71c + 0x63f6fc) != iStack_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+
+REPORT: Discarding changes to the following read-only file: /libhvc_perception_joplin.so (HeadlessAnalyzer)
+
+## Ghidra 0063cf20  input: request dispatch on f4 SourceType 1/2(loopback)/3
+/* ==== 0063cf20  FUN_0063cf20  ANCHOR [@63cf20] ==== */
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_0063cf20(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  int *piVar3;
+  undefined1 *puVar4;
+  int iStack_7c;
+  int iStack_78;
+  int aiStack_74 [3];
+  undefined1 auStack_68 [16];
+  undefined4 uStack_58;
+  undefined4 uStack_54;
+  undefined4 uStack_50;
+  int aiStack_4c [2];
+  undefined4 uStack_44;
+  undefined1 auStack_40 [20];
+  int iStack_2c;
+  int iStack_24;
+  
+  iStack_24 = **(int **)(_DAT_0063d0f4 + 0x63cf3a);
+  uStack_44 = param_2;
+  FUN_005b376c(aiStack_4c,param_1 + 0x30,&uStack_44);
+  if (aiStack_4c[0] == 0) {
+    puVar4 = auStack_40;
+    FUN_00e2b200(puVar4,_DAT_0063d0f8 + 0x63d0a6,0xc6,_DAT_0063d0fc + 0x63d0aa);
+    goto LAB_0063d0c8;
+  }
+  FUN_00635714(auStack_40);
+  FUN_003487f0(&uStack_54,param_3);
+  iVar1 = FUN_00deaeb4(auStack_40,uStack_54,uStack_50);
+  iStack_78 = param_1;
+  if (iVar1 == 0) {
+    iVar1 = _DAT_0063d100 + 0x63d03e;
+    uVar2 = FUN_00e2acb0(auStack_68,iVar1,0xca);
+    FUN_0034636c(uVar2,_DAT_0063d104 + 0x63d048);
+    FUN_00e2aee8();
+    FUN_00e2acb6(auStack_68);
+    FUN_00399ba8(&uStack_58,param_1 + 0x60);
+    FUN_00b28ba0(auStack_68,_DAT_0063d108 + 0x63d074,iVar1,0xcb);
+    aiStack_74[1] = 0;
+    aiStack_74[0] = _DAT_0063d10c + 0x63d080;
+    aiStack_74[2] = FUN_003b861a(_DAT_0063d110 + 0x63d08e,aiStack_74,&iStack_78,&uStack_44);
+    piVar3 = aiStack_74 + 2;
+  }
+  else {
+    if (iStack_2c == 3) {
+      func_0x0063d274(param_1,uStack_44,auStack_40,*(undefined4 *)(param_1 + 0x24));
+      *(undefined1 *)(param_1 + 0x1c) = 1;
+    }
+    else if (iStack_2c == 2) {
+      if (*(int *)(param_1 + 0x28) == 0) {
+        puVar4 = auStack_68;
+        uVar2 = FUN_00e2b200(puVar4,_DAT_0063d114 + 0x63d0ba,0xda,_DAT_0063d118 + 0x63d0be);
+        FUN_0034636c(uVar2,_DAT_0063d11c + 0x63d0c6);
+        goto LAB_0063d0c8;
+      }
+      func_0x0063d274(param_1,uStack_44,auStack_40);
+      *(undefined1 *)(param_1 + 0x1a) = 1;
+    }
+    else {
+      if (iStack_2c != 1) {
+        puVar4 = auStack_68;
+        uVar2 = FUN_00e2b1fa(puVar4,_DAT_0063d120 + 0x63d0de,0xe0);
+        uVar2 = FUN_0034636c(uVar2,_DAT_0063d124 + 0x63d0e6);
+        aiStack_74[0] = iStack_2c;
+        FUN_0037bd48(uVar2,aiStack_74);
+LAB_0063d0c8:
+        FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+        FUN_00e2b258(puVar4);
+      }
+      func_0x0063d274(param_1,uStack_44,auStack_40,*(undefined4 *)(param_1 + 0x20));
+      *(undefined1 *)(param_1 + 0x1b) = 1;
+    }
+    func_0x0063d2f8(param_1);
+    FUN_00399ba8(&uStack_58,param_1 + 0x60);
+    FUN_00b28ba0(auStack_68,_DAT_0063d128 + 0x63cfda,_DAT_0063d12c + 0x63cfdc,0xe5);
+    aiStack_74[1] = 0;
+    aiStack_74[0] = _DAT_0063d130 + 0x63cfe8;
+    iStack_7c = FUN_003b861a(_DAT_0063d134 + 0x63cff6,aiStack_74,&iStack_78,&uStack_44);
+    piVar3 = &iStack_7c;
+  }
+  FUN_00e10b04(uStack_58,auStack_68,piVar3);
+  thunk_FUN_00b286d4(piVar3);
+  FUN_00399bce(&uStack_58);
+  FUN_00384958(auStack_40);
+  if (**(int **)(_DAT_0063d138 + 0x63d020) != iStack_24) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## Ghidra 0063e3d8  input: first engine observer -> FUN_0063dfd4 -> Response{f1=2} Resuming
+/* ==== 0063e3d8  FUN_0063e3d8  ANCHOR [@63e3d8] ==== */
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_0063e3d8(int param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_24 [8];
+  int iStack_1c;
+  
+  iStack_1c = **(int **)(_DAT_0063e45c + 0x63e3f0);
+  FUN_00e31bd8(param_1 + 8);
+  if (*(int *)(param_1 + 0xc) == *(int *)(param_1 + 0x10)) {
+    FUN_0063dfd4(param_1);
+  }
+  FUN_0063e46c((int *)(param_1 + 0xc),param_2);
+  uVar1 = FUN_00e2aca4(auStack_24,_DAT_0063e460 + 0x63e420,0xc4);
+  uVar1 = FUN_0034636c(uVar1,_DAT_0063e464 + 0x63e428);
+  FUN_0037bd48(uVar1,param_1 + 0x34);
+  FUN_00e2aee8();
+  FUN_00e2acb6(auStack_24);
+  FUN_00e32cd0(param_1 + 8);
+  if (**(int **)(_DAT_0063e468 + 0x63e44a) != iStack_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## Ghidra 0063dfd4  input: Response f1=2
+/* ==== 0063dfd4  FUN_0063dfd4  ANCHOR [@63dfd4] ==== */
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_0063dfd4(int param_1)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_54 [8];
+  undefined1 auStack_4c [24];
+  undefined1 auStack_34 [8];
+  uint uStack_2c;
+  undefined4 uStack_20;
+  int iStack_1c;
+  
+  iStack_1c = **(int **)(_DAT_0063e058 + 0x63dfe6);
+  FUN_0063e5e4(auStack_34);
+  uStack_20 = 2;
+  uStack_2c = uStack_2c | 2;
+  FUN_00634d70(auStack_4c,auStack_34);
+  (**(code **)(*(int *)(param_1 + 0x38) + 4))(*(int *)(param_1 + 0x38),param_1,auStack_4c);
+  FUN_00384958(auStack_4c);
+  uVar1 = FUN_00e2aca4(auStack_54,_DAT_0063e05c + 0x63e024,0xda);
+  FUN_0034636c(uVar1,_DAT_0063e060 + 0x63e02c);
+  FUN_00e2aee8();
+  FUN_00e2acb6(auStack_54);
+  FUN_00384958(auStack_34);
+  if (**(int **)(_DAT_0063e064 + 0x63e046) != iStack_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## Ghidra 0063e4ac  input: last observer removed -> Response{f1=1} Pausing
+/* ==== 0063e4ac  FUN_0063e4ac  ANCHOR [@63e4ac] ==== */
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_0063e4ac(int param_1,int *param_2)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_54 [8];
+  undefined1 auStack_4c [24];
+  undefined1 auStack_34 [8];
+  uint uStack_2c;
+  undefined4 uStack_20;
+  int iStack_1c;
+  
+  iStack_1c = **(int **)(_DAT_0063e588 + 0x63e4c4);
+  FUN_00e31bd8(param_1 + 8);
+  FUN_0063e5a0(param_1 + 0xc,param_2);
+  uVar1 = FUN_00e2aca4(auStack_34,_DAT_0063e58c + 0x63e4e4,0xca);
+  uVar1 = FUN_0034636c(uVar1,_DAT_0063e590 + 0x63e4ec);
+  FUN_0037bd48(uVar1,param_1 + 0x34);
+  FUN_00e2aee8();
+  FUN_00e2acb6(auStack_34);
+  (**(code **)(*param_2 + 8))(param_2);
+  if (*(int *)(param_1 + 0xc) == *(int *)(param_1 + 0x10)) {
+    FUN_0063e5e4(auStack_34);
+    uStack_20 = 1;
+    uStack_2c = uStack_2c | 2;
+    FUN_00634d70(auStack_4c,auStack_34);
+    (**(code **)(*(int *)(param_1 + 0x38) + 4))(*(int *)(param_1 + 0x38),param_1,auStack_4c);
+    FUN_00384958(auStack_4c);
+    uVar1 = FUN_00e2aca4(auStack_54,_DAT_0063e594 + 0x63e56a,0xd2);
+    FUN_0034636c(uVar1,_DAT_0063e598 + 0x63e572);
+    FUN_00e2aee8();
+    FUN_00e2acb6(auStack_54);
+    FUN_00384958(auStack_34);
+  }
+  FUN_00e32cd0(param_1 + 8);
+  if (**(int **)(_DAT_0063e59c + 0x63e51e) != iStack_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+
+REPORT: Discarding changes to the following read-only file: /libhvc_perception_joplin.so (HeadlessAnalyzer)
+
+## G. cast_shell bootup manager strings in code order (file VA 0x1ed1800-0x1ed4800)
+  0x1ed221a  -K@
+  0x1ed22de  Cast.Assistant.Bootup.Start
+  0x1ed2304  BootupManagerImpl
+  0x1ed23f8  Bootup timeout hit.
+  0x1ed2452  Waiting start up earcon on hold too long, resume now.
+  0x1ed24b2  timeout reason: 
+  0x1ed24c8  Cast.Assistant.Bootup.Timeout
+  0x1ed2500  OnGetAsyncDataTimeout
+  0x1ed2552  OnGetAsyncDataTimeout
+  0x1ed25b0  User didn't get authenticated fast enough.
+  0x1ed25e6  Language was not set fast enough.
+  0x1ed261e  Night mode not notified in time, assuming default
+  0x1ed2652  Silence not played in time.
+  0x1ed2682  Reboot source not set in time.
+  0x1ed26b2  Privacy mode not set in time.
+  0x1ed26e2  CCS config not set in time.
+  0x1ed283c  Authentication received
+  0x1ed286e  OnAuthenticationReceived
+  0x1ed2904  OnHasDownloadedResources
+  0x1ed2996  Ready animation already played
+  0x1ed29b4  PlayReadyAnimationIfReady
+  0x1ed2a72  PlayReadyAnimationIfReady
+  0x1ed2ac0  Startup earcon on hold, keep waiting
+  0x1ed2ae8  Not finish playing silence to wake up ALSA, keep waiting
+  0x1ed2b10  Last reboot source not set yet, keep waiting
+  0x1ed2b38  Language not set, keep waiting
+  0x1ed2b60  Auth not received, keep waiting
+  0x1ed2b88  Night mode not set yet, keep waiting
+  0x1ed2bb0  Unknown privacy mode, keep waiting
+  0x1ed2bd6  Proceed to play ready animation
+  0x1ed2ce0  Cannot hold startup earcon again 
+  0x1ed2ce8  if already un-hold previously, ignore.
+  0x1ed2d06  OnHoldStartupEarcon
+  0x1ed2d64  Best effort to HoldStartupEarcon(
+  0x1ed2d72  ) if not too late.
+  0x1ed2e02  OnMicMutedChange
+  0x1ed2eaa  OnAssistantStarting
+  0x1ed2f9a  Play audio resource 
+  0x1ed3058  Tried to play audio resource 
+  0x1ed3066   before AssistantClient was ready
+  0x1ed309e  Not playing audio resource 
+  0x1ed312a  OnSilencePlayed
+  0x1ed31a8  Assistant bootup complete
+  0x1ed31cc  OnStartFinished
+  0x1ed325c  OnCCSConfigLinked
+  0x1ed3414  MarkShouldIgnoreAuthentication
+  0x1ed3490  Maybe notify assistant ready
+  0x1ed3498  , assistant_ready_: 
+  0x1ed34aa  , ccs_config_linked_: 
+  0x1ed34b6  , received_authentication_: 
+  0x1ed34d4  , bootup_finished_: 
+  0x1ed3536  Reporting assistant ready
+  0x1ed3550  MaybeNotifyAssistantReady
+  0x1ed35e6  night_mode_active = 
+  0x1ed35f4  , do_not_disturb = 
+  0x1ed3626  UpdateNightModeSettings
+  0x1ed36c0  OnGetLastRebootSource = 
+  0x1ed36f0  OnGetLastRebootSource
+  0x1ed377a  Device is in managed mode. Suppress the bootup chime.
+  0x1ed37bc  Device is on retail demo build. Suppress the bootup chime.
+  0x1ed37ea  Night mode is active and the user asked not to be disturbed. 
+  0x1ed3808  /data/share/sntpd/last_sync
+  0x1ed383e  %Y-%m-%d %H:%M:%S
+  0x1ed3866  From loaded sntpd last sync at 
+  0x1ed3874  , tm_hour=
+  0x1ed38c6  Probably midnight and device is setup, suppress bootup chime
+  0x1ed38ee  Read file 
+  0x1ed38f6  /data/share/sntpd/last_sync
+  0x1ed38fc   failed. Assuming not midnight.
+  0x1ed3946  Suppress boot chime since this is recovered from crash.
+  0x1ed398a  ShouldSuppressBootChime = 
+  0x1ed39c0  Invalid value from 
+  0x1ed39c8  /data/share/sntpd/last_sync
+  0x1ed3ab4  OnBootupAnimationStopped
+  0x1ed3ae2  OnBootupAnimationStopped
+  0x1ed3b4c  OnBootupAnimationStopped
+  0x1ed3b7a  Cast.Power.UsbC.SufficientPowerBootup
+  0x1ed3be8  Cast.Power.UsbC.SufficientPowerBootup
+  0x1ed3d10  Critical signal(s) missing.
+  0x1ed3d18   silence_played_: 
+  0x1ed3d2a   last_reboot_src_notified_: 
+  0x1ed3d34   privacy_mode_notified_: 
+  0x1ed3d88  Cast.Power.UsbC.PowerDataObjectReadSuccess
+  0x1ed3db8  ro.usb_c_adapter_on_i2c_bus
+  0x1ed3dfa  Cast.Power.UsbC.UsbCAdapterOnI2cBus
+  0x1ed3e3c  Cast.Power.UsbC.PowerDataObjectReadFailure
+  0x1ed3e60  Cast.Power.UsbC.UsbCAdapterNotOnI2cBus
+  0x1ed3eac  ro.usb_c_pdo_read_success
+  0x1ed3f2a  persist.sufficient_usb_c_power
+  0x1ed3f7a  No persistent property present for USB-C power. Assuming sufficient power.
+  0x1ed3fbc  Cast.Power.UsbC.InsufficientPowerBootup
+  0x1ed3fea  ro.plugged_into_stock_usb_c_power_supply
+  0x1ed4006  Cast.Power.UsbC.InsufficientPowerBootupWithStockUsbCPowerSupply
+  0x1ed40ce  Play insufficient power warning audio resource 
+  0x1ed411a  PlayInsufficientPowerErrorAudio
+  0x1ed4190  Tried to play audio resource 
+  0x1ed41a0   before AssistantClient was ready
+  0x1ed421e  OnPlayStartupEarconFinished
+  0x1ed425a  OnPlayStartupEarconFinished
+  0x1ed42d2  Handle OOBE: play the welcome message/animation
+  0x1ed4330  Not playing OOBE welcome message/animation due to insufficient USB-C power.
+  0x1ed43a8  Cast.Assistant.Bootup.End
+  0x1ed43e4  OnEndOfBootup quiet = 
+  0x1ed4416  NotifyEndOfBoot
+  0x1ed445a  NotifyEndOfBoot
+  0x1ed4516  OnWelcomeMessageFinished
+  0x1ed4664  OnConnectionStatusChange
+  0x1ed470a  OnGrpcMessage
+
+## H. cast_shell BootupManagerImpl start (capstone): movs r1,#0x1e before bl 0x179dd80 / bl 0x1a9b1a0 at 0x1ed231a (inferred: 30 s default timeout)
+
+## I. cast_shell UdsAudioOutputClient registration (capstone 0x1e8006c-0x1e800aa): f2(+0x1c)=1, hasbit0; repeated f1 filled in loop from backend vector (runtime)

@@ -4,6 +4,7 @@
 //
 //   analyzeHeadless ... -postScript DecompileByString.java "<java-regex>" [callee-depth]
 //   analyzeHeadless ... -postScript DecompileByString.java "@1fb42c,1fb1d8" [callee-depth]
+//   analyzeHeadless ... -postScript DecompileByString.java "=SymbolName" [callee-depth]   (callers)
 //
 // Re-run on an existing project without re-analysis:
 //   analyzeHeadless work/ghidra <proj> -process -noanalysis -readOnly -scriptPath scripts/ghidra \
@@ -23,6 +24,31 @@ import ghidra.program.model.listing.*;
 import ghidra.program.model.symbol.Reference;
 
 public class DecompileByString extends GhidraScript {
+    // Walk back (max 4 KB) to a Thumb "push {..., lr}" (0xb5xx) or "push.w {..., lr}"
+    // (0xe92d 0x4xxx) and create a function there.
+    private Function createAtPrologue(Address at) throws Exception {
+        Address a = at.getNewAddress(at.getOffset() & ~1L);
+        for (int i = 0; i < 2048; i++, a = a.subtract(2)) {
+            int h = getShort(a) & 0xffff;
+            boolean push16 = (h & 0xff00) == 0xb500;
+            boolean push32 = h == 0xe92d && (getShort(a.add(2)) & 0x4000) != 0;
+            if (!push16 && !push32) continue;
+            Function f = getFunctionAt(a);
+            if (f == null) {
+                // Analysis often left these as ARM-mode garbage: clear, force Thumb, redo.
+                Address end = a.add(0x1000);
+                clearListing(a, end);
+                ghidra.program.model.lang.Register tm = currentProgram.getRegister("TMode");
+                currentProgram.getProgramContext().setValue(tm, a, end, java.math.BigInteger.ONE);
+                disassemble(a);
+                f = getFunctionAt(a);
+            }
+            if (f == null) f = createFunction(a, null);
+            if (f != null) return f;   // body may not reach `at` if flow analysis stops early
+        }
+        return null;
+    }
+
     @Override
     public void run() throws Exception {
         String[] a = getScriptArgs();
@@ -33,10 +59,39 @@ public class DecompileByString extends GhidraScript {
         Listing listing = currentProgram.getListing();
         Map<Function, Set<String>> anchors = new LinkedHashMap<>();
         if (a[0].startsWith("@")) {            // "@1fb42c,1fb1d8": explicit function addresses
-            for (String h : a[0].substring(1).split(",")) {
-                Function f = getFunctionContaining(toAddr(Long.parseLong(h, 16)));
+            boolean force = a[0].startsWith("@!"); // "@!addr": addr is a Thumb function start; rebuild it
+            for (String h : a[0].substring(force ? 2 : 1).split(",")) {
+                Address at = toAddr(Long.parseLong(h, 16));
+                if (force) {
+                    Function old = getFunctionContaining(at);
+                    if (old != null) removeFunction(old);
+                    Function g = getFunctionAt(at);
+                    if (g != null) removeFunction(g);
+                }
+                Function f = force ? null : getFunctionContaining(at);
+                if (f == null) f = createAtPrologue(at);   // analysis missed it; -readOnly keeps DB clean
                 if (f != null) anchors.put(f, new TreeSet<>(List.of("@" + h)));
+                else println("// no function for @" + h);
             }
+        }
+        else if (a[0].startsWith("=")) {       // "=NewLibassistantEntrypoint": callers of a symbol
+            List<Address> targets = new ArrayList<>();
+            for (ghidra.program.model.symbol.Symbol s : currentProgram.getSymbolTable().getSymbols(a[0].substring(1))) {
+                targets.add(s.getAddress());
+                // imports: calls go to the PLT thunks, which getSymbols() does not return
+                if (s.getObject() instanceof Function fn && fn.getFunctionThunkAddresses(true) != null)
+                    targets.addAll(Arrays.asList(fn.getFunctionThunkAddresses(true)));
+            }
+            for (Address t : targets)
+                for (Reference r : getReferencesTo(t)) {
+                    Function f = getFunctionContaining(r.getFromAddress());
+                    if (f != null && !f.isThunk()) anchors.computeIfAbsent(f, k -> new TreeSet<>()).add(a[0]);
+                    else if (f != null)            // PLT thunk: take the thunk's callers
+                        for (Reference r2 : getReferencesTo(f.getEntryPoint())) {
+                            Function g = getFunctionContaining(r2.getFromAddress());
+                            if (g != null) anchors.computeIfAbsent(g, k -> new TreeSet<>()).add(a[0] + " via thunk");
+                        }
+                }
         }
         else for (Data d : listing.getDefinedData(true)) {
             if (monitor.isCancelled()) break;

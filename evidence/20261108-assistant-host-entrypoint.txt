@@ -1,0 +1,403 @@
+# assistant host binary vs libhvc public API (3.78.540761)
+# assistant sha256: 468d7c23a44cedcdb9330fb00b46071fcfe5a97087975e45a52767aafece5966
+# libhvc   sha256: e5b51734e664324c59ccb68bd68e484dadcb472c37ac384ff7ac013e8177d7d3
+# Tools: readelf, c++filt, Ghidra 12.2 headless (scripts/ghidra/DecompileByString.java), capstone
+
+## libhvc exported GLOBAL symbols (readelf --dyn-syms, defined)
+__aeabi_d2lz@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_d2ulz@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_f2lz@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_f2ulz@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_idiv@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_idivmod@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_l2d@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_l2f@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_lasr@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_ldivmod@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_llsl@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_llsr@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_uidiv@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_uidivmod@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_ul2d@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_ul2f@@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_uldivmod@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s0_end@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s0_size@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s0_start@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s1_end@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s1_size@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s1_start@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s2_end@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s2_size@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s2_start@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s3_end@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s3_size@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s3_start@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s4_end@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s4_size@@LIBPERCEPTION_MUSHROOM_1.0
+_binary_blaze_out_platform_44E09539_opt_genfiles_home_interaction_device_shlib_device_configs_embed_data_o_tmpdir_filewrapper_s4_start@@LIBPERCEPTION_MUSHROOM_1.0
+NewLibassistantEntrypoint@@LIBASSISTANT_1.0
+__start_google_malloc
+__start_malloc_hook
+__start_pb_defaults
+__stop_google_malloc
+__stop_malloc_hook
+__stop_pb_defaults
+ml_framework::EventHandler::Create(ml_framework::InputManager*, home_interaction::device_shlib::Perception*)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::InputManager::Create(std::__1::unique_ptr<ml_framework::InputSourceFactory, std::__1::default_delete<ml_framework::InputSourceFactory> >, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, ml_framework::MlFrameworkCallbacks)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::InputManager::Create(std::__1::unique_ptr<ml_framework::InputSourceFactory, std::__1::default_delete<ml_framework::InputSourceFactory> >, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, ml_framework::MlFrameworkCallbacks, assistant_client::services::GrpcServicesInitializer*)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::PerceptionPacket::PerceptionPacket(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >, ml_framework::StreamInput const&, std::__1::unique_ptr<home_interaction::device_shlib::DataBuffers, std::__1::default_delete<home_interaction::device_shlib::DataBuffers> >)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::PerceptionPacket::PerceptionPacket(ml_framework::PerceptionPacket&&)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::PerceptionPacket::PerceptionPacket(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >, ml_framework::StreamInput const&, std::__1::unique_ptr<home_interaction::device_shlib::DataBuffers, std::__1::default_delete<home_interaction::device_shlib::DataBuffers> >)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::PerceptionPacket::PerceptionPacket(ml_framework::PerceptionPacket&&)@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::PerceptionPacket::~PerceptionPacket()@@LIBPERCEPTION_MUSHROOM_1.0
+ml_framework::PerceptionPacket::~PerceptionPacket()@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::Perception::SetModuleVerbosity(char const*, int)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::Perception::Create(std::__1::function<void (long long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, home_interaction::device_shlib::PerceptionOutput)>, home_interaction::device_shlib::PlatformAbstractionLayerDependencies*)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::Perception::Create(std::__1::function<void (long long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)>)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::Perception::Create(std::__1::function<void (long long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)>, home_interaction::device_shlib::PlatformAbstractionLayerDependencies*)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::PerceptionOutput(std::__1::unique_ptr<home_interaction::device_shlib::DataBuffers, std::__1::default_delete<home_interaction::device_shlib::DataBuffers> >)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::PerceptionOutput(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::PerceptionOutput(home_interaction::device_shlib::PerceptionOutput&&)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::PerceptionOutput(std::__1::unique_ptr<home_interaction::device_shlib::DataBuffers, std::__1::default_delete<home_interaction::device_shlib::DataBuffers> >)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::PerceptionOutput(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::PerceptionOutput(home_interaction::device_shlib::PerceptionOutput&&)@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::~PerceptionOutput()@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::PerceptionOutput::~PerceptionOutput()@@LIBPERCEPTION_MUSHROOM_1.0
+home_interaction::device_shlib::AnalyticsWriterDelegate::Create(home_interaction::device_shlib::AnalyticsWriterDelegateSafe*)@@LIBPERCEPTION_MUSHROOM_1.0
+
+## assistant imports versioned LIBASSISTANT/LIBPERCEPTION
+__aeabi_uldivmod@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_llsl@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_llsr@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_uidiv@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_ldivmod@LIBPERCEPTION_MUSHROOM_1.0
+NewLibassistantEntrypoint@LIBASSISTANT_1.0
+__aeabi_idiv@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_uidivmod@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_l2f@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_l2d@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_d2lz@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_ul2d@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_d2ulz@LIBPERCEPTION_MUSHROOM_1.0
+__aeabi_idivmod@LIBPERCEPTION_MUSHROOM_1.0
+
+## relocation
+0006c9a4  00005a16 R_ARM_JUMP_SLOT        00000000   NewLibassistantEntrypoint@LIBASSISTANT_1.0
+
+## flag/config strings (strings -n 4, filtered)
+RegisterAudioEmittingStateCallback
+enable_audio_input_service
+libhvc/internal/exe/flags.cc
+libhvc/internal/exe/main.cc
+libhvc/internal/exe/platform/exe_audio_output_provider_impl.cc
+If root, switch to this group id (matches --uid unless overridden)
+enable_audio_loopback
+config_string_file_path
+GetAudioInput
+GetCurrentAudioTime
+libhvc/internal/exe/platform/exe_audio_input_provider_impl.cc
+GRPC_POLL_STRATEGY
+enable_audio_output_service
+libhvc/internal/exe/platform/exe_file_provider_impl.cc
+Config string JSON parsing failed -- 
+libhvc/internal/exe/platform/exe_network_provider_impl.cc
+libhvc/internal/exe/hvc_manager_owner.cc
+Missing --config_string_file_path
+use_client_audio_service
+libhvc/internal/exe/signal_handler.cc
+libhvc/internal/exe/platform/exe_system_provider_impl.cc
+CreateAudioOutput
+Path to JSON config string file
+
+## Ghidra 0002e6d0
+/* ==== 0002e6d0  FUN_0002e6d0  ANCHOR [=NewLibassistantEntrypoint, =NewLibassistantEntrypoint via thunk] ==== */
+
+void FUN_0002e6d0(void)
+
+{
+  NewLibassistantEntrypoint(0);
+  FUN_0002aea0();
+  return;
+}
+
+## Ghidra 0002cfd8
+/* ==== 0002cfd8  FUN_0002cfd8  (callee) ==== */
+
+int * FUN_0002cfd8(int *param_1)
+
+{
+  *param_1 = DAT_0002d014 + 0x2cfee;
+  FUN_0002d07c(param_1 + 1);
+  FUN_0002d100(param_1 + 2);
+  FUN_0002d260(param_1 + 3);
+  FUN_0002d3c0(param_1 + 4);
+  FUN_0002d498(param_1 + 5);
+  return param_1;
+}
+
+## Ghidra 00023a00
+/* ==== 00023a00  FUN_00023a00  ANCHOR [Config string JSON parsing failed -- , GRPC_POLL_STRATEGY, Missing --config_string_file_path, libhvc/internal/exe/main.cc] ==== */
+
+void FUN_00023a00(undefined4 param_1,undefined4 param_2)
+
+{
+  undefined1 uVar1;
+  int *piVar2;
+  undefined4 uVar3;
+  undefined1 *puVar4;
+  int iVar5;
+  undefined4 uVar6;
+  code *pcVar7;
+  int **ppiVar8;
+  code *pcVar9;
+  code *pcVar10;
+  undefined4 local_2d8;
+  undefined4 uStack_2d4;
+  undefined4 local_2d0;
+  undefined1 auStack_2cc [24];
+  undefined1 auStack_2b4 [4];
+  undefined1 auStack_2b0 [4];
+  int *local_2ac;
+  undefined1 auStack_2a8 [12];
+  int local_29c;
+  byte local_298 [4];
+  uint local_294;
+  undefined1 local_28c [12];
+  undefined1 local_280;
+  undefined7 uStack_27f;
+  undefined4 local_278;
+  undefined4 uStack_274;
+  undefined1 local_270 [8];
+  undefined4 local_268;
+  undefined4 uStack_264;
+  undefined1 local_260 [8];
+  undefined4 local_258;
+  undefined4 uStack_254;
+  undefined1 local_250;
+  undefined7 uStack_24f;
+  undefined4 local_248;
+  undefined4 uStack_244;
+  undefined1 local_240;
+  undefined7 uStack_23f;
+  undefined4 local_238;
+  undefined4 uStack_234;
+  undefined1 local_230 [8];
+  undefined4 local_228;
+  undefined4 uStack_224;
+  undefined1 local_220 [8];
+  undefined4 local_218;
+  undefined4 uStack_214;
+  undefined1 local_210 [8];
+  undefined4 local_208;
+  undefined4 uStack_204;
+  undefined1 local_200 [8];
+  undefined4 local_1f8;
+  undefined4 local_1f4;
+  undefined1 local_1f0 [8];
+  undefined4 local_1e8;
+  undefined4 uStack_1e4;
+  undefined1 local_1e0 [8];
+  undefined4 local_1d8;
+  undefined4 uStack_1d4;
+  undefined1 local_1d0 [8];
+  undefined4 local_1c8;
+  undefined4 uStack_1c4;
+  undefined1 local_1c0;
+  undefined7 uStack_1bf;
+  undefined4 local_1b8;
+  undefined4 uStack_1b4;
+  undefined8 local_1b0;
+  undefined4 local_1a8;
+  undefined4 uStack_1a4;
+  undefined1 auStack_19c [12];
+  undefined1 local_190 [8];
+  undefined4 local_188;
+  undefined4 uStack_184;
+  undefined1 local_180 [8];
+  undefined4 local_178;
+  undefined4 uStack_174;
+  int *local_170;
+  undefined4 uStack_16c;
+  undefined4 local_168;
+  undefined4 uStack_164;
+  uint local_160 [4];
+  string asStack_150 [216];
+  int local_78;
+  undefined1 *local_74;
+  undefined4 *local_70;
+  int *local_68;
+  int *local_60 [4];
+  undefined4 local_50;
+  int local_28;
+  
+  local_28 = **(int **)(DAT_000240b8 + 0x23a18);
+  FUN_00042980(auStack_2a8,param_1,param_2);
+  FUN_00024130(auStack_2a8);
+  FUN_0002aea0();
+  FUN_0002e810(local_60);
+  piVar2 = local_60[0];
+  FUN_00024168(asStack_150,DAT_00023a64 + 0x23a40);
+  (**(code **)(*piVar2 + 0x10))(piVar2,DAT_00023a68 + 0x23a52,0x12,asStack_150);
+  std::string::~string(asStack_150);
+  piVar2 = local_60[0];
+  local_60[0] = (int *)0x0;
+  if (piVar2 != (int *)0x0) {
+    (**(code **)(*piVar2 + 4))();
+  }
+  FUN_0002eca4(asStack_150,0);
+  FUN_0003cecc(auStack_2b4);
+  FUN_0002dea8(auStack_2b0,auStack_2b4);
+  FUN_00024184(auStack_2b4);
+  FUN_0002cfd8(auStack_2cc);
+  FUN_00024300(local_298,*(undefined4 *)(DAT_00023ab8 + 0x23a9e));
+  if ((local_298[0] & 1) == 0) {
+    local_294 = (uint)(local_298[0] >> 1);
+  }
+  if (local_294 == 0) {
+    ppiVar8 = local_60;
+    uVar3 = FUN_0005031c(ppiVar8,DAT_000240bc + 0x24046,0x4a,DAT_000240c0 + 0x2404a);
+    FUN_00024198(uVar3,DAT_000240c4 + 0x24052);
+  }
+  else {
+    local_2d8 = 0;
+    uStack_2d4 = 0;
+    local_2d0 = 0;
+    local_29c = FUN_0002d7dc(local_298,&local_2d8);
+    if (local_29c == 1) {
+      local_50 = 0;
+      FUN_00024420(local_160,&local_2d8,local_60,0,0);
+      FUN_0002a070(local_60);
+      local_160[0] = local_160[0] & 0xff;
+      if (local_160[0] == 1) {
+        iVar5 = DAT_00023c08 + 0x23b08;
+        pcVar7 = (code *)(DAT_00023c0c + 0x23b0e);
+        uVar3 = (*pcVar7)(local_160);
+        FUN_000244ec(&local_170,uVar3);
+        local_190[0] = 1;
+        FUN_00024544(local_180,local_190);
+        puVar4 = (undefined1 *)(*pcVar7)(&local_170,DAT_00023c10 + 0x23b34);
+        uVar1 = *puVar4;
+        *puVar4 = local_180[0];
+        uVar3 = *(undefined4 *)(puVar4 + 8);
+        *(undefined4 *)(puVar4 + 8) = local_178;
+        uVar6 = *(undefined4 *)(puVar4 + 0xc);
+        *(undefined4 *)(puVar4 + 0xc) = uStack_174;
+        pcVar9 = (code *)(DAT_00023c14 + 0x23b58);
+        local_180[0] = uVar1;
+        local_178 = uVar3;
+        uStack_174 = uVar6;
+        (*pcVar9)(local_180);
+        FUN_0002455a(local_190,DAT_00023c18 + 0x23b64);
+        puVar4 = (undefined1 *)(*pcVar7)(&local_170,DAT_00023c1c + 0x23b6e);
+        uVar1 = *puVar4;
+        *puVar4 = local_190[0];
+        uVar3 = *(undefined4 *)(puVar4 + 8);
+        *(undefined4 *)(puVar4 + 8) = local_188;
+        uVar6 = *(undefined4 *)(puVar4 + 0xc);
+        *(undefined4 *)(puVar4 + 0xc) = uStack_184;
+        local_190[0] = uVar1;
+        local_188 = uVar3;
+        uStack_184 = uVar6;
+        (*pcVar9)(local_190);
+        uVar3 = (*pcVar7)(&local_170,DAT_00023c20 + 0x23b96);
+        FUN_0002a6c6(auStack_19c,uVar3);
+        local_1b0 = CONCAT44(uStack_16c,local_170);
+        local_1a8 = local_168;
+        uStack_1a4 = uStack_164;
+        local_168 = 0;
+        uStack_164 = 0;
+        local_170 = (int *)((uint)local_170 & 0xffffff00);
+        puVar4 = (undefined1 *)(*pcVar7)(local_160,iVar5);
+        uVar1 = *puVar4;
+        *puVar4 = (undefined1)local_1b0;
+        uVar3 = *(undefined4 *)(puVar4 + 8);
+        *(undefined4 *)(puVar4 + 8) = local_1a8;
+        uVar6 = *(undefined4 *)(puVar4 + 0xc);
+        *(undefined4 *)(puVar4 + 0xc) = uStack_1a4;
+        local_1b0 = CONCAT71(local_1b0._1_7_,uVar1);
+        _local_1a8 = CONCAT44(uVar6,uVar3);
+        (*pcVar9)(&local_1b0);
+        uVar3 = (*pcVar7)(local_160,DAT_00023c24 + 0x23bec);
+        FUN_000244ec(&local_1c0,uVar3);
+        iVar5 = FUN_00024570(auStack_19c,DAT_00023c28 + 0x23bfc);
+        pcVar10 = (code *)(DAT_00023c2c + 0x23c04);
+        if ((iVar5 != 0) || (iVar5 = FUN_00024570(auStack_19c,DAT_00024004 + 0x23c38), iVar5 != 0))
+        {
+          local_1e0[0] = 1;
+          (*pcVar10)(local_1d0,local_1e0);
+          puVar4 = (undefined1 *)(*pcVar7)(&local_1c0,DAT_00024008 + 0x23c5c);
+          uVar1 = *puVar4;
+          *puVar4 = local_1d0[0];
+          uVar3 = *(undefined4 *)(puVar4 + 8);
+          *(undefined4 *)(puVar4 + 8) = local_1c8;
+          uVar6 = *(undefined4 *)(puVar4 + 0xc);
+          *(undefined4 *)(puVar4 + 0xc) = uStack_1c4;
+          local_1d0[0] = uVar1;
+          local_1c8 = uVar3;
+          uStack_1c4 = uVar6;
+          (*pcVar9)(local_1d0);
+          local_1f0[0] = 1;
+          (*pcVar10)(local_1e0,local_1f0);
+          puVar4 = (undefined1 *)(*pcVar7)(&local_1c0,DAT_0002400c + 0x23c96);
+          uVar1 = *puVar4;
+          *puVar4 = local_1e0[0];
+          uVar3 = *(undefined4 *)(puVar4 + 8);
+          *(undefined4 *)(puVar4 + 8) = local_1d8;
+          uVar6 = *(undefined4 *)(puVar4 + 0xc);
+          *(undefined4 *)(puVar4 + 0xc) = uStack_1d4;
+          local_1e0[0] = uVar1;
+          local_1d8 = uVar3;
+          uStack_1d4 = uVar6;
+          (*pcVar9)(local_1e0);
+          local_200[0] = 1;
+          (*pcVar10)(local_1f0,local_200);
+          puVar4 = (undefined1 *)(*pcVar7)(&local_1c0,DAT_00024010 + 0x23ccc);
+          uVar1 = *puVar4;
+          *puVar4 = local_1f0[0];
+          uVar3 = *(undefined4 *)(puVar4 + 8);
+          *(undefined4 *)(puVar4 + 8) = local_1e8;
+          uVar6 = *(undefined4 *)(puVar4 + 0xc);
+          *(undefined4 *)(puVar4 + 0xc) = uStack_1e4;
+          local_1f0[0] = uVar1;
+          local_1e8 = uVar3;
+          uStack_1e4 = uVar6;
+          (*pcVar9)(local_1f0);
+        }
+        local_210[0] = 1;
+        (*pcVar10)(local_200,local_210);
+        puVar4 = (undefined1 *)(*pcVar7)(&local_1c0,DAT_00024014 + 0x23d0c);
+        uVar1 = *puVar4;
+        *puVar4 = local_200[0];
+        uVar3 = *(undefined4 *)(puVar4 + 8);
+        *(undefined4 *)(puVar4 + 8) = local_1f8;
+        uVar6 = *(undefined4 *)(puVar4 + 0xc);
+        *(undefined4 *)(puVar4 + 0xc) = local_1f4;
+        local_200[0] = uVar1;
+        local_1f8 = uVar3;
+        local_1f4 = uVar6;
+        (*pcVar9)(local_200);
+        local_220[0] = 1;
+        (*pcVar10)(local_210,local_220);
+        puVar4 = (undefined1 *)(*pcVar7)(&local_1c0,DAT_000240f4 + 0x23d46);
+        uVar1 = *puVar4;
+        *puVar4 = local_210[0];
+        uVar3 = *(undefined4 *)(puVar4 + 8);
+        *(undefined4 *)(puVar4 + 8) = local_208;
+        uVar6 = *(undefined4 *)(puVar4 + 0xc);
+        *(undefined4 *)(puVar4 + 0xc) = uStack_204;
+        local_210[0] = uVar1;
+        local_208 = uVar3;
+        uStack_204 = uVar6;
+        (*pcVar9)(local_210);
+        local_230[0] = 1;
+        (*pcVar10)(local_220,local_230);
+        puVar4 = (undefined1 *)(*pcVar7)(&local_1c0,DAT_000240f8 + 0x23d7a);
+        uVar1 = *puVar4;
+        *puVar4 = local_220[0];
+        uVar3 = *(undefined4 *)(puVar4 + 8);
+        *(undefined4 *)(puVar4 + 8) = local_218;
+        uVar6 = *(undefined4 *)(puVar4 + 0xc);
+        *(undefined4 *)(puVar4 + 0xc) = uStack_214;
+        local_2
+

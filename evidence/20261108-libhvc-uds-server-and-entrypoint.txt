@@ -1,0 +1,405 @@
+# libhvc server side of the UDS audio transport + NewLibassistantEntrypoint (3.78.540761)
+# Binary: target/ota-540761/rootfs/chrome/libhvc_perception_joplin.so  sha256 e5b51734e664324c59ccb68bd68e484dadcb472c37ac384ff7ac013e8177d7d3
+# Tool: Ghidra 12.2 headless, full auto-analysis (~25 min, 3G heap), scripts/ghidra/DecompileByString.java
+# Ghidra address = file VA + 0x10000.
+#
+# NewLibassistantEntrypoint: export @ file VA 0x391d01 (thumb), 36 bytes.
+#   disasm: r4=arg; r0=operator new(8); r1 = pc-rel(0xe59878)+8; [r0]={r1, r4}; tail-call nop -> returns r0
+# Vtable at file VA 0xe59880 (Ghidra 0xe69880), slot: target (Ghidra)
+#   0 0x345fce dtor(empty)  1 0x345fd0 deleting dtor  2 0x3a1d24 init  3 0x3a1e5c new(0x14){arg}->0x3a1ea8
+#   4 0x3a1e72 'return p ? p+4 : 0' (base-class adjust)  5 0x355be4 return 0  6 0x112d62 (not code? unclear)
+#   7 = 0x10 (start of next vtable's offset-to-top) -> this vtable is slots 0..5(6)
+# String used by slot 2: file VA 0xc42d2 "LibAssistant" (len 12)
+
+
+## 0064059c  UdsConnection ctor: read buffer of 0xffff bytes
+/* ==== 0064059c  FUN_0064059c  ANCHOR [libhvc/internal/services/platform/uds_connection.cc] ==== */
+
+void FUN_0064059c(undefined4 *param_1,undefined4 param_2,undefined4 *param_3,undefined4 *param_4,
+                 undefined4 *param_5)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_24 [8];
+  int local_1c;
+  
+  local_1c = **(int **)(DAT_00640628 + 0x6405b4);
+  *param_1 = param_2;
+  uVar1 = *param_3;
+  *param_3 = 0;
+  *(undefined2 *)(param_1 + 2) = 0;
+  param_1[1] = uVar1;
+  param_1[3] = 0;
+  param_1[4] = *(undefined4 *)((undefined1  [16])0x0 + (undefined1  [16])0x4);
+  param_1[5] = *(undefined4 *)((undefined1  [16])0x0 + (undefined1  [16])0x8);
+  param_1[6] = *(undefined4 *)((undefined1  [16])0x0 + (undefined1  [16])0xc);
+  param_1[7] = 0;
+  param_1[8] = 0;
+  FUN_006412f8(param_1 + 9,0xffff);
+  param_1[0xf] = *param_4;
+  *param_4 = 0;
+  param_1[0x10] = *param_5;
+  *param_5 = 0;
+  if (param_1[1] == 0) {
+    FUN_00e2b200(auStack_24,DAT_00640630 + 0x640616,0x29,DAT_00640634 + 0x64061a);
+    FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+    FUN_00e2b258(auStack_24);
+  }
+  if (**(int **)(DAT_0064062c + 0x6405f6) != local_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail(local_1c);
+  }
+  return;
+}
+
+## 006406a8  UdsConnection::Send: frame (FUN_0064159c) + enqueue + kick writer
+/* ==== 006406a8  FUN_006406a8  (callee) ==== */
+
+void FUN_006406a8(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined1 auStack_30 [4];
+  uint local_2c;
+  string local_28 [4];
+  uint local_24;
+  undefined4 local_1c;
+  
+  local_1c = **(undefined4 **)(DAT_00640720 + 0x6406bc);
+  FUN_0064159c(local_28);
+  if (((byte)local_28[0] & 1) == 0) {
+    local_24 = (uint)((byte)local_28[0] >> 1);
+  }
+  local_2c = local_24;
+  FUN_006407b0(auStack_30,local_28);
+  FUN_00640728(param_1 + 0xc,auStack_30,&local_2c,param_4);
+  FUN_003b98ec(auStack_30);
+  if (*(char *)(param_1 + 8) == '\0') {
+    FUN_00640820(param_1);
+  }
+                    /* WARNING: Subroutine does not return */
+  std::string::~string(local_28);
+}
+
+## 0064159c  Frame: u16 big-endian length + payload (identical to ml_framework FUN_001faa48)
+/* ==== 0064159c  FUN_0064159c  (callee) ==== */
+
+void FUN_0064159c(byte *param_1,uint param_2,int param_3)
+
+{
+  ushort *puVar1;
+  
+  std::string::__init((uint)param_1,'\x02');
+  puVar1 = *(ushort **)(param_1 + 8);
+  if ((*param_1 & 1) == 0) {
+    puVar1 = (ushort *)(param_1 + 1);
+  }
+  *puVar1 = (ushort)((uint)(param_3 << 0x18) >> 0x10) | (ushort)((uint)param_3 >> 8) & 0xff;
+  std::string::append((char *)param_1,param_2);
+  return;
+}
+
+## 00640820  Write next queued buffer raw
+/* ==== 00640820  FUN_00640820  ANCHOR [libhvc/internal/services/platform/uds_connection.cc] ==== */
+
+void FUN_00640820(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  int iVar5;
+  undefined4 uVar6;
+  undefined4 uVar7;
+  undefined4 local_34;
+  
+  iVar1 = **(int **)(DAT_006408f4 + 0x640830);
+  local_34 = param_4;
+  if (*(int *)(param_1 + 0x20) == 0) {
+    iVar1 = DAT_006408f8 + 0x6408d2;
+    uVar4 = 0x41;
+    iVar2 = DAT_006408fc + 0x6408d6;
+  }
+  else {
+    if (*(char *)(param_1 + 8) == '\0') {
+      iVar5 = *(int *)(param_1 + 0x1c);
+      *(undefined1 *)(param_1 + 8) = 1;
+      uVar6 = *(undefined4 *)(param_1 + 4);
+      iVar3 = *(int *)(param_1 + 0x10);
+      iVar2 = __aeabi_uidiv(iVar5,0x155);
+      iVar3 = *(int *)(iVar3 + iVar2 * 4);
+      iVar5 = iVar5 + iVar2 * -0x155;
+      uVar7 = *(undefined4 *)(iVar3 + iVar5 * 0xc);
+      uVar4 = *(undefined4 *)(iVar3 + iVar5 * 0xc + 4);
+      local_34 = param_1;
+      FUN_0039e53a(DAT_0064090c + 0x640886,(int)register0x00000054 + -0x2c,&local_34);
+      iVar2 = FUN_007ad6f8(uVar6,uVar7,uVar4,(int)register0x00000054 + -0x30);
+      thunk_FUN_00b286d4((int)register0x00000054 + -0x30);
+      if (iVar2 != -1) {
+        FUN_00640914(param_1,iVar2);
+      }
+      if (**(int **)(DAT_00640910 + 0x6408b4) != iVar1) {
+                    /* WARNING: Subroutine does not return */
+        __stack_chk_fail();
+      }
+      return;
+    }
+    iVar1 = DAT_00640900 + 0x6408e2;
+    uVar4 = 0x42;
+    iVar2 = DAT_00640904 + 0x6408e6;
+  }
+  FUN_00e2b200((int)register0x00000054 + -0x2c,iVar1,uVar4,iVar2,param_3);
+  FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+  FUN_00e2b258((int)register0x00000054 + -0x2c);
+}
+
+## 00640914  Write completion, "Failed to send data to uds socket"
+/* ==== 00640914  FUN_00640914  ANCHOR [Failed to send data to uds socket with result=:, libhvc/internal/services/platform/uds_connection.cc] ==== */
+
+void FUN_00640914(undefined4 *param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  int iVar4;
+  int iVar5;
+  undefined1 auStack_b0 [128];
+  
+  iVar1 = **(int **)(DAT_00640a08 + 0x640924);
+  if (*(char *)(param_1 + 2) == '\0') {
+    FUN_00e2b200(auStack_b0 + 0x84,DAT_00640a20 + 0x6409f6,0x72,DAT_00640a24 + 0x6409fa);
+    FUN_00e2aee8();
+                    /* WARNING: Subroutine does not return */
+    FUN_00e2b258(auStack_b0 + 0x84);
+  }
+  iVar5 = param_1[7];
+  *(undefined1 *)(param_1 + 2) = 0;
+  iVar4 = param_1[4];
+  iVar2 = __aeabi_uidiv(iVar5,0x155);
+  *(undefined4 *)(*(int *)(iVar4 + iVar2 * 4) + (iVar5 + iVar2 * -0x155) * 0xc + 8) = 0;
+  FUN_00640d44(param_1 + 3);
+  if (param_2 < 1) {
+    iVar2 = FUN_00e2a110(0,DAT_00640a0c + 0x64098e);
+    if (iVar2 != 0) {
+      uVar3 = FUN_00e2acb0(auStack_b0 + 0x84,DAT_00640a10 + 0x6409c6,0x7a);
+      uVar3 = FUN_0034636c(uVar3,DAT_00640a14 + 0x6409ce);
+      uVar3 = FUN_00346388(uVar3,param_2);
+      FUN_0034636c(uVar3,DAT_00640a18 + 0x6409dc);
+      FUN_00e2aee8();
+      FUN_00e2acb6(auStack_b0 + 0x84);
+    }
+    FUN_00640c2c(param_1);
+  }
+  else {
+    FUN_003a3bf0(auStack_b0 + 0x80,*param_1);
+    if (param_1[8] != 0) {
+      FUN_00640820(param_1);
+    }
+  }
+  thunk_FUN_00b286d4(auStack_b0 + 0x80);
+  if (**(int **)(DAT_00640a1c + 0x6409a8) != iVar1) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail(iVar1,**(int **)(DAT_00640a1c + 0x6409a8));
+  }
+  return;
+}
+
+## 00640c2c  Close connection
+/* ==== 00640c2c  FUN_00640c2c  ANCHOR [libhvc/internal/services/platform/uds_connection.cc] ==== */
+
+undefined8 FUN_00640c2c(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  undefined4 uVar1;
+  int *piVar2;
+  undefined4 uStack_1c;
+  undefined4 uStack_18;
+  int local_14;
+  
+  local_14 = **(int **)(DAT_00640c98 + 0x640c3a);
+  uStack_1c = param_2;
+  uStack_18 = param_3;
+  uVar1 = FUN_00e2aca4(&uStack_1c,DAT_00640c9c + 0x640c48,100);
+  FUN_0034636c(uVar1,DAT_00640ca0 + 0x640c50);
+  FUN_00e2aee8();
+  FUN_00e2acb6(&uStack_1c);
+  piVar2 = (int *)param_1[1];
+  param_1[1] = 0;
+  if (piVar2 != (int *)0x0) {
+    (**(code **)(*piVar2 + 0xc))();
+  }
+  *(undefined2 *)(param_1 + 2) = 0;
+  FUN_00640ca8(param_1 + 3);
+  if (param_1[0xf] != 0) {
+    FUN_003a3bf0(param_1 + 0xf,*param_1);
+  }
+  if (**(int **)(DAT_00640ca4 + 0x640c8a) != local_14) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return CONCAT44(uStack_1c,param_1);
+}
+
+## 00641048  UdsServerSocket accept completion -> new connection id
+/* ==== 00641048  FUN_00641048  ANCHOR [libhvc/internal/services/platform/uds_server_socket.cc] ==== */
+
+void FUN_00641048(int param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined1 auStack_54 [4];
+  undefined1 auStack_50 [8];
+  int local_48 [3];
+  int local_3c [4];
+  undefined4 local_2c;
+  int local_28;
+  
+  iVar2 = DAT_00641198;
+  local_28 = **(int **)(DAT_00641194 + 0x641060);
+  iVar1 = FUN_00e2a110(0,DAT_00641198 + 0x64106a);
+  if (iVar1 != 0) {
+    uVar3 = FUN_00e2aca4(local_3c,DAT_0064119c + 0x641178,0x5f);
+    uVar3 = FUN_0034636c(uVar3,DAT_006411a0 + 0x641180);
+    FUN_00346388(uVar3,param_2);
+    FUN_00e2aee8();
+    FUN_00e2acb6(local_3c);
+  }
+  FUN_00e12404(&local_2c);
+  FUN_00b28ba0(local_3c,DAT_006411a4 + 0x641090,DAT_006411a8 + 0x641092,99);
+  local_48[1] = 0;
+  local_48[0] = DAT_006411ac + 0x6410a2;
+  FUN_003a2f54(auStack_50,param_1 + 0xc0);
+  local_48[2] = FUN_003cab1c(DAT_006411b0 + 0x6410b4,local_48,auStack_50);
+  FUN_00e10b04(local_2c,local_3c,local_48 + 2);
+  thunk_FUN_00b286d4(local_48 + 2);
+  thunk_FUN_0039e2e8(auStack_50);
+  FUN_00399bce(&local_2c);
+  if (param_2 == 0) {
+    local_3c[0] = *(int *)(param_1 + 0xbc);
+    *(int *)(param_1 + 0xbc) = local_3c[0] + 1;
+    FUN_006411c0(auStack_54,local_3c,param_1 + 0xac,param_1 + 0xb4,param_1 + 0xb8);
+    (**(code **)(*(int *)(param_1 + 0xb0) + 4))(*(int *)(param_1 + 0xb0),auStack_54);
+    FUN_0063d49e(auStack_54);
+  }
+  else {
+    iVar2 = FUN_00e2a110(0,iVar2 + 0x64107a);
+    if (iVar2 != 0) {
+      uVar3 = FUN_00e2acb0(local_3c,DAT_006411b4 + 0x641100,0x67);
+      uVar3 = FUN_0034636c(uVar3,DAT_006411b8 + 0x641108);
+      FUN_00346388(uVar3,param_2);
+      FUN_00e2aee8();
+      FUN_00e2acb6(local_3c);
+    }
+  }
+  if (**(int **)(DAT_006411bc + 0x641158) != local_28) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## 0063caf4  UdsAudioInputService: forwards to delegate +0x14 vfunc 0x10
+/* ==== 0063caf4  FUN_0063caf4  ANCHOR [libhvc/internal/services/platform/uds_audio_input_service.cc] ==== */
+
+void FUN_0063caf4(int param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_24 [8];
+  int local_1c;
+  
+  local_1c = **(int **)(DAT_0063cb50 + 0x63cb0a);
+  uVar1 = FUN_00e2aca4(auStack_24,DAT_0063cb54 + 0x63cb18,99);
+  FUN_0034636c(uVar1,DAT_0063cb58 + 0x63cb20);
+  FUN_00e2aee8();
+  FUN_00e2acb6(auStack_24);
+  (**(code **)(**(int **)(param_1 + 0x14) + 0x10))(*(int **)(param_1 + 0x14),param_2);
+  if (**(int **)(DAT_0063cb5c + 0x63cb3e) != local_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## 0063ca88  UdsAudioInputService: forwards to delegate +0x14 vfunc 0xc
+/* ==== 0063ca88  FUN_0063ca88  ANCHOR [libhvc/internal/services/platform/uds_audio_input_service.cc] ==== */
+
+void FUN_0063ca88(int param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_24 [8];
+  int local_1c;
+  
+  local_1c = **(int **)(DAT_0063cae4 + 0x63ca9e);
+  uVar1 = FUN_00e2aca4(auStack_24,DAT_0063cae8 + 0x63caac,0x5d);
+  FUN_0034636c(uVar1,DAT_0063caec + 0x63cab4);
+  FUN_00e2aee8();
+  FUN_00e2acb6(auStack_24);
+  (**(code **)(**(int **)(param_1 + 0x14) + 0xc))(*(int **)(param_1 + 0x14),param_2);
+  if (**(int **)(DAT_0063caf0 + 0x63cad2) != local_1c) {
+                    /* WARNING: Subroutine does not return */
+    __stack_chk_fail();
+  }
+  return;
+}
+
+## 003a1d00  NewLibassistantEntrypoint: new {vtable, arg} (8 bytes)
+/* ==== 003a1d00  NewLibassistantEntrypoint  ANCHOR [@3a1d00] ==== */
+
+void NewLibassistantEntrypoint(int param_1)
+
+{
+  int *piVar1;
+  
+  piVar1 = operator_new(8);
+  *piVar1 = DAT_003a1d20 + 0x3a1d1a;
+  piVar1[1] = param_1;
+  FUN_00345fce(piVar1,param_1);
+  return;
+}
+
+## 003a1d24  vtable slot 2: init; "LibAssistant" name; build core from config
+/* ==== 003a1d24  FUN_003a1d24  ANCHOR [@3a1d24] ==== */
+
+void FUN_003a1d24(void)
+
+{
+  int iVar1;
+  string asStack_80 [12];
+  undefined1 auStack_74 [4];
+  undefined1 auStack_70 [8];
+  undefined4 local_68;
+  undefined4 local_54;
+  undefined4 local_30;
+  undefined4 uStack_2c;
+  undefined4 local_28;
+  undefined4 local_24;
+  
+  local_24 = **(undefined4 **)(DAT_003a1e4c + 0x3a1d38);
+  FUN_003487f0(&local_30);
+  FUN_0079b770(&local_28,local_30,uStack_2c);
+  FUN_0079e6d0(auStack_70,local_28);
+  iVar1 = FUN_00e09240();
+  if (iVar1 == 0) {
+    FUN_00e091c4(DAT_003a1e50 + 0x3a1d62,0xc);
+  }
+  FUN_0034822e(asStack_80,DAT_003a1e54 + 0x3a1d72);
+  FUN_003a1e7c(auStack_74,local_68,local_54,asStack_80);
+                    /* WARNING: Subroutine does not return */
+  std::string::~string(asStack_80);
+}
+
+## 00355be4  vtable slot 5: returns 0
+/* ==== 00355be4  FUN_00355be4  ANCHOR [@355be4] ==== */
+
+undefined4 FUN_00355be4(void)
+
+{
+  return 0;
+}
