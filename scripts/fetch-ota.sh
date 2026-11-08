@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Download an OTA zip offered by Omaha (see scripts/omaha_spoof.py), verify it against
-# the offer's sha256, and unpack it into work/ota-<build>/ (gitignored):
+# the offer's sha256, and unpack it next to the zip in target/ota-<build>/ (gitignored):
 #   zip/      the OTA zip contents (system.img, boot.img, bootloaders, tz, META-INF)
 #   rootfs/   system.img (SquashFS) unpacked -> chrome/cast_shell, bin/, lib/ ...
 #   kernel.bin, Image (decompressed), ramdisk/ (from boot.img, incl. dmtable)
@@ -9,13 +9,13 @@
 set -euo pipefail
 url="$1"; sha="$2"; build="$3"
 root="$(cd "$(dirname "$0")/.." && pwd)"
-dl="$root/target/ota-$build"; w="$root/work/ota-$build"
-mkdir -p "$dl" "$w"
-zip="$dl/$(basename "${url%%\?*}")"
+w="$root/target/ota-$build"
+mkdir -p "$w"
+zip="$w/$(basename "${url%%\?*}")"
 [ -f "$zip" ] || curl -fSL -o "$zip" "$url"
 echo "$sha  $zip" | sha256sum -c -
 
-rm -rf "$w/zip" "$w/rootfs" "$w/ramdisk"
+rm -rf "$w/zip" "$w/rootfs" "$w/ramdisk" "$w/kernel.bin" "$w/Image" "$w/ramdisk.xz"
 unzip -q "$zip" -d "$w/zip"
 7z x -y -o"$w/rootfs" "$w/zip/system.img" >/dev/null   # unsquashfs works too
 
@@ -35,6 +35,6 @@ if i >= 0:
     open(f"{w}/Image", "wb").write(img)
     print(re.search(rb"Linux version [^\n]+", img).group().decode())
 EOF
-mkdir -p "$w/ramdisk" && (cd "$w/ramdisk" && xz -dc ../ramdisk.xz | cpio -idm --quiet)
+mkdir -p "$w/ramdisk" && (cd "$w/ramdisk" && xz -dc ../ramdisk.xz | cpio -idm --quiet) && rm "$w/ramdisk.xz"
 cat "$w/zip/META-INF/com/android/metadata"
 echo "unpacked to $w"

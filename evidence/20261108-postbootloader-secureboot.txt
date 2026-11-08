@@ -1,0 +1,57 @@
+# Secure-boot / post-bootloader static analysis (supports F25-F28, Piste 11/12)
+# Generated 2026-11-08T08:05:29Z from target/ota-540761/zip/*  (read-only)
+
+## sha256 of analyzed images
+9cf883cda2cd971323097cd5f157b8fe7572fc3c0d7b5d0d73ba21edf73db0f0  target/ota-540761/zip/bootloader.joplin-b4
+aea741e2e690e0ac00f76a94f8a9ed48c51c4035cf7dfbc4c2317e8ba412d873  target/ota-540761/zip/post-bootloader.joplin-b4
+40fe71cbcf0ce44e1b4651c46ca8b7e9992a8a0a83d3a2b27cc6c9189f273fcb  target/ota-540761/zip/tz_en.joplin-b4
+d63ecdd002b792d476aa4cbae6be1d37ca78200c860eb0635f7d07381b94b0d1  target/ota-540761/zip/boot.img
+fd699769aefc86b844ac1e462f46cb76c23b893d3ad1b508b5d159eec20d23a7  target/ota-540761/Image
+
+## figo/C0DE header (first 48 bytes each)
+post-bootloader.joplin-b4:   01000000dec0000400000000000000000000000000000000000000000100
+0000ffffffff01ff0000a8db0100a659f20f
+tz_en.joplin-b4:             01000000dec00204000000001c520561a9a5e9ddb617c27734b756da0100
+0000ffffffff01ff0000f0e1120013ab3a38
+boot.img:                    01000000dec0000400000000000000000000000000000000000000000100
+0000ffffffff01ff000000683f00145970d8
+bootloader.joplin-b4:        0100000037c2000101000000df2d7351ccea84af7f2c1c2720a06a2a6f7d
+59ae02c6573ff55254b1ece4f9eb500084d1
+
+## body entropy (overall) — >7.5 = encrypted, ~5-6 = plaintext code
+  bootloader.joplin-b4         7.97
+  post-bootloader.joplin-b4    6.63
+  tz_en.joplin-b4              8.00
+  boot.img                     8.00
+
+## F27 USB-boot + verify strings in post-bootloader
+Detected button press -- booting from USB
+bootimg SHA1 verify fail: start 0x%08x, size %d
+mkbootimg bootargs: %s
+	verify 0k:0x%x, 1k:0x%x, 2k:0x%x
+	verify image %x, size=%d, waitcount=%d
+ERROR: Failed to read CPU image header from USB 
+ERROR: Failed to read CPU image blk_cnt %d ret %d
+ERROR: Failed to read CPU image ret %d
+ERROR: Verify k_buff image failed!ret=0x%x
+ERROR: Invalid mkbootimg header!
+ERROR: Boot image verify header failed!ret=0x%x
+Booting from NAND failed, booting from USB....!
+RSA KEY INDEX:%1X
+figo magic = %x, figo_off = %d, figo_len = %d
+Warning: Invalid key store!Key Id is:0x%x, keystore size is: 0x%x
+Loading Secure Customer Key Store is finished
+Finish to load Customer Key store
+FIGO is running at FIGO ROM Code agian
+USB IF descriptor overflowed buffer!
+Too many USB interfaces!
+USB EP descriptor overflowed buffer!
+ERROR, too many USB Devices, max=%d
+
+## F22 YAFFS fix vs vuln trace strings in kernel Image
+FIX markers present:
+7yaffs: yaffs tragedy: Bad type, %d != %d, for object %d at chunk %d during scan
+7yaffs: Obj %d header type is illegal value 0x%x
+7yaffs: Obj %d has illegaltype %d
+VULN courk trace ('yaffs: Bad object type') present?:
+  (absent — only binder uses phrase)
