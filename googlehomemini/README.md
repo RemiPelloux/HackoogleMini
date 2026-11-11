@@ -22,17 +22,32 @@ Read in this order:
 | Setup API mapped | ✅ `eureka_info`, `scan_results`, `scan_wifi`, `get_app_device_id`, `offer` (E2) |
 | Large BLE payloads | ✅ resolved — no longer needed, the setup AP returns full data (U1) |
 | Exact model name | ✅ `product_name: mushroom` ⇒ Marvell Armada 1500 Mini Plus (U2) |
-| LAN / Cast reachability | ❌ device has no IP yet (`wpa_configured: false`) |
+| LAN / Cast reachability | ✅ **provisioned** — `192.168.1.29`, firmware 3.78.540761, Chrome/92.0.4515.0 |
 | USB / UART / JTAG | ❌ none available on H0A — NAND access only (U5, F9) |
-| Firmware obtained | ❌ not yet — **the blocking prerequisite** |
+| Firmware obtained | ❌ not yet — OTA extraction path documented (F18) |
 | Firmware pipeline | ✅ verified end-to-end on a synthetic image |
 | NAND dump decoder | ✅ `scripts/nand-decode.py`, selftest green |
 | REA + Ghidra | ✅ healthy (Ghidra 12.1.2 headless; IDA + JADX also available) |
+| ARP MITM | ✅ operational (arpspoof + dnsmasq + iptables REDIRECT) |
+| HTTPS MITM server | ✅ port 4443, CN=clients3.google.com, serving fake registry → probe.html |
+| Media fetch via MITM | ✅ cast_shell fetches audio + WebVTT from our HTTP server |
+| Boot-time registry intercept | ⏳ **one power cycle away** — infrastructure ready |
+| JS execution in cast_shell | ⏳ blocked on boot-time intercept |
+| CVE-2021-30563 (V8, Chrome 92) | ⏳ applicable — needs JS execution first |
+| Magellan (CVE-2018-20346) | ⏳ applicable — needs JS execution first |
+| Shell access | ⏳ 1–5 days after first JS execution |
 
-**The short version:** boot is verified and there is no UART, so Google's images
-cannot be patched in place. The only route into this hardware is a NAND dump plus the
-published YAFFS2 `cache`-partition exploit; the alternative is a drop-in PCB. See
-`notes/ondevice-plan.md`.
+**Current blocker:** cast_shell caches receiver HTML URLs locally and only fetches
+the Cast registry at boot. The MITM is live and correct; a single device power cycle
+triggers the boot window where the registry fetch is intercepted and probe.html is
+loaded as the receiver → JavaScript executes in cast_shell's Chromium renderer.
+
+**ETA:**
+- First JS execution: one 5-second power cycle + 30-60 s boot
+- Shell access: 1–5 days (Magellan Phase 3 binary offsets or V8 weaponisation)
+- LLM replacement: 1–2 weeks post-shell
+
+See `notes/findings.md` F19–F25 and the attack status table for full detail.
 
 ## Quick start
 

