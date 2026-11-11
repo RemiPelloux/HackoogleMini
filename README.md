@@ -69,7 +69,7 @@ Each investigation follows the same layout:
 ## Quick start
 
 ```bash
-git clone https://github.com/tkmremi/rea-lab
+git clone https://github.com/RemiPelloux/rea-lab
 cd rea-lab
 
 # Install REA + wire up to Claude Code
@@ -101,11 +101,11 @@ Then open Claude Code in the new folder and start with the `reverse-engineer-any
 If this work saves you time or sparks an idea, consider supporting it.
 
 <div align="center">
-  <a href="https://github.com/sponsors/tkmremi">
+  <a href="https://github.com/sponsors/RemiPelloux">
     <img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?style=for-the-badge&logo=github-sponsors&logoColor=white" alt="Sponsor on GitHub" />
   </a>
   &nbsp;
-  <a href="https://ko-fi.com/tkmremi">
+  <a href="https://ko-fi.com/RemiPelloux">
     <img src="https://img.shields.io/badge/Ko--fi-Support-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Support on Ko-fi" />
   </a>
 </div>
