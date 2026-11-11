@@ -25,17 +25,39 @@
 
 ## Attack surface
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│  Google Home Mini gen 1 (H0A)  ·  Marvell Armada 1500  ·  fw 3.78.540761       │
-│                                                                                  │
-│  cast_shell ── Chrome/92.0.4515.0 ── CVE-2021-30563 (V8 type confusion) ───────►│ SHELL
-│      │                                                                           │
-│      └── queries clients3.google.com ──► DNS MITM ──► fake Cast registry        │
-│                                              │                                  │
-│  YAFFS2 cache-partition exploit ─────────────┤ hardware path (NAND dump)        │
-│  Magellan SQLite RCE (CVE-2018-20346) ────────┘ revisiting — mfg 2018-09-05     │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph DEVICE["🔴 Google Home Mini gen 1 · H0A · Marvell Armada 1500 · fw 3.78.540761"]
+        CS["cast_shell\nChrome/92.0.4515.0 pre-release"]
+        SQLITE["SQLite embedded\nmfg 2018-09-05"]
+        NAND["NAND/YAFFS2\nflash storage"]
+    end
+
+    subgraph ATTACKER["💻 Attacker LAN"]
+        DNS["DNS MITM\nclients3.google.com → us"]
+        REG["Fake Cast Registry\nmitm_https_server.py"]
+        PROBE["probe.html\nWebSQL + V8 shellcode"]
+        EX["exfil_server.py\nPOST /log callback"]
+    end
+
+    CS -->|"queries Cast registry\n(TLS :443)"| DNS
+    DNS --> REG
+    REG -->|"{'url': tunnel/probe.html}"| CS
+    CS -->|"fetches + executes"| PROBE
+    PROBE -->|"CVE-2021-30563\nV8 type confusion"| SHELL["🏆 SHELL"]
+    PROBE -->|"CVE-2018-20346\nMagellan SQLite RCE"| SQLITE
+    SQLITE --> SHELL
+    PROBE -->|"exfil"| EX
+
+    NAND -->|"YAFFS2 cache-partition\n(hardware fallback)"| SHELL
+
+    style SHELL fill:#238636,color:#fff,stroke:#2ea043
+    style DEVICE fill:#1a0a2e,color:#c9d1d9,stroke:#58a6ff
+    style ATTACKER fill:#0d1117,color:#c9d1d9,stroke:#30363d
+    style CS fill:#1f3a5f,color:#79c0ff,stroke:#388bfd
+    style DNS fill:#3d2b00,color:#ffa657,stroke:#d29922
+    style REG fill:#3d2b00,color:#ffa657,stroke:#d29922
+    style PROBE fill:#3d2b00,color:#ffa657,stroke:#d29922
 ```
 
 ## Status
@@ -65,14 +87,22 @@
 
 ### Chain A — Chrome n-day via Cast registry MITM (active)
 
-```
-1. AdGuard DNS rewrite: clients3.google.com → <mitm-ip>
-2. Freebox: port-forward WAN:443 → pi:443
-3. pi5 reverse tunnel: 443 → attacker:4443 (mitm_https_server.py)
-4. Mini queries Cast registry → fake JSON: {"url": "<tunnel>/probe.html"}
-5. cast_shell fetches probe.html (valid TLS via Cloudflare tunnel)
-6. probe.html: WebSQL/Magellan probe + CVE-2021-30563 V8 shellcode
-7. Exfil via POST to Cloudflare tunnel → shell callback
+```mermaid
+sequenceDiagram
+    participant Mini as 🔴 cast_shell<br/>(Chrome/92.0.4515.0)
+    participant DNS as DNS MITM<br/>(AdGuard / iptables)
+    participant Reg as Fake Cast Registry<br/>mitm_https_server.py :4443
+    participant Probe as probe.html<br/>(Cloudflare/Serveo tunnel)
+    participant Exfil as exfil_server.py<br/>:8081 /log
+
+    Mini->>DNS: DNS lookup clients3.google.com
+    DNS-->>Mini: → 192.168.1.24 (us)
+    Mini->>Reg: GET /cast/v2/receiver?appId=CC1AD845
+    Reg-->>Mini: {"url": "https://tunnel/probe.html"}
+    Mini->>Probe: fetch probe.html (valid TLS)
+    Note over Mini,Probe: CVE-2021-30563 V8 type confusion<br/>+ Magellan WebSQL SQLite RCE
+    Mini->>Exfil: POST /log (SQLite ver, UA, shell callback)
+    Exfil-->>Mini: 200 OK
 ```
 
 Scripts: `reconstruction/exploit/magellan/mitm_https_server.py` · `scripts/mitm-attack.sh`
