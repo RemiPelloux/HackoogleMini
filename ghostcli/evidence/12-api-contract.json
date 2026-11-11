@@ -1,0 +1,193 @@
+{
+ "source": "static extraction from 32 client sources (target/web/chunks, target/web/dashboard/chunks)",
+ "authority": "shipped-artifact \u2014 nothing executed",
+ "endpoints": {
+  "/api/auth/login": {
+   "POST": {
+    "body": [
+     "email",
+     "password",
+     "capToken"
+    ],
+    "note": "client sends a CAPTCHA token"
+   }
+  },
+  "/api/auth/logout": {
+   "POST": {}
+  },
+  "/api/me": {
+   "GET": {}
+  },
+  "/api/config": {
+   "GET": {}
+  },
+  "/api/plan": {
+   "POST": {
+    "body": [
+     "plan"
+    ],
+    "note": "body hardcoded to {\"plan\":\"free\"} for cancel"
+   }
+  },
+  "/api/subscription": {
+   "POST": {
+    "body": [
+     "action"
+    ]
+   }
+  },
+  "/api/usage": {
+   "GET": {}
+  },
+  "/api/keys": {
+   "GET": {},
+   "POST": {
+    "body": [
+     "name"
+    ]
+   }
+  },
+  "/api/keys?id=${id}": {
+   "DELETE": {}
+  },
+  "/api/keys/ips": {
+   "POST": {
+    "body": [
+     "keyId",
+     "+ client state (ip fields)"
+    ]
+   }
+  },
+  "/api/keys/ips?keyId=${id}": {
+   "GET": {},
+   "response": [
+    "ips",
+    "currentIp",
+    "currentNetwork",
+    "limite",
+    "teto"
+   ]
+  },
+  "/api/keys/ips?id=${id}": {
+   "DELETE": {}
+  },
+  "/api/chats": {
+   "GET": {},
+   "POST": {}
+  },
+  "/api/chats/${id}": {
+   "GET": {},
+   "PATCH": {
+    "body": [
+     "pinned | model"
+    ]
+   },
+   "DELETE": {}
+  },
+  "/api/chat": {
+   "POST": {
+    "body": [
+     "chatId",
+     "content"
+    ],
+    "note": "402 -> limit reached, 403 -> locked-model; extra auth headers from a client-side helper"
+   }
+  },
+  "/api/chat/upload": {
+   "POST": {
+    "body": [
+     "file (multipart)"
+    ],
+    "client_accept": [
+     ".png",
+     ".jpg",
+     ".jpeg",
+     ".gif",
+     ".webp",
+     ".txt",
+     ".csv",
+     ".log",
+     ".json",
+     ".xml",
+     ".yaml",
+     ".yml",
+     ".toml",
+     ".py",
+     ".js",
+     ".ts",
+     ".tsx",
+     ".jsx",
+     ".rs",
+     ".go",
+     ".java",
+     ".c",
+     ".cpp"
+    ]
+   }
+  },
+  "/api/affiliate": {
+   "GET": {},
+   "POST": {
+    "body": [
+     "code"
+    ]
+   }
+  },
+  "/api/pay/whop/check": {
+   "POST": {
+    "body": [
+     "reference (from ?ref= in the URL)"
+    ],
+    "response": [
+     "paid"
+    ]
+   }
+  },
+  "/api/uptime": {
+   "GET": {}
+  }
+ },
+ "trust_boundary": [
+  {
+   "input": "keyId on /api/keys/ips (GET, POST, DELETE)",
+   "from_client": true,
+   "server_must": "WHERE user_id = session.user"
+  },
+  {
+   "input": "id on /api/keys (DELETE) and /api/chats/{id} (GET, PATCH, DELETE)",
+   "from_client": true,
+   "server_must": "ownership check per row"
+  },
+  {
+   "input": "chatId in POST /api/chat",
+   "from_client": true,
+   "server_must": "ownership check before append"
+  },
+  {
+   "input": "reference in POST /api/pay/whop/check",
+   "from_client": true,
+   "server_must": "verify the reference against Whop's API/webhook, never trust {paid} derivation from it alone"
+  },
+  {
+   "input": "plan in POST /api/plan",
+   "from_client": true,
+   "server_must": "only allow self-downgrade, never self-upgrade"
+  },
+  {
+   "input": "ip inside POST /api/keys/ips",
+   "from_client": true,
+   "server_must": "prefer socket peer / CF-Connecting-IP; the GET handler returning currentIp suggests the server already knows the real address"
+  },
+  {
+   "input": "file in POST /api/chat/upload",
+   "from_client": true,
+   "server_must": "own type/size validation; the accept attribute is a UI hint only"
+  }
+ ],
+ "positives": [
+  "login carries a capToken (bot mitigation) \u2014 server-side verification unverified",
+  "/api/chat returns 402 for quota and 403 for locked-model, so plan enforcement exists on that path",
+  "sensitive reads use cache:\"no-store\"; errors surface only errorCode keys",
+  "GET /api/keys/ips returns currentIp/currentNetwork computed server-side"
+ ]
+}

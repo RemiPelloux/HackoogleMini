@@ -1,0 +1,13 @@
+{
+  "title": "Funnel: identity headers stripped only in dash form; underscore variants pass through to backend -> internet identity spoof",
+  "severity": "HIGH (internet-facing identity spoof / auth bypass at a backend that trusts Tailscale-User-Login). Backend-dependent exploitability.",
+  "status": "VERIFIED at tailscaled layer (Go canonicalization + code read). Exploitability depends on backend/gateway conflating '_' and '-'.",
+  "upstream_status": "present on origin/main (no client/web/serve identity-strip change post-tag)",
+  "component": "ipn/ipnlocal/serve.go addTailscaleIdentityHeaders (:1098-1126), addAppCapabilitiesHeader (:1144)",
+  "mechanism": "Only exact dash-case keys are Del'd (Tailscale-User-Login/-Name/-Profile-Pic/-Funnel-Request/-Headers-Info + Tailscale-App-Capabilities). Go's CanonicalMIMEHeaderKey treats '_' as a non-separator, so 'Tailscale_User_Login' -> 'Tailscale_user_login', a DISTINCT key that survives Del. httputil.ReverseProxy (Rewrite mode) clones r.In headers to r.Out, so the underscore header is forwarded to the backend. On the funnel path the legit dash header is NEVER set (returns early after Tailscale-Funnel-Request), so the client-supplied underscore variant is the sole source.",
+  "verify_output": "After Del(\"Tailscale-User-Login\"), map still contains \"Tailscale_user_login\"=[admin@corp.com] (reproduced with Go 1.27.3).",
+  "scenario": "Funnel enabled + a Proxy mount to a backend that maps both '-' and '_' headers to the same var (CGI/PHP/FastCGI/WSGI; Apache; nginx with underscores_in_headers on). Internet client sends 'Tailscale_User_Login: admin@corp.com' -> backend sees HTTP_TAILSCALE_USER_LOGIN=admin@corp.com -> spoofed authenticated identity. Same for Tailscale_Funnel_Request suppression and Tailscale_App_Capabilities injection.",
+  "caveat": "nginx default (underscores_in_headers off) drops underscore headers -> not exploitable there. Certain on the tailscaled gap; backend-dependent on reach.",
+  "fix": "strip identity/cap/funnel headers by normalized/prefix match (reject '_' variants), not exact dash-case Del.",
+  "credit_auditor": "funnel agent"
+}

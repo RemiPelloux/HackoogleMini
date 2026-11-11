@@ -1,0 +1,13 @@
+{
+  "title": "NEGATIVE: unauthenticated/on-LAN remote surface has no in-tree High/Critical",
+  "scope": "net/portmapper (UPnP/NAT-PMP/PCP), net/netcheck+net/stun, wgengine/magicsock disco pre-auth, net/packet geneve",
+  "result": "All in-tree parsers bounds-checked (NAT-PMP parsePMPResponse, PCP parsePCPMapResponse, stun.ParseResponse, geneve.Decode). Disco handleDiscoMessage msg[6:38] slice guarded by packetLooksLike(len>=38) in all 3 callers; nacl/box open only after knownPeerDiscoKey match (control-distributed) -> effectively authenticated surface. WireGuard fall-through Noise-gated.",
+  "only_lead": {
+    "title": "UPnP control-URL SSRF (MEDIUM)",
+    "where": "net/portmapper/upnp.go:245-280 getUPnPRootDevice pins FIRST fetch to gateway IP, but controlURL/eventSubURL/SCPDURL inside device XML are used by goupnp WITHOUT re-validation -> SOAP POSTs go where XML says.",
+    "why_medium": "netns.NewDialer binds to physical iface (loopback likely unreachable); no exfil channel back to attacker; attacker is the gateway (already on-path).",
+    "confirm": "audit goupnp v1.3.0 URL resolution; test whether netns dialer permits 169.254.169.254."
+  },
+  "next_avenue_out_of_tree": "github.com/huin/goupnp v1.3.0 does the UPnP device-description XML + SOAP parsing; any memory/parse HIGH on the UPnP path would live there (not in this repo).",
+  "authenticated-only_followup": "disco/disco.go parseCallMeMaybeVia / parseAllocateUDPRelayEndpoint* parse length/count fields post-box-open (malicious tailnet member scope)."
+}

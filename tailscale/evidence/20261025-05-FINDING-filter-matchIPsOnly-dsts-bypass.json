@@ -1,0 +1,13 @@
+{
+  "title": "ICMP ACL scope bypass: matchIPsOnly SrcCaps branch ignores rule Dsts",
+  "status": "CONFIRMED by source inspection (exact asymmetry vs non-cap branch and matches.match); runtime unit test described but NOT yet run",
+  "upstream_status": "UNFIXED on origin/main (no post-v1.104.1 commits touch wgengine/filter/match.go)",
+  "severity_estimate": "Low-Medium (ICMP-only; requires SrcCaps-based ACL rules; meaningful recon impact only where localNets includes advertised subnets / exit-node default route, i.e. subnet routers & exit nodes)",
+  "component": "wgengine/filter",
+  "sink": "wgengine/filter/match.go:74-82 (matchIPsOnly cap branch) used by runIn4 (filter.go:519) / runIn6 (filter.go:581) ICMP cases",
+  "root_cause": "cap branch iterates all matches and returns true on first hasCap(srcAddr,c) hit WITHOUT checking that match's Dsts; the non-cap branch (match.go:64-73) checks dst.Net.Contains, and matches.match() (TCP/UDP) keeps Dsts/Ports scoped per-match via srcMatches. Asymmetric.",
+  "scenario": "A peer whose node holds capability c that appears in ANY rule's SrcCaps can send ICMP echo to any IP in localNets, even if the only rule granting c scoped Dsts to one unrelated host. On a subnet router localNets includes the advertised subnet -> host sweep / recon across the subnet beyond intended ACL scope.",
+  "confirming_test": "filter_test.go: Match{SrcCaps:[c], Dsts:[10.0.0.5/32:443]} + advertised 10.0.0.0/24 in localNets; RunIn ICMP echo to 10.0.0.9 -> expect Accept 'icmp ok' (bug) vs Drop (correct).",
+  "fix": "In the cap branch, only consider matches whose Dsts contain q.Dst.Addr() (mirror the non-cap branch / srcMatches+Dsts structure).",
+  "credit_auditor": "surface F (netstack+filter)"
+}

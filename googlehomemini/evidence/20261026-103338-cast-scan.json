@@ -1,0 +1,59 @@
+{
+  "mdns": {
+    "QN80D-0ae37f5dc8a4eb9041974476794c7240._googlecast._tcp.local.": {
+      "addresses": [
+        "192.168.1.12"
+      ],
+      "port": 8009,
+      "server": "0ae37f5d-c8a4-eb90-4197-4476794c7240.local.",
+      "service": "_googlecast._tcp.local.",
+      "txt": {
+        "bs": "001A11FF0000",
+        "ca": "5",
+        "cd": "B0E88EAFB1F34E26FF056CDCA8F0BAA4",
+        "fn": "65\" Neo QLED",
+        "ic": "/setup/icon.png",
+        "id": "0ae37f5dc8a4eb9041974476794c7240",
+        "md": "QN80D",
+        "nf": "1",
+        "rm": "70F82451BDAA4310",
+        "st": "3",
+        "ve": "05"
+      }
+    }
+  },
+  "probes": {
+    "192.168.1.12": {
+      "build_version": "721674079",
+      "cast_build_revision": "1.68.cast_20250131_0201_RC31.721674079",
+      "connected": true,
+      "ethernet_connected": false,
+      "has_update": false,
+      "hotspot_bssid": "00:1A:11:FF:61:87",
+      "ip_address": "192.168.1.12",
+      "locale": "Unknown",
+      "mac_address": "00:00:00:00:00:00",
+      "name": "65\" Neo QLED",
+      "opt_in": {
+        "crash": true,
+        "stats": true
+      },
+      "public_key": "MIIBCgKCAQEAyLgGVoJEo8OegJWbjCR4ZG8qSYbeio3YJbiaZJccrTL/6ruUKuaTBjl5HztV56WBFrihcDQgotAyaASRJjxeph/8QjYcyoR2xmDka1EAffjFMd7G2BTp+ZhYAX4ZnNjyh7Yn6iolCZuTab6EDVRRrXLnFI80Y0FD9f4mH0kkR62gU5qpTpH+hPlw2JSl68POaJmjQTrvQS9+PmRAnTrGWA7RnWTaLtsIM0IAuPmtvDRLHRZBwg2qNi95Q69KpIMuGHeAfF8QcDZ3mlMeCIcStDlattR87XcY8dQs7mYmUiuwQfdwoejaPUKrcJT0FPKrdfGtPEofZgvBEHC8kKCRpwIDAQAB",
+      "release_track": "stable-channel",
+      "setup_state": 63,
+      "setup_stats": {
+        "historically_succeeded": true,
+        "num_check_connectivity": 2,
+        "num_initial_eureka_info": 0,
+        "num_obtain_ip": 0
+      },
+      "ssdp_udn": "0ae37f5d-c8a4-eb90-4197-4476794c7240",
+      "time_format": 1,
+      "timezone": "Etc/Unknown",
+      "tos_accepted": false,
+      "uma_client_id": "dca6c3c0-118b-4840-b452-4d25e432e53e",
+      "uptime": 37470.371256,
+      "version": 10
+    }
+  }
+}

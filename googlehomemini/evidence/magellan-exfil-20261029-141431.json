@@ -1,0 +1,1 @@
+{"type":"fs_probe","data":{"XMLHttpRequest":true,"fetch":true,"WebSocket":true,"file_read_err":"Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'file:///etc/passwd'."}}

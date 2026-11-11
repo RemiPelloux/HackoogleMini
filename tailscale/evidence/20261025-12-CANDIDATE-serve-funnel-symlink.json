@@ -1,0 +1,10 @@
+{
+  "title": "CANDIDATE: serve static-directory mount follows symlinks; via Funnel = unauthenticated internet arbitrary file read (sibling of Taildrive finding)",
+  "severity_estimate": "Medium-High (internet-facing arbitrary file read as serving user), tempered: standard http.Dir behavior + requires owner to funnel-serve a directory containing an outward symlink",
+  "component": "ipn/ipnlocal/serve.go:1211 serveFileOrDirectory -> http.FileServer(http.Dir(fileOrDir))",
+  "mechanism": "http.Dir blocks '..' but os.Open follows symlinks; no EvalSymlinks/openat2 confinement. A directory serve mount reachable via funnelFlow (internet) therefore serves files a symlink inside the mount points to, outside the mount.",
+  "precondition": "owner runs `tailscale serve <dir>` AND enables Funnel for that hostport AND a symlink to outside exists in the served tree.",
+  "relation": "Same root cause class as the reported Taildrive webdav.Dir symlink escape (ev10); this variant is internet-facing (Funnel) rather than granted-peer.",
+  "status": "candidate; pending funnel-agent corroboration and a decision on whether to fold into the Taildrive report as a second instance or report separately.",
+  "fix": "confine serve file mounts to the mount root (EvalSymlinks within root / openat2 RESOLVE_BENEATH), same remediation as Taildrive."
+}

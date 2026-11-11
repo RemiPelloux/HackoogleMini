@@ -1,0 +1,7 @@
+{
+  "title": "Relay server endpoint-allocation exhaustion (MEDIUM, ACL-gated)",
+  "severity": "MEDIUM (CPU/memory DoS of relay node). Gated by peercap.Relay ACL grant + tailnet-lock signed + sender in ClientDisco.",
+  "component": "net/udprelay/server.go AllocateEndpoint (:1005), feature/relayserver/relayserver.go onAllocReq (:136) - no rate/per-peer cap; partner disco key unconstrained; 2x ECDH + VNI per request; reclaimed after 30s.",
+  "status": "VERIFIED behavior; below the High/Critical bar and ACL-gated. Noted, not prioritized.",
+  "credit_auditor": "UDP relay agent"
+}

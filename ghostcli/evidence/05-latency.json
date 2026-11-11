@@ -1,0 +1,94 @@
+{
+ "method": "curl timing (time_namelookup/time_connect/time_appconnect/time_starttransfer/time_total), 5-20 samples per endpoint, from France over IPv4+IPv6",
+ "endpoints": [
+  {
+   "name": "GET /v1/models (unauth) IPv6",
+   "samples": 10,
+   "dns_ms": {
+    "min": 0.8,
+    "med": 1.0,
+    "max": 42.2
+   },
+   "tcp_ms": {
+    "min": 6.3,
+    "med": 10.8,
+    "max": 61.8
+   },
+   "tls_ms": {
+    "min": 23.5,
+    "med": 34.5,
+    "max": 106.1
+   },
+   "ttfb_ms": {
+    "min": 144.3,
+    "med": 166.6,
+    "max": 440.4
+   },
+   "total_ms": {
+    "min": 154.7,
+    "med": 174.6,
+    "max": 459.4
+   }
+  },
+  {
+   "name": "GET /v1/models/claude-opus-5-5 (key) IPv6",
+   "samples": 5,
+   "tcp_ms": {
+    "min": 6.8,
+    "med": 7.7,
+    "max": 13.6
+   },
+   "tls_ms": {
+    "min": 24.8,
+    "med": 26.9,
+    "max": 31.1
+   },
+   "ttfb_ms": {
+    "min": 150.3,
+    "med": 154.8,
+    "max": 163.2
+   },
+   "total_ms": {
+    "min": 150.6,
+    "med": 154.9,
+    "max": 163.3
+   }
+  },
+  {
+   "name": "GET /v1/models (unauth) IPv4",
+   "samples": 5,
+   "tcp_ms": {
+    "min": 9.9,
+    "med": 13.3,
+    "max": 19.2
+   },
+   "tls_ms": {
+    "min": 30.8,
+    "med": 44.3,
+    "max": 52.8
+   },
+   "ttfb_ms": {
+    "min": 164.0,
+    "med": 172.5,
+    "max": 369.4
+   },
+   "total_ms": {
+    "min": 173.3,
+    "med": 196.5,
+    "max": 378.3
+   }
+  },
+  {
+   "name": "GET /v1/models (unauth) IPv4 jitter",
+   "samples": 20,
+   "ttfb_ms": {
+    "min": null,
+    "med": 162,
+    "p90": 228,
+    "max": 272,
+    "stdev": 37
+   }
+  }
+ ],
+ "inference_latency": "not measurable: all /v1/messages calls return 403 ip_not_authorized before any model work"
+}

@@ -1,0 +1,13 @@
+{
+  "source": "https://gitlab.archlinux.org/archlinux/packaging/packages/tailscale/-/raw/main/PKGBUILD",
+  "fetched": "2026-10-25",
+  "note": "Arch 'extra' packaging. Current PKGBUILD is pkgver=1.104.2 (installed binary is 1.104.1); build recipe identical across the two.",
+  "findings": {
+    "patches_applied": "NONE. prepare() runs only `go mod vendor`; build() runs `go build` per cmd. No patch files in source=().",
+    "dirty_explanation": "binary vcs.modified=true is caused by `go mod vendor` adding vendor/ to the checked-out tag tree, not by distro code patches.",
+    "build_tags": "xversion only (no extra feature build tags)",
+    "ldflags": "-linkmode=external; version.longStamp/shortStamp=pkgver; version.gitCommitStamp=$(git rev-parse v$pkgver) -> the ANNOTATED TAG object sha, which is why 7f4efe8 (tag obj) != 9a522a9 (commit) yet both are v1.104.1",
+    "cgo_flags": "inherited from Arch makepkg CFLAGS/LDFLAGS (FORTIFY_SOURCE=3, stack-clash, cf-protection, relro/now)",
+    "builds": "./cmd/tailscale and ./cmd/tailscaled"
+  }
+}

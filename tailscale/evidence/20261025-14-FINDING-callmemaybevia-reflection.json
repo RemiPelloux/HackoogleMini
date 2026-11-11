@@ -1,0 +1,12 @@
+{
+  "title": "CallMeMaybeVia: no ClientDisco/AddrPorts validation -> attacker-directed UDP reflection/amplification + client-side handshake resource exhaustion",
+  "severity": "HIGH (DDoS reflection/amplification to arbitrary internet addresses from the victim node + client DoS). Default-on preconditions.",
+  "status": "VERIFIED by code read: dispatch checks relayClientEnabled+relayCapable+known-peer+disco but NOT via.ClientDisco membership and does NOT cap via.AddrPorts; handshakeServerEndpoint loops over every AddrPort calling sendDiscoMessage.",
+  "upstream_status": "present on origin/main",
+  "component": "wgengine/magicsock/magicsock.go (CallMeMaybeVia dispatch ~2331-2416), relaymanager.go handleCallMeMaybeVia (:448) + handshakeServerEndpoint (AddrPorts send loop)",
+  "preconditions": "attacker is any peer known to victim over DERP advertising capver>=121 (relayCapable is self-advertised, NOT ACL-gated); victim relayClientEnabled is DEFAULT-ON (true unless DisableRelayClient/OnlyTCP443). No peercap required.",
+  "mechanism": "one CallMeMaybeVia over DERP carries attacker-chosen ServerDisco, VNI, and AddrPorts (bounded only by DERP MaxPacketSize 64KiB -> ~thousands of AddrPorts). handshakeServerEndpoint fires a Geneve+disco Bind to EACH AddrPort -> victim emits N outbound UDP packets to attacker-chosen (incl. off-tailnet) addresses. Distinct ServerDisco/VNI spawn distinct concurrent handshake goroutines+ECDH -> CPU/goroutine/memory exhaustion.",
+  "impact": "1:thousands packet fan-out reflection with the victim as source (DDoS primitive to arbitrary internet IP:ports); sustained -> client resource exhaustion DoS.",
+  "fix": "validate via.ClientDisco includes self before handshaking; cap AddrPorts; cap concurrent handshake works per peer.",
+  "credit_auditor": "UDP relay agent"
+}

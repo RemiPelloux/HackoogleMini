@@ -1,0 +1,13 @@
+{
+  "title": "Web client manage-mode GET /api/data discloses owner profile, control admin URL, and UNRAID_CSRF_TOKEN to non-owner/tagged tailnet peers",
+  "status": "CONFIRMED by source inspection (authorizeRequest ordering + serveGetNodeData has no per-caller redaction)",
+  "upstream_status": "UNFIXED on origin/main (no post-v1.104.1 commits touch client/web/web.go or auth.go)",
+  "severity_estimate": "Medium (info disclosure). Preconditions: web client manage listener enabled; tailnet ACLs let the peer reach :5252.",
+  "component": "client/web",
+  "mechanism": "authorizeRequest (web.go): switch tests errNotUsingTailscale first, then `path==/api/data && GET` returns true BEFORE ownership/session checks. getSession returns errNotOwner/errTaggedRemoteSource/errTaggedLocalSource (NOT errNotUsingTailscale) for non-owner/tagged callers, so they fall through to the /api/data allow.",
+  "disclosed": ["Profile = st.User[Self.UserID] owner UserProfile/login name (web.go:898)", "ControlAdminURL (web.go:908)", "UnraidToken = os.Getenv(UNRAID_CSRF_TOKEN) (web.go:905)", "TailnetName/DomainName, device IPs/OS/version, routes/exit-node state"],
+  "scenario": "A different user's node, or a tagged node (which can never obtain a management session), reaches :5252 and GETs /api/data -> reads owner identity + admin URL + (on Unraid) the Unraid management-UI CSRF token (pivot to CSRF against the Unraid console).",
+  "note": "Sessionless readonly /api/data is intentional, but exposing owner UserProfile and UNRAID_CSRF_TOKEN to arbitrary/tagged peers exceeds the read-only viewer intent.",
+  "fix": "Require ownership for /api/data, or redact Profile/UnraidToken/ControlAdminURL when the caller has no authorized owner session.",
+  "credit_auditor": "surface A/web (webclient+localapi)"
+}

@@ -1,0 +1,21 @@
+{
+  "note": "Commits on origin/main AFTER the v1.104.1 tag that fix security issues PRESENT in the installed 1.104.1 binary. Most reference tailscale/corp#50380 (a coordinated hardening batch, 11/14 in ssh/tailssh). These are known/fixed upstream => not themselves bounty-eligible; value is (a) incomplete-fix check, (b) same-pattern-unfixed-elsewhere.",
+  "source": "git log v1.104.1..origin/main in target/tailscale-src",
+  "high_interest": [
+    {"commit": "ff3bb5883", "area": "ssh/tailssh/accept_env.go", "bug_in_1.104.1": "SSH accepts client env (TERM/LANG/LC_*) with unvalidated values reaching root su/login env; GLIBC_TUNABLES not denylisted (CVE-2023-4911 class priv-esc). Also acceptEnv name matching not length-capped."},
+    {"commit": "a819ec075", "area": "ssh/tailssh", "bug_in_1.104.1": "acceptEnv pattern matching not linear time -> potential ReDoS/CPU DoS via crafted env var names."},
+    {"commit": "17c90d88c", "area": "ssh/tailssh", "bug_in_1.104.1": "off-by-one + unclamped c2n SSH username hint cap."},
+    {"commit": "d484ac300", "area": "ssh/tailssh", "bug_in_1.104.1": "direct-exec fallback for non-root users while running as root (priv context)."},
+    {"commit": "d90ffb62a", "area": "ssh/tailssh", "bug_in_1.104.1": "numerically-zero uids not treated as root in isRootUser (authz)."},
+    {"commit": "3c1346664", "area": "ssh/tailssh", "bug_in_1.104.1": "private host keys not written 0600 (local info disclosure)."},
+    {"commit": "566f89e0f", "area": "ipn/ipnlocal/serve.go", "bug_in_1.104.1": "serve app capabilities stored on connection-scoped serveHTTPContext shared by concurrent h2 streams -> Tailscale-App-Capabilities header can leak across mounts, authorizing wrong mount at a trusting backend."},
+    {"commit": "3e61adf83", "area": "util/osuser", "bug_in_1.104.1": "'id -G <user>' and getent passwd parsing: crafted username like '-u' treated as option; 8-field/corrupt passwd shifts fields (home<->shell)."},
+    {"commit": "b0e35bf5b", "area": "util/cmpver", "bug_in_1.104.1": "Compare panics on numeric version field >= 20 digits (overflow uint64) -> DoS where caller compares attacker-influenced version strings."}
+  ],
+  "hunting_patterns": [
+    "connection-scoped struct carrying per-request state shared across concurrent h2 streams (serveHTTPContext pattern) elsewhere",
+    "exec of system tools with attacker-influenced argv lacking leading-dash guards (osuser pattern)",
+    "untrusted strings reaching strconv.ParseUint/Atoi without error handling -> panic",
+    "env/arg propagation into privileged child processes"
+  ]
+}

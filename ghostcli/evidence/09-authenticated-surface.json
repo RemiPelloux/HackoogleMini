@@ -1,0 +1,898 @@
+{
+ "routes": [
+  {
+   "path": "/api/me",
+   "http": 200,
+   "ms": 178,
+   "len": 408,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:30 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=QfGm2GouY32Bivh0JJ6vWoOzWTk%2FAxc%2B7x%2Fktc1RXGPelK%2BvE1f6UkAlwY55XtKII24rLIuZbO%2BCsn7MKXgLIMYuh9yFSni4628FxFYYkX87%2B4HM9ySwYCbnrJeLjJA1PXdrkgZcdEkJEtU4NQ%3D%3D\"}]}",
+    "cf-ray": "a510a181dbb773ab-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"user\":{\"id\":5599,\"name\":\"R\u00e9mi Pelloux\",\"email\":\"pellouxremi@gmail.com\",\"plan\":\"free\",\"planRenewsAt\":null,\"apiAccessUntil\":null,\"recurring\":false,\"isAdmin\":false,\"hue\":143,\"createdAt\":\"2026-10-27 08:29:26\"},\"plan\":{\"id\":\"free\",\"name\":\"Sem assinatura\",\"limit\":0},\"api\":{\"active\":false,\"until\":null},\"subscription\":null,\"usage\":{\"today\":0,\"remaining\":0,\"totalMessages\":0,\"totalTokensIn\":0,\"totalTokensOut\":0}}",
+   "json": {
+    "user": {
+     "id": 5599,
+     "name": "R\u00e9mi Pelloux",
+     "email": "pellouxremi@gmail.com",
+     "plan": "free",
+     "planRenewsAt": null,
+     "apiAccessUntil": null,
+     "recurring": false,
+     "isAdmin": false,
+     "hue": 143,
+     "createdAt": "2026-10-27 08:29:26"
+    },
+    "plan": {
+     "id": "free",
+     "name": "Sem assinatura",
+     "limit": 0
+    },
+    "api": {
+     "active": false,
+     "until": null
+    },
+    "subscription": null,
+    "usage": {
+     "today": 0,
+     "remaining": 0,
+     "totalMessages": 0,
+     "totalTokensIn": 0,
+     "totalTokensOut": 0
+    }
+   }
+  },
+  {
+   "path": "/api/plan",
+   "http": 405,
+   "ms": 297,
+   "len": 0,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:30 GMT",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=zk92DNNAPxMEZAjPscFTInBsZ6s32qwqXXb4rcrDTi6jMgct35wjqYuIWfDmqL6s%2BqUpc4r9jZlltlTcwJ5cEOwzarwtpcmM26SrDn6MmC5I0LbnJOnstVzylHnBUd0yB134UWFtdNcKpnujqw%3D%3D\"}]}",
+    "cf-ray": "a510a183586a0cd2-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "",
+   "json": null
+  },
+  {
+   "path": "/api/subscription",
+   "http": 200,
+   "ms": 247,
+   "len": 21,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:30 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ie%2BYGy41znDwaK4C7xvMlgsbLGFwcKrLdmdIANTx6eJGgQa5wJSr0BX7B0RAbnbk8vtcWMgodQ%2FYUx4XN00NLNWA2LwMXoDIT%2BJMp9mWUl9NRSCep7hUv02%2F%2FM7GWNcSAKdUEsHPCkjfcrjbAw%3D%3D\"}]}",
+    "cf-ray": "a510a1854da2e28c-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"subscription\":null}",
+   "json": {
+    "subscription": null
+   }
+  },
+  {
+   "path": "/api/usage",
+   "http": 200,
+   "ms": 248,
+   "len": 1926,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:30 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=EkkQQCrVigGpsgLvApUGI6gh8n6SOZkoPsW3FVNuBLlZ13IbsVZHDi2b1cumSdryinStF2KS3yAYJhSmX4xpDE0rYneQ1TS%2B8cduPLWCxrPeNXI4T2faRzLP1fIE4l1HUzRusExpyB3FslncBg%3D%3D\"}]}",
+    "cf-ray": "a510a1870b74c0fb-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"marketUsdTotal\":0,\"daily\":[{\"day\":\"2026-09-28\",\"label\":\"09/28\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-09-29\",\"label\":\"09/29\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-09-30\",\"label\":\"09/30\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-01\",\"label\":\"10/01\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-02\",\"label\":\"10/02\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-03\",\"label\":\"10/03\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-04\",\"label\":\"10/04\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-05\",\"label\":\"10/05\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-06\",\"label\":\"10/06\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-07\",\"label\":\"10/07\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-08\",\"label\":\"10/08\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-09\",\"label\":\"10/09\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-10\",\"label\":\"10/10\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-11\",\"label\":\"10/11\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-12\",\"label\":\"10/12\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-13\",\"label\":\"10/13\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-14\",\"label\":\"10/14\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-15\",\"label\":\"10/15\",\"messages\":0,\"tokens\":0},{\"day\":\"2026-10-16\",\"label\":\"10/16\",\"messages\":0,\"tokens\":0},{\"day\":\"2026",
+   "json": {
+    "marketUsdTotal": 0,
+    "daily": [
+     {
+      "day": "2026-09-28",
+      "label": "09/28",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-09-29",
+      "label": "09/29",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-09-30",
+      "label": "09/30",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-01",
+      "label": "10/01",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-02",
+      "label": "10/02",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-03",
+      "label": "10/03",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-04",
+      "label": "10/04",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-05",
+      "label": "10/05",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-06",
+      "label": "10/06",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-07",
+      "label": "10/07",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-08",
+      "label": "10/08",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-09",
+      "label": "10/09",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-10",
+      "label": "10/10",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-11",
+      "label": "10/11",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-12",
+      "label": "10/12",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-13",
+      "label": "10/13",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-14",
+      "label": "10/14",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-15",
+      "label": "10/15",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-16",
+      "label": "10/16",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-17",
+      "label": "10/17",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-18",
+      "label": "10/18",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-19",
+      "label": "10/19",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-20",
+      "label": "10/20",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-21",
+      "label": "10/21",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-22",
+      "label": "10/22",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-23",
+      "label": "10/23",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-24",
+      "label": "10/24",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-25",
+      "label": "10/25",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-26",
+      "label": "10/26",
+      "messages": 0,
+      "tokens": 0
+     },
+     {
+      "day": "2026-10-27",
+      "label": "10/27",
+      "messages": 0,
+      "tokens": 0
+     }
+    ],
+    "byModel": [],
+    "totals": {
+     "messages": 0,
+     "tokens_in": 0,
+     "tokens_out": 0
+    }
+   }
+  },
+  {
+   "path": "/api/keys",
+   "http": 200,
+   "ms": 230,
+   "len": 19,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:31 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=VaBLOVtL5D74CuQ2mVVC1Di9UxGsq%2BSfP97TukVlW4kY8K1dbTyTGOraiUUslN%2BOv%2BuughcR79kdNxuiJZsYe4lGDcny6uMg5jRLrI5wmYPRsjdyhfoZuNhm97CVIun2uxaHNaLK2Iz1PvizqQ%3D%3D\"}]}",
+    "cf-ray": "a510a1883a40245e-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"keys\":[],\"max\":0}",
+   "json": {
+    "keys": [],
+    "max": 0
+   }
+  },
+  {
+   "path": "/api/keys/ips",
+   "http": 404,
+   "ms": 273,
+   "len": 60,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:31 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=tO1nfkEwLS%2B3W9BHr1PyCX0bojS6g%2BlGhAbkLgSoUxJciBOh7sRVes8StKF2jKQldNDndcgmV1HIkzBhwZdPH%2BK7kfE%2FFnrBnKHCs4CaiHGzqR2hoY4EUYUZaUzD5ZA9hmToWlcdnT%2BC28zJuA%3D%3D\"}]}",
+    "cf-ray": "a510a18a2caae210-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"error\":\"Chave n\u00e3o encontrada\",\"errorCode\":\"ipKeyNotFound\"}",
+   "json": {
+    "error": "Chave n\u00e3o encontrada",
+    "errorCode": "ipKeyNotFound"
+   }
+  },
+  {
+   "path": "/api/affiliate",
+   "http": 200,
+   "ms": 185,
+   "len": 87,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:31 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ydjYgWTDJoq5tlrzSe%2FAJ2zxnkJIkHbWByw6WTpRF1meBUH62PyM%2BlpKHFliql01WyS4kbu7vQglHhfQebRsUec7Q2cghskz8YQXN%2BbeeVPY1Ny0tRkHUjxzmetFSE4luLhyOalpjFbttgNsEA%3D%3D\"}]}",
+    "cf-ray": "a510a18b4e3e3391-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"code\":\"pellouxremi\",\"randomCode\":\"ghp4qla0\",\"commissions\":[],\"total\":0,\"referrals\":0}",
+   "json": {
+    "code": "pellouxremi",
+    "randomCode": "ghp4qla0",
+    "commissions": [],
+    "total": 0,
+    "referrals": 0
+   }
+  },
+  {
+   "path": "/api/config",
+   "http": 200,
+   "ms": 371,
+   "len": 73,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:31 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "cache-control": "no-store",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=ouvqoRFYka52deUnvilQkt3qcECNRsQ%2BQrYm9FLOBSCh21KLPi2DokOEXPmJVOHm80IEjqQNbXkwQ71xtrZfTUtOUF0s3XUaxD4Uk%2BfJYUowYINcgVG04lvoindP00cR%2FZjxa0gtbc%2BUqKA8RA%3D%3D\"}]}",
+    "cf-ray": "a510a18c78cff539-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"paymentMethods\":{\"card\":true,\"pix\":false,\"crypto\":true},\"country\":\"FR\"}",
+   "json": {
+    "paymentMethods": {
+     "card": true,
+     "pix": false,
+     "crypto": true
+    },
+    "country": "FR"
+   }
+  },
+  {
+   "path": "/api/chats",
+   "http": 200,
+   "ms": 167,
+   "len": 170,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:32 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=UDeZ%2FkndpvhN9qKPJUlt3mFAvlGL8w%2FBU8nSawArUDH1EJIFEwoLNaT6UKFAHTgtYx2v4Rs49ats0o4ThF7MJh1ytBUCPXpUjrZ1bnicsEUgN8zRUyQqZ%2F94foNmdsfi4Hzc8vbsEYiDxUJPEQ%3D%3D\"}]}",
+    "cf-ray": "a510a18ecdb7b6c4-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"chats\":[{\"id\":18369,\"user_id\":5599,\"title\":\"Nova conversa\",\"model\":\"claude-opus-5-5\",\"pinned\":0,\"created_at\":\"2026-10-27 08:29:26\",\"updated_at\":\"2026-10-27 08:29:26\"}]}",
+   "json": {
+    "chats": [
+     {
+      "id": 18369,
+      "user_id": 5599,
+      "title": "Nova conversa",
+      "model": "claude-opus-5-5",
+      "pinned": 0,
+      "created_at": "2026-10-27 08:29:26",
+      "updated_at": "2026-10-27 08:29:26"
+     }
+    ]
+   }
+  },
+  {
+   "path": "/api/uptime",
+   "http": 200,
+   "ms": 283,
+   "len": 4810,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:32 GMT",
+    "content-type": "application/json",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "cache-control": "no-store",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=JoavBO1grW8s80iOf%2FHyrRtQ6KmGVfLtPgioT6EByuaO5w8uH5W%2B%2BpmmoHdqQUgprZweFn8pt%2Fw0Vgkz9avjdcG4lnJ7xD1CwuIXDeHwxs%2Fap0t9ieOquwFeupKPjM1fvTvCeh3s2lUTl8G%2Fqw%3D%3D\"}]}",
+    "cf-ray": "a510a18ffa4b2a48-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "{\"status\":\"operational\",\"checkedAt\":\"2026-10-27T09:21:00.049Z\",\"latencyMs\":59,\"monitoredSince\":\"2026-09-24T04:16:24.099Z\",\"intervalSeconds\":60,\"windows\":[{\"hours\":24,\"samples\":1440,\"successes\":1439,\"failures\":1,\"expected\":1440,\"missing\":0,\"uptime\":99.93055555555556,\"coverage\":100},{\"hours\":168,\"samples\":10080,\"successes\":10041,\"failures\":39,\"expected\":10080,\"missing\":0,\"uptime\":99.61309523809524,\"coverage\":100},{\"hours\":720,\"samples\":43177,\"successes\":42697,\"failures\":480,\"expected\":43200,\"missing\":23,\"uptime\":98.88829700998217,\"coverage\":99.94675925925925}],\"days\":[{\"date\":\"2026-09-28\",\"samples\":1439,\"successes\":1439,\"failures\":0,\"expected\":1440,\"missing\":1,\"uptime\":100,\"coverage\":99.93055555555556},{\"date\":\"2026-09-29\",\"samples\":1439,\"successes\":1439,\"failures\":0,\"expected\":1440,\"missing\":1,\"uptime\":100,\"coverage\":99.93055555555556},{\"date\":\"2026-09-30\",\"samples\":1440,\"successes\":1437,\"failures\":3,\"expected\":1440,\"missing\":0,\"uptime\":99.79166666666667,\"coverage\":100},{\"date\":\"2026-10-01\",\"samples\":1439,\"successes\":1436,\"failures\":3,\"expected\":1440,\"missing\":1,\"uptime\":99.79152189020152,\"coverage\":99.93055555555556},{\"date\":\"2026-10-02\",\"samples\":1439,\"successes\":1439,\"failures\":0",
+   "json": {
+    "status": "operational",
+    "checkedAt": "2026-10-27T09:21:00.049Z",
+    "latencyMs": 59,
+    "monitoredSince": "2026-09-24T04:16:24.099Z",
+    "intervalSeconds": 60,
+    "windows": [
+     {
+      "hours": 24,
+      "samples": 1440,
+      "successes": 1439,
+      "failures": 1,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.93055555555556,
+      "coverage": 100
+     },
+     {
+      "hours": 168,
+      "samples": 10080,
+      "successes": 10041,
+      "failures": 39,
+      "expected": 10080,
+      "missing": 0,
+      "uptime": 99.61309523809524,
+      "coverage": 100
+     },
+     {
+      "hours": 720,
+      "samples": 43177,
+      "successes": 42697,
+      "failures": 480,
+      "expected": 43200,
+      "missing": 23,
+      "uptime": 98.88829700998217,
+      "coverage": 99.94675925925925
+     }
+    ],
+    "days": [
+     {
+      "date": "2026-09-28",
+      "samples": 1439,
+      "successes": 1439,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 100,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-09-29",
+      "samples": 1439,
+      "successes": 1439,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 100,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-09-30",
+      "samples": 1440,
+      "successes": 1437,
+      "failures": 3,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.79166666666667,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-01",
+      "samples": 1439,
+      "successes": 1436,
+      "failures": 3,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.79152189020152,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-02",
+      "samples": 1439,
+      "successes": 1439,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 100,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-03",
+      "samples": 1439,
+      "successes": 1432,
+      "failures": 7,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.5135510771369,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-04",
+      "samples": 1439,
+      "successes": 1437,
+      "failures": 2,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.86101459346769,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-05",
+      "samples": 1438,
+      "successes": 1435,
+      "failures": 3,
+      "expected": 1440,
+      "missing": 2,
+      "uptime": 99.79137691237831,
+      "coverage": 99.86111111111111
+     },
+     {
+      "date": "2026-10-06",
+      "samples": 1438,
+      "successes": 1435,
+      "failures": 3,
+      "expected": 1440,
+      "missing": 2,
+      "uptime": 99.79137691237831,
+      "coverage": 99.86111111111111
+     },
+     {
+      "date": "2026-10-07",
+      "samples": 1439,
+      "successes": 1434,
+      "failures": 5,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.65253648366922,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-08",
+      "samples": 1439,
+      "successes": 1431,
+      "failures": 8,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.44405837387075,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-09",
+      "samples": 1438,
+      "successes": 1215,
+      "failures": 223,
+      "expected": 1440,
+      "missing": 2,
+      "uptime": 84.4923504867872,
+      "coverage": 99.86111111111111
+     },
+     {
+      "date": "2026-10-10",
+      "samples": 1438,
+      "successes": 1437,
+      "failures": 1,
+      "expected": 1440,
+      "missing": 2,
+      "uptime": 99.93045897079277,
+      "coverage": 99.86111111111111
+     },
+     {
+      "date": "2026-10-11",
+      "samples": 1440,
+      "successes": 1397,
+      "failures": 43,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 97.01388888888889,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-12",
+      "samples": 1439,
+      "successes": 1439,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 100,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-13",
+      "samples": 1440,
+      "successes": 1440,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 100,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-14",
+      "samples": 1438,
+      "successes": 1437,
+      "failures": 1,
+      "expected": 1440,
+      "missing": 2,
+      "uptime": 99.93045897079277,
+      "coverage": 99.86111111111111
+     },
+     {
+      "date": "2026-10-15",
+      "samples": 1439,
+      "successes": 1437,
+      "failures": 2,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.86101459346769,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-16",
+      "samples": 1440,
+      "successes": 1438,
+      "failures": 2,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.86111111111111,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-17",
+      "samples": 1439,
+      "successes": 1436,
+      "failures": 3,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 99.79152189020152,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-18",
+      "samples": 1440,
+      "successes": 1436,
+      "failures": 4,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.72222222222223,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-19",
+      "samples": 1439,
+      "successes": 1319,
+      "failures": 120,
+      "expected": 1440,
+      "missing": 1,
+      "uptime": 91.66087560806116,
+      "coverage": 99.93055555555556
+     },
+     {
+      "date": "2026-10-20",
+      "samples": 1440,
+      "successes": 1432,
+      "failures": 8,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.44444444444444,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-21",
+      "samples": 1440,
+      "successes": 1440,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 100,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-22",
+      "samples": 1440,
+      "successes": 1440,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 100,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-23",
+      "samples": 1440,
+      "successes": 1436,
+      "failures": 4,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.72222222222223,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-24",
+      "samples": 1440,
+      "successes": 1434,
+      "failures": 6,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 99.58333333333333,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-25",
+      "samples": 1440,
+      "successes": 1412,
+      "failures": 28,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 98.05555555555556,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-26",
+      "samples": 1440,
+      "successes": 1440,
+      "failures": 0,
+      "expected": 1440,
+      "missing": 0,
+      "uptime": 100,
+      "coverage": 100
+     },
+     {
+      "date": "2026-10-27",
+      "samples": 562,
+      "successes": 561,
+      "failures": 1,
+      "expected": 562,
+      "missing": 0,
+      "uptime": 99.8220640569395,
+      "coverage": 100
+     }
+    ]
+   }
+  },
+  {
+   "path": "/dashboard",
+   "http": 200,
+   "ms": 178,
+   "len": 15839,
+   "headers": {
+    "date": "Tue, 27 Oct 2026 09:21:32 GMT",
+    "content-type": "text/html; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=JCkzZpImJRpWziOLdzjY4ePwJ9kYBqv6BwQSZU0ZfgD2g3BvLUUvFa7DihpKexzrki4j%2FHqc9AnjwRIXoTrDVvGN%2Bbiax1k%2BIF1OrLffYSYyU4mHntmoeFTCoS4c1A9hAVMUXke6W5Y6HW6DPQ%3D%3D\"}]}",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://cdn.utmify.com.br https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' blob: https://connect.facebook.net https://www.facebook.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://connect.facebook.net https://www.facebook.com; connect-src 'self' https://static.cloudflareinsights.com https://connect.facebook.net https://www.facebook.com https://mpc2-prod-29-is5qnl632q-uc.a.run.app https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws https://tracking.utmify.com.br https://ipapi.co https://api.ipify.org https://api6.ipify.org; object-src 'none'; base-uri 'self'; form-action 'self' https://connect.facebook.net https://www.facebook.com; frame-ancestors 'self'",
+    "link": "</_next/static/media/36966cca54120369-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/bb3ef058b751a6ad-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\"",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-powered-by": "Next.js",
+    "cf-cache-status": "DYNAMIC",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "cf-ray": "a510a191bfbc98d2-MRS",
+    "alt-svc": "h3=\":443\"; ma=86400"
+   },
+   "body_sample": "<!DOCTYPE html><html lang=\"en\" class=\"bg-[#08090f]\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/><link rel=\"stylesheet\" href=\"/_next/static/css/57810634e0864773.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"/_next/static/css/dc9232901f90ce77.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"/_next/static/css/b1801ea50834e408.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"/_next/static/css/d8f0397db9c09e35.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"/_next/static/css/6e339c1cd5ffccbd.css\" data-precedence=\"next\"/><link rel=\"preload\" as=\"script\" fetchPriority=\"low\" href=\"/_next/static/chunks/webpack-049429b45fcc350c.js\"/><script src=\"/_next/static/chunks/4bd1b696-04d4e6726f46d1d5.js\" async=\"\"></script><script src=\"/_next/static/chunks/3794-50ffabe5ed0a960a.js\" async=\"\"></script><script src=\"/_next/static/chunks/main-app-ac1145bd39fd937e.js\" async=\"\"></script><script src=\"/_next/static/chunks/870fdd6f-8e80e840694faf05.js\" async=\"\"></script><script src=\"/_next/static/chunks/1610-1b371c1088cf0712.js\" async=\"\"></script><script src=\"/_next/static/chunks/8500-01a63dafd809e317.js\" async=\"\"></scr",
+   "json": null
+  }
+ ]
+}

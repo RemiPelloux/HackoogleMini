@@ -1,0 +1,14 @@
+{
+  "title": "Taildrive WebDAV symlink escape: peer with a share grant reads/writes files outside the share root as the serving user",
+  "severity": "HIGH (arbitrary file read, and write with rw grant, as the per-user serving account; NOT root)",
+  "status": "CONFIRMED: vendored webdav.Dir does not confine symlinks (fetched tailscale/xnet@8497ac4dab2e webdav/file.go: resolve()=filepath.Join+slashClean then os.OpenFile, no Lstat/O_NOFOLLOW/openat2/EvalSymlinks). .. is blocked; symlinks are followed.",
+  "upstream_status": "UNFIXED on origin/main (only post-tag drive commit a6cffd0a6 is unrelated ttlcache cleanup; xnet pinned at the same non-confining fork version in go.mod)",
+  "component": "drive/driveimpl (fileserver.go:104 webdav.Dir) + vendored github.com/tailscale/xnet/webdav",
+  "precondition": "Victim shares a directory via Taildrive AND that tree contains a symlink pointing outside the share root (common when sharing a home/project dir). Attacker is a tailnet peer granted a peercap.Taildrive grant on that share (ro is enough for read; rw for write). Grants come from the control netmap (not forgeable), so the attacker is a legitimately-granted-but-hostile peer.",
+  "chain": "peer -> peerapi /v0/drive (peerapi_drive.go:88) -> ServeHTTPWithPerms (remote_impl.go:202) -> compositedav proxy -> webdav.Dir(sharePath).OpenFile follows symlink via os.OpenFile -> target outside share root.",
+  "impact": "Confidentiality+integrity bypass of the share-root boundary and the read-only-to-one-folder restriction: arbitrary file read (rw grant: write) as the file-serving user. Bounded to unprivileged user (unix serves via su/sudo with assertNotRoot).",
+  "cannot": "Attacker cannot create the symlink via WebDAV (no symlink verb: PUT=file, MKCOL=dir); the symlink must pre-exist in the shared tree.",
+  "confirm": "create share, place `ln -s /etc/passwd link` inside, grant a peer ro, GET /v0/drive/<share>/link.",
+  "fix": "confine shares with openat2(RESOLVE_BENEATH) or verify EvalSymlinks stays within share root.",
+  "credit_auditor": "Taildrive/serve agent"
+}

@@ -1,0 +1,112 @@
+{
+ "timestamp": "2026-10-27T09:45Z",
+ "transport": {
+  "http_version": "2",
+  "tcp_connect_ms": 9.6,
+  "tls_ms": 30.0,
+  "alt_svc": "h3=\":443\""
+ },
+ "effort_lever": {
+  "claude-sonnet-5 /v1/messages output_config.effort": {
+   "none": [
+    65.17,
+    2.72,
+    3.17
+   ],
+   "low": [
+    3.11,
+    2.96,
+    3.09
+   ],
+   "medium": [
+    3.28,
+    4.32,
+    2.93
+   ],
+   "high": [
+    8.92,
+    7.07,
+    18.1
+   ]
+  },
+  "gpt-6-astra[1m] /v1/chat/completions reasoning_effort": {
+   "none": [
+    7.87,
+    8.35,
+    18.51
+   ],
+   "low": [
+    2.49,
+    2.72,
+    2.82
+   ],
+   "medium": [
+    2.33,
+    3.48,
+    4.5
+   ],
+   "high": [
+    7.08,
+    7.52,
+    9.75
+   ],
+   "xhigh": [
+    6.38,
+    6.77,
+    9.18
+   ]
+  },
+  "claude thinking blocks": {
+   "disabled_s": 9.76,
+   "budget_1024_s": 10.28
+  }
+ },
+ "pi_wall_clock_claude-sonnet-5": {
+  "default_ms": [
+   6980,
+   6434
+  ],
+  "off_ms": [
+   4498,
+   4170
+  ],
+  "low_ms": [
+   5925,
+   8916
+  ]
+ },
+ "system_prompt": {
+  "forwarded": true,
+  "evidence": "'you must reply only in French' -> 'Bonjour'; 'answer BANANA' -> 'BANANA'",
+  "not_counted_in_usage": {
+   "system_tokens_approx": 2100,
+   "reported_input_tokens": 15
+  }
+ },
+ "input_token_accounting": {
+  "padded_user_approx_tokens": 3395,
+  "reported_input_tokens": 3395,
+  "verdict": "accurate for user messages"
+ },
+ "errors_observed": {
+  "429": "overloaded_error, body in Portuguese: 'O upstream esta congestionado' - shared upstream capacity",
+  "502": "glm-5.3 on every surface; also every image-input request"
+ },
+ "account_surface_ro": {
+  "user_id": 5599,
+  "plan": "free",
+  "api_active": false,
+  "api_keys_returned": 0,
+  "usage_all_days_zero": true,
+  "inference_with_supplied_key": "works",
+  "conclusion": "the API key is not attached to the account in the supplied session cookie"
+ },
+ "csp_third_parties": [
+  "https://mpc2-prod-29-is5qnl632q-uc.a.run.app",
+  "https://5z-2b6b7616f94640c2840d1841e1ac24c3.ecs.us-east-1.on.aws",
+  "https://ipapi.co",
+  "https://api.ipify.org",
+  "https://api6.ipify.org"
+ ],
+ "note_scope": "GET-only against the owner's own account. No exploitation, no parameter fuzzing, no cross-tenant requests."
+}

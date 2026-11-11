@@ -1,0 +1,46 @@
+name: Attack Vector Proposal
+description: Propose a new software-only attack vector
+title: "[vector] "
+labels: ["attack-vector"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a software-only path to shell access. Hardware modifications are out of scope.
+  - type: input
+    id: name
+    attributes:
+      label: Vector name
+      placeholder: "e.g. OTA update MITM, Cast WebRTC overflow"
+    validations:
+      required: true
+  - type: textarea
+    id: chain
+    attributes:
+      label: Attack chain
+      description: Step-by-step from initial access to code execution.
+    validations:
+      required: true
+  - type: textarea
+    id: prereqs
+    attributes:
+      label: Prerequisites
+      description: What network position, credentials, or tools are needed?
+  - type: dropdown
+    id: confidence
+    attributes:
+      label: Confidence
+      options:
+        - High — CVE confirmed unpatched on this fw
+        - Medium — plausible, needs verification
+        - Low — speculative
+    validations:
+      required: true
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints respected
+      options:
+        - label: Software-only (no hardware modifications)
+          required: true
+        - label: Targets fw 3.78.540761 / Chrome 92.0.4515.0

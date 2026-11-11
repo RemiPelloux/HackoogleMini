@@ -1,0 +1,88 @@
+
+== previous Wi-Fi connection: Livebox-C5C0
+
+== scanning for a Google setup AP
+
+== setup AP SSID: 'GoogleHome4983.o,'
+Connection 'gh-setup-3097977' (0e3fd5db-469d-437d-87f3-b5e377180888) successfully added.
+
+== joining ...
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/12)
+
+== our address: 192.168.255.253   gateway: 192.168.255.249
+
+== probing candidate setup hosts on :8443 (https) and :8008 (eureka_info)
+   https://192.168.255.249:8443  -> 200
+   http://192.168.255.249:8008  -> 200
+   https://192.168.255.1:8443  -> no-response
+   http://192.168.255.1:8008  -> no-response
+   https://192.168.255.249:8443  -> 200
+   http://192.168.255.249:8008  -> 200
+   https://192.168.44.1:8443  -> no-response
+   http://192.168.44.1:8008  -> no-response
+   https://8.8.8.8:8443  -> no-response
+   http://8.8.8.8:8008  -> no-response
+
+== fetching full eureka_info from every host that answered
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133605-eureka-192.168.255.249-8443.json (1346 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   detail.model_name = Google Home Mini
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133605-eureka-192.168.255.249-8008.json (1137 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133605-eureka-192.168.255.249-8443.json (1346 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   detail.model_name = Google Home Mini
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+   saved /home/tkmremi/Desktop/work/REA/googlehomemini/evidence/20261026-133605-eureka-192.168.255.249-8008.json (1137 B)
+   build_version = 468362
+   cast_build_revision = 3.75.468362
+   hotspot_bssid = FA:8F:CA:35:5C:46
+   locale = fr
+   location.country_code = FR
+   mac_address = 44:07:0B:D2:6F:36
+   name = GoogleHome4983
+   public_key = MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB
+   release_track = stable-channel
+   setup_state = 10
+   ssid = 
+   time_format = 1
+   version = 13
+
+== done -- evidence prefix: evidence/20261026-133605-*
+
+== restored: Livebox-C5C0

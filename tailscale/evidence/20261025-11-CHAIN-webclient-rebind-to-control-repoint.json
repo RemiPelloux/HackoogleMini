@@ -1,0 +1,24 @@
+{
+  "title": "CHAIN: login-mode web client lacks anti-DNS-rebinding guard -> CSRF repoint to attacker control server -> DNS MITM (default) up to root RCE",
+  "severity": "HIGH->CRITICAL ceiling (see preconditions per stage)",
+  "status": "CONFIRMED reachability + impact ceiling by source analysis",
+  "upstream_status": "UNFIXED on origin/main (no post-tag client/web changes)",
+  "root_cause": {
+    "component": "client/web/web.go",
+    "bug": "requireTailscaleIP (Host/anti-DNS-rebinding guard) and the CSP/X-Frame-Options headers run ONLY in ManageServerMode (web.go:335,348). In login/readonly mode (`tailscale web`, default localhost:8088) authorizeRequest returns true unconditionally; the only mutation defense is csrfProtect, which a same-origin DNS-rebound page (evil.com:8088 -> 127.0.0.1) satisfies (Sec-Fetch-Site: same-origin, or Origin==Host both = evil.com:8088). This is the CVE-2022-41924 anti-rebinding class, present in manage mode but ABSENT in login mode.",
+    "reachable_sink": "serveLoginAPI (web.go:519) routes POST /api/up -> serveTailscaleUp with no session."
+  },
+  "repoint_mechanics": {
+    "running_node": "IMMUNE: ControlURL EditPrefs is inside `if !isRunning` (web.go:1173-1185); a Running node returns early and ControlURL is never set.",
+    "non_running_node": "Attacker POSTs {\"Reauthenticate\":true,\"ControlURL\":\"https://attacker\",\"AuthKey\":\"...\"}; !isRunning true -> EditPrefs(ControlURL) + Start(AuthKey). Non-running (NeedsLogin/Stopped/NoState) is the normal state when `tailscale web` login is used."
+  },
+  "impact_ceiling_after_repoint": {
+    "default_on": "FULL DNS INTERCEPTION (HIGH): --accept-dns/CorpDNS defaults true (prefs.go:747). Malicious control sets DNSConfig.Resolvers=[attacker] -> overrides resolution for ALL domains (manager.go:378, resolved.go:322). No attacker-controlled file write (resolv.conf lines FQDN-validated).",
+    "if_ssh_enabled": "ROOT RCE (CRITICAL): nm.SSHPolicy taken from netmap with no signature (tailssh.go:606); gated only by local RunSSH pref. Control authors {Principals:[{Any}], SSHUsers:{\"*\":\"root\"}, Accept} -> interactive root shell via incubator.",
+    "if_remoteconfig_enabled": "FULL TAKEOVER (CRITICAL, default OFF): feature/remoteconfig handleC2NRemoteAPI proxies into LocalAPI with PermitRead+PermitWrite+Actor Self (remoteconfig.go:86); control can PATCH prefs to set RunSSH=true then do the SSH chain even if SSH was off.",
+    "not_reachable": "exit-node/subnet-route L3 MITM requires user prefs ExitNodeID/RouteAll (routemanager.go:827); not auto-accepted from netmap."
+  },
+  "preconditions_summary": "victim ran `tailscale web` (login mode) + node non-running at CSRF time + browser permits public->127.0.0.1 rebinding (modern PNA may block) ; RCE additionally needs --ssh or RemoteConfig.",
+  "fix": "apply requireTailscaleIP (or a synthesized CSRF token + CSP/XFO) to login/readonly mode too; mirror manage mode's Host allowlist.",
+  "credit_auditor": "webclient agent + malicious-control-ceiling agent + distsign negative (ev08)"
+}

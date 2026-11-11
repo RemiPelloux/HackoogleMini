@@ -1,0 +1,386 @@
+{
+ "evidence": "ev_40108f03f8956a661095bd6d060b363b269abad29f9863e79cef2161b91be67c",
+ "artifact": {
+  "path": "/home/tkmremi/Desktop/work/REA/ghostcli/target/web",
+  "sha256": "c38bee8e6010c320f0fef6446f1cc3449981b7672ea2d6d27ab41cc0fcd68156"
+ },
+ "routes": [
+  {
+   "id": "jsr:3144ae7a720e83ecaa0ba64aaa61afc0",
+   "path": "/admin",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 2,
+   "source_count": 1,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:9c2d50d39d983c90c5631e0824b2441d",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 41442
+     },
+     "end": {
+      "line": 1,
+      "column": 41450
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:4bf948db4b91167f8ff002d46ecf41e9",
+   "path": "/afiliados",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 4,
+   "source_count": 1,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:4081bbb943d90f64a3bf8f3c8b9f6cfd",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 21119
+     },
+     "end": {
+      "line": 1,
+      "column": 21131
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:6dde9cbadd7d3b7d5dcfa848888d7fec",
+   "path": "/appeal",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 2,
+   "source_count": 1,
+   "provenance": {
+    "source_id": "jss:a47f8a9eff755dccda0b500484eb06b3",
+    "occurrence_id": "jso:2d9a8f6c0ffd64adc86b792c4a1c5cde",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 2642
+     },
+     "end": {
+      "line": 1,
+      "column": 2651
+     }
+    },
+    "mechanism": "route-string-constant",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:07f6546366b6865ff20732f609f70d3f",
+   "path": "/chat",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 8,
+   "source_count": 2,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:17b9088076c8fadcb07f79b67c5fb30c",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 21333
+     },
+     "end": {
+      "line": 1,
+      "column": 21340
+     }
+    },
+    "mechanism": "route-string-constant",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:3d75f2a54925588260c738aae57d260c",
+   "path": "/checkout",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 6,
+   "source_count": 2,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:0e4ee748c9cf69922e30ce5dd9646a33",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 7650
+     },
+     "end": {
+      "line": 1,
+      "column": 7669
+     }
+    },
+    "mechanism": "route-string-constant",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:af91d1d9a8e61422e97723bd4983fa57",
+   "path": "/dashboard",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 23,
+   "source_count": 3,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:3461cb6c8f41f335f7986667f7a06135",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 41596
+     },
+     "end": {
+      "line": 1,
+      "column": 41614
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:e06cd60758e30c995d31c5c5c2420edb",
+   "path": "/docs",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 14,
+   "source_count": 3,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:09a9520215dcaa59ff9b7d48f205bd88",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 20915
+     },
+     "end": {
+      "line": 1,
+      "column": 20922
+     }
+    },
+    "mechanism": "route-string-constant",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:261cec632617be5fbc146f998607c587",
+   "path": "/forgot-password",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 2,
+   "source_count": 1,
+   "provenance": {
+    "source_id": "jss:a47f8a9eff755dccda0b500484eb06b3",
+    "occurrence_id": "jso:0afa7b45432dc7ee864efa504af92b4c",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 4424
+     },
+     "end": {
+      "line": 1,
+      "column": 4442
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:e9b3e00aa6554b280be53ce9a7d61ed4",
+   "path": "/invoices",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 4,
+   "source_count": 1,
+   "provenance": {
+    "source_id": "jss:376c7de88de1c64144e01aaa876ec9ed",
+    "occurrence_id": "jso:2770621c8321530a757472f7b7020b2f",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 41324
+     },
+     "end": {
+      "line": 1,
+      "column": 41335
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:f843c0448fc91cb5691b57b472bb0416",
+   "path": "/login",
+   "classification": "system",
+   "classification_basis": "path-name-heuristic",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 4,
+   "source_count": 2,
+   "provenance": {
+    "source_id": "jss:04429d966a7aad1e427e0d815df5e105",
+    "occurrence_id": "jso:0067b4c25ea1ca798a8145f6a257d6f2",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 7116
+     },
+     "end": {
+      "line": 1,
+      "column": 7144
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:4e14b7cfa2c5d39c99e3336aa1906014",
+   "path": "/register",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 12,
+   "source_count": 2,
+   "provenance": {
+    "source_id": "jss:8f3617f3016d130315d5f596721065e7",
+    "occurrence_id": "jso:0f2891a46828b0d5bc1654b61eb87b9a",
+    "source_range": {
+     "start": {
+      "line": 38,
+      "column": 2283
+     },
+     "end": {
+      "line": 38,
+      "column": 2294
+     }
+    },
+    "mechanism": "route-string-constant",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  },
+  {
+   "id": "jsr:0fd9367e6aa59e28f816b4708ae99d7c",
+   "path": "/termos",
+   "classification": "unknown",
+   "classification_basis": "unknown",
+   "confidence": "low",
+   "mechanisms": [
+    "navigation-target",
+    "route-string-constant"
+   ],
+   "occurrence_count": 4,
+   "source_count": 2,
+   "provenance": {
+    "source_id": "jss:e22d3ef19aed06b4554ec9e89911fffd",
+    "occurrence_id": "jso:0d41a391017b70e2a4397a9dbbe64577",
+    "source_range": {
+     "start": {
+      "line": 1,
+      "column": 5689
+     },
+     "end": {
+      "line": 1,
+      "column": 5698
+     }
+    },
+    "mechanism": "navigation-target",
+    "derivation": "inferred",
+    "inferred_base_path": null
+   }
+  }
+ ],
+ "limitations": [
+  "Caller-selected source analysis leaves 71 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+  "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+  "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+  "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+  "Pattern IDs are exact path identities within this inventory. Occurrence and source IDs retain source/content identity and precise syntax ranges; metadata-only discoveries have no AST range.",
+  "Routes are static candidates from the provided code sources. Reachability, permissions, server-only routes and the complete application route set are unverified.",
+  "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+  "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+  "System classification is a path-name heuristic. Asset URL prefixes can differ from routing bases; inferred prefixes retain the original unprefixed path.",
+  "Unbound path strings require a top-level segment supported by structural routes or navigation candidates. Unknown or missing source facts do not establish route absence.",
+  "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+ ],
+ "unknowns": [
+  "The complete application route set, reachability and runtime permissions remain unknown.",
+  "Some source/routing facts are incomplete; inspect sources and unknowns without reanalyzing."
+ ]
+}

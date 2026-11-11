@@ -1,0 +1,22 @@
+{
+  "title": "Remotely-triggerable panic in Taildrop filename dedup (nextFilename slice out of range)",
+  "status": "CONFIRMED (runtime reproducer run against verbatim function logic; reachability traced in source)",
+  "upstream_status": "UNFIXED on origin/main as of review (no post-v1.104.1 commits touch feature/taildrop/; tip nextFilename identical)",
+  "severity_estimate": "Low (contained by net/http per-connection panic recovery: failed transfer + logged panic, not daemon crash)",
+  "component": "feature/taildrop",
+  "sink": "feature/taildrop/taildrop.go:287  name[i+len(\"( \"):len(name)-len(\")\")]  (i=strings.LastIndex(name,\" (\"))",
+  "root_cause": "When name matches rxNumberSuffix ` \\([0-9]+\\)` yet ends with ' (', LastIndex(' (') points at the trailing ' (', so the slice low index (i+2) exceeds the high index (len-1) -> slice bounds out of range panic.",
+  "reachability": [
+    "peerapi PUT /v0/put/<name>; <name> = url.PathUnescape of path tail (feature/taildrop/peerapi.go)",
+    "-> manager.PutFile -> fsFileOps.Rename (feature/taildrop/fileops_fs.go:148)",
+    "Rename calls nextFilename(filepath.Base(dst)) only on a name COLLISION that is not deduped (different size OR different sha256)",
+    "filename passes validateBaseName (taildrop.go:154): verified ACCEPTED for 'x (1) (', 'a (5) (', 'doc (12) ('",
+    "caller must hold FileSharingSend cap or be same-user-untagged (canPutFile)"
+  ],
+  "repro_inputs_panic": ["x (1) (", "a (5) (", "doc (12) ("],
+  "repro_inputs_ok": ["foo.jpg -> foo (1).jpg", "Foo (1).jpg -> Foo (2).jpg"],
+  "repro": "scripts/repro-taildrop-nextfilename/ (go run . -> prints validateBaseName ACCEPTED then PANIC slice bounds out of range [7:6])",
+  "attack_sequence": "Authorized file-sharing peer: PUT name 'x (1) (' (size A); then PUT same name with size B != A -> Rename sees existing file, sizes differ so sha dedup skipped -> nextFilename('x (1) (') -> panic in the peerapi handler goroutine.",
+  "fix": "Guard the slice bounds / parse the numeric group via the rxNumberSuffix submatch instead of hand-computed indices.",
+  "credit_auditor": "surface B (peerapi+taildrop)"
+}

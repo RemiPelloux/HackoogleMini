@@ -1,0 +1,7 @@
+{
+  "title": "NEGATIVE: malicious-control -> RCE via auto-update is blocked by pinned-root signature verification",
+  "component": "clientupdate/distsign",
+  "finding": "distsign embeds root ed25519 pubkeys (roots.go:16 //go:embed roots). Client.Download (distsign.go:209-243) fetches file to dst+'.unverified', computes BLAKE2s hash+len, fetches .sig, and requires VerifyAny(signingKeys, hash||len, sig); signingKeys() (distsign.go:298-310) is itself VerifyAny(c.roots, bundle, sig) against the pinned roots. File is os.Rename'd into place ONLY after signature OK; on mismatch the .unverified file is removed and never executed. Overriding pkgsAddr does not help (sig still must chain to pinned roots).",
+  "implication": "A repointed/attacker control server (or MITM of pkgs.tailscale.com) cannot deliver a runnable update binary without Tailscale's private signing key. The update c2n path is NOT a control->RCE chain.",
+  "confidence": "high (code read end-to-end)"
+}

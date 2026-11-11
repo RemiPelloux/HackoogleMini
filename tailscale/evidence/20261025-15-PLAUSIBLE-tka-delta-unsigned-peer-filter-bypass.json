@@ -1,0 +1,11 @@
+{
+  "title": "TKA bypass (plausible): delta MapResponse path skips the unlocked-nodes packet-filter guard, letting malicious control inject a data-plane-reachable UnsignedPeerAPIOnly peer",
+  "severity_estimate": "HIGH if confirmed (defeats tailnet-lock's purpose: control injects a network-reachable peer with no network-lock signature). Needs runtime proof.",
+  "status": "PLAUSIBLE (medium-high confidence per audit); TKA crypto core verified SOUND. Needs integration test.",
+  "component": "ipn/ipnlocal/tailnet-lock.go tkaFilterDeltaMutsLocked (:150-183, skips UnsignedPeerAPIOnly), local.go delta path authReconfigLocked (:2553) which does NOT run updateFilterLocked/unlockedNodesPermitted (only full-netmap path does, local.go:3437-3442 / packetFilterPermitsUnlockedNodes :3540-3577).",
+  "mechanism": "malicious control sends delta-only PeersChanged (no PacketFilter/non-patch field) adding a node UnsignedPeerAPIOnly=true with a CGNAT Address. Delta path installs the peer but never re-evaluates the fail-closed unlocked-nodes filter nulling. With the default permissive ACL the pre-existing filter permits the new peer's IP -> data-plane reachable unsigned peer.",
+  "mitigation_present": "map.go:266-274 strips unsigned peer AllowedIPs to its own Addresses (no routes/exit); magicsock denies peercaps to unsigned peers. So blast radius = the peer's own address reachability, not routes.",
+  "confirm": "integration test: tailnet-locked node + permissive filter, deliver delta MapResponse adding UnsignedPeerAPIOnly peer in filter Srcs; assert active filter still accepts its IP (bug) vs nulled (full-netmap path behavior).",
+  "fix": "delta path should re-run updateFilterLocked/unlockedNodesPermitted on any UnsignedPeerAPIOnly upsert.",
+  "credit_auditor": "TKA agent"
+}

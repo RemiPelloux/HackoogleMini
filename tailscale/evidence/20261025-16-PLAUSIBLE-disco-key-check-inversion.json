@@ -1,0 +1,10 @@
+{
+  "title": "Disco (plausible): inverted disco-key check in unambiguousNodeKeyOfPingLocked lets a hostile tailnet member poison receive-path epAddr->nodekey mapping",
+  "severity_estimate": "HIGH-ish IF real-impact confirmed, but WG crypto caps it to misrouting/endpoint-confusion/DoS, NOT interception. Needs runtime proof.",
+  "status": "PLAUSIBLE but UNCERTAIN. origin/main is BYTE-IDENTICAL (no upstream fix -> cannot cite a fix as confirmation; subagent's 'upstream fixed' claim was WRONG). The branch also fires in a benign 'endpoint has no disco key yet' bootstrap case, so intent is ambiguous.",
+  "component": "wgengine/magicsock/magicsock.go:2538 unambiguousNodeKeyOfPingLocked (UDP branch uses `if !knownKey` vs DERP sibling branch `if knownKey`), consumed via setNodeKeyForEpAddr.",
+  "mechanism": "naked UDP disco Ping sealed with attacker disco key, Ping.NodeKey=victim. endpointForNodeKey(victim) exists and does not own attacker dk -> !knownKey true -> returns (victim,true) -> setNodeKeyForEpAddr(attackerSrc, victim). Attacker src ip:port bound to victim endpoint in receive map.",
+  "caveat": "For legit pings knownKey is TRUE so branch is skipped (relies on fallback). Branch conflates (a) endpoint-has-no-disco-key-yet (benign) and (b) endpoint-has-different-disco-key (poisoning). Impact capped by WireGuard peer authentication.",
+  "decision": "NOT send-ready; requires a runtime test proving real misrouting impact and a determination it is not intended/benign.",
+  "credit_auditor": "disco agent"
+}

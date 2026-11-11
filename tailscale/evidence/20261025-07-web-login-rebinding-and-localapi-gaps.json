@@ -1,0 +1,23 @@
+{
+  "secondary_candidates": [
+    {
+      "title": "Login/readonly `tailscale web` mode has no Host/anti-DNS-rebinding guard -> CSRF to POST /api/up",
+      "component": "client/web/web.go + cmd/tailscale/cli/web.go",
+      "detail": "requireTailscaleIP + CSP/XFO only run in ManageServerMode (web.go:335). Login mode: authorizeRequest returns true unconditionally; only csrfProtect guards mutation, which a same-origin rebound page (evil.com:8088 -> 127.0.0.1) satisfies. Sink serveTailscaleUp can reauth/read auth URL, and on a stopped node apply attacker ControlURL+AuthKey. Precondition: user ran `tailscale web`. Severity ~Medium. Unfixed upstream.",
+      "confidence": "medium (server-side defense genuinely absent; real-world gated by browser PNA protections)",
+      "reachability_confirmed": "serveLoginAPI (web.go:519) routes POST /api/up -> serveTailscaleUp with NO session auth in login mode (authorizeRequest default-case returns true; only csrfProtect guards, satisfied by same-origin DNS-rebinding). tailscaleUp applies attacker ControlURL+AuthKey+Start when node is NOT running (the normal state during `tailscale web` login). Running-node repoint blocked by `if !isRunning`.",
+      "promoted": "Chain candidate: rebinding -> /api/up -> attacker ControlURL/AuthKey -> node joins attacker tailnet. Severity ceiling = what a malicious control server can do (update->RCE CONFIRMED BLOCKED; traffic/DNS MITM + SSH-if-enabled pending agent)."
+    },
+    {
+      "title": "Ungated localapi handlers (serveDial, servePing, serveUploadClientMetrics, serveDERPMap, debug bus/*) lack PermitRead/PermitWrite",
+      "component": "ipn/localapi/localapi.go",
+      "detail": "serveDial (:1304) opens a hijacked proxy to Dial-Host:Port over tailnet with NO Permit check -> a PermitRead-only local (non-operator) user could tunnel TCP via the root daemon. Not reachable from browser/peer (not in web proxy allowlist) -> local defense-in-depth gap. serveUploadClientMetrics unbounded distinct metric names -> slow mem DoS.",
+      "confidence": "high that ungated; impact local-only"
+    },
+    {
+      "title": "/metrics served without auth in both web modes",
+      "component": "client/web/web.go:360",
+      "severity": "low"
+    }
+  ]
+}

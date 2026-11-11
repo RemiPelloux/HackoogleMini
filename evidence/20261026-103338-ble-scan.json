@@ -1,0 +1,58 @@
+[
+  {
+    "address": "4D:64:D0:63:0A:E2",
+    "name": "GoogleHome4983",
+    "local_name": "GoogleHome4983",
+    "rssi": -42,
+    "service_uuids": [
+      "0000fea0-0000-1000-8000-00805f9b34fb"
+    ],
+    "manufacturer_data": {},
+    "service_data": {
+      "0000fea0-0000-1000-8000-00805f9b34fb": "03fa8fca355c466f2020209e42"
+    },
+    "tx_power": null
+  },
+  {
+    "address": "06:3A:61:32:43:D5",
+    "name": null,
+    "local_name": null,
+    "rssi": -76,
+    "service_uuids": [
+      "0000fef3-0000-1000-8000-00805f9b34fb"
+    ],
+    "manufacturer_data": {},
+    "service_data": {
+      "0000fef3-0000-1000-8000-00805f9b34fb": "4a17234a43585a1132c250635c4e6627206b4943fd2296ce77a26c"
+    },
+    "tx_power": null
+  },
+  {
+    "address": "24:8B:07:9F:76:BD",
+    "name": null,
+    "local_name": null,
+    "rssi": -88,
+    "service_uuids": [
+      "0000fef3-0000-1000-8000-00805f9b34fb"
+    ],
+    "manufacturer_data": {},
+    "service_data": {
+      "0000fef3-0000-1000-8000-00805f9b34fb": "4a172347395738113201873bcd4d865f49fbd53331bf0d2470fddf"
+    },
+    "tx_power": null
+  },
+  {
+    "address": "69:72:9F:6A:A1:2F",
+    "name": null,
+    "local_name": null,
+    "rssi": -92,
+    "service_uuids": [
+      "0000fe9f-0000-1000-8000-00805f9b34fb"
+    ],
+    "manufacturer_data": {},
+    "service_data": {
+      "0000fe9f-0000-1000-8000-00805f9b34fb": "0254387a4c585f58436f6438000001a17794c3c6"
+    },
+    "tx_power": null
+  }
+]

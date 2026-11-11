@@ -1,0 +1,21 @@
+{
+  "evidence_id": "ev_b292a9e4e7cc18e9524cbaaa56b68f33c32e525d5dafa2d4eca4cc9991ba26f6",
+  "operation": "inspect_go_binary",
+  "subject": {"name": "tailscaled", "sha256": "c2c311f11e35296498128c5fb563fc2e3bb1d92de3a6419e862a394e1b469467", "bytes": 30012280, "format": "elf", "arch": "amd64/x86_64"},
+  "go_version": "go1.27.1-X:nodwarf5",
+  "module_path": "tailscale.com/cmd/tailscaled",
+  "main": {"path": "tailscale.com", "version": "v1.104.1+dirty"},
+  "build_settings": {
+    "-buildmode": "pie", "-compiler": "gc", "-tags": "xversion",
+    "CGO_ENABLED": "1", "GOARCH": "amd64", "GOOS": "linux", "GOAMD64": "v1",
+    "GOEXPERIMENT": "nodwarf5",
+    "ldflags_version_stamps": {"longStamp": "1.104.1", "shortStamp": "1.104.1", "gitCommitStamp": "7f4efe814ff14b064eb080344389ceb9ea2d37ac"},
+    "vcs.revision": "9a522a9786c97eb7910c01ccb7bd66557b04c910",
+    "vcs.time": "2026-10-07T18:43:28Z",
+    "vcs.modified": true,
+    "cgo_hardening": "_FORTIFY_SOURCE=3, -fstack-clash-protection, -fcf-protection, RELRO+now, pack-relative-relocs (Arch packaging flags)"
+  },
+  "dependency_count": 71,
+  "notable_deps": ["gvisor.dev/gvisor", "github.com/tailscale/wireguard-go", "golang.org/x/crypto v0.57.0", "filippo.io/edwards25519", "github.com/google/go-tpm", "github.com/coder/websocket", "aws-sdk-go-v2 (ssm/sso/sts)", "github.com/tailscale/web-client-prebuilt"],
+  "limitations": "Embedded build metadata is observed file content, not proof of compiler identity or runtime behavior. Only Go build info inspected; no symbols/decompilation here."
+}

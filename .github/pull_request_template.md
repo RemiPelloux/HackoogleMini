@@ -1,38 +1,25 @@
-## Investigation
+## What this adds
 
-<!-- Which investigation folder does this PR touch? -->
-**Folder:** `<name>/`
-**Target:** <!-- e.g. Google Home Mini gen 1, Tailscale v1.104.1 -->
+<!-- New script / exploit component / analysis finding / documentation -->
 
----
+## Attack chain relevance
 
-## What was analyzed
+<!-- Which chain (A/B/C) does this advance? -->
 
-<!-- Describe the artifact(s) or surface examined in this PR -->
-
----
-
-## Key findings
-
-- 
-- 
-- 
-
----
+- [ ] Chain A — Chrome n-day via Cast registry MITM
+- [ ] Chain B — Magellan SQLite RCE
+- [ ] Chain C — YAFFS2 / NAND
+- [ ] Other / tooling / docs
 
 ## Evidence
 
-<!-- List the evidence files added/updated and what each proves -->
-| File | Claim supported |
-|---|---|
-| `evidence/XX-command.json` | |
-
----
+| Step | Command | Output / evidence file |
+|---|---|---|
+| | | |
 
 ## Checklist
 
-- [ ] Every claim in `notes/findings.md` cites at least one evidence file
-- [ ] No raw binaries or firmware images committed (`target/` is gitignored)
-- [ ] `notes/findings.md` updated with new conclusions
-- [ ] Reconstruction (if any) is clean-room — written from notes, not decompiled code
-- [ ] `README.md` investigation table updated if status changed
+- [ ] No binaries committed (`target/`, `work/` stay out of git)
+- [ ] Evidence cited in `notes/findings.md` or inline above
+- [ ] Scripts tested on the actual target or a faithful synthetic
+- [ ] `reconstruction/` code is clean-room (not copied from decompiled output)

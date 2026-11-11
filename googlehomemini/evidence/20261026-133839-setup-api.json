@@ -1,0 +1,1155 @@
+{
+  "base": "https://192.168.255.249:8443",
+  "endpoints": {
+    "/setup/eureka_info": {
+      "status": 200,
+      "len": 1137,
+      "json": {
+        "bssid": "",
+        "build_version": "468362",
+        "cast_build_revision": "3.75.468362",
+        "connected": false,
+        "ethernet_connected": false,
+        "has_update": false,
+        "hotspot_bssid": "FA:8F:CA:35:5C:46",
+        "locale": "fr",
+        "location": {
+          "country_code": "FR",
+          "latitude": 255.0,
+          "longitude": 255.0
+        },
+        "mac_address": "44:07:0B:D2:6F:36",
+        "name": "GoogleHome4983",
+        "opt_in": {
+          "crash": false,
+          "opencast": false,
+          "stats": false
+        },
+        "public_key": "MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB",
+        "release_track": "stable-channel",
+        "setup_state": 10,
+        "setup_stats": {
+          "historically_succeeded": true,
+          "num_check_connectivity": 0,
+          "num_connect_wifi": 0,
+          "num_connected_wifi_not_saved": 0,
+          "num_initial_eureka_info": 0,
+          "num_obtain_ip": 0
+        },
+        "ssdp_udn": "ad8442f8-f004-f4f4-44cb-ac11eb2d26f6",
+        "ssid": "",
+        "time_format": 1,
+        "tos_accepted": false,
+        "uptime": 15174.510524,
+        "version": 13,
+        "wpa_configured": false,
+        "wpa_state": 3
+      }
+    },
+    "/setup/eureka_info?options=detail": {
+      "status": 200,
+      "len": 1346,
+      "json": {
+        "bssid": "",
+        "build_version": "468362",
+        "cast_build_revision": "3.75.468362",
+        "connected": false,
+        "detail": {
+          "icon_list": [
+            {
+              "depth": 32,
+              "height": 55,
+              "mimetype": "image/png",
+              "url": "/setup/icon.png",
+              "width": 98
+            }
+          ],
+          "locale": {
+            "display_string": "fran\u00e7ais"
+          },
+          "manufacturer": "Google Inc.",
+          "model_name": "Google Home Mini"
+        },
+        "ethernet_connected": false,
+        "has_update": false,
+        "hotspot_bssid": "FA:8F:CA:35:5C:46",
+        "locale": "fr",
+        "location": {
+          "country_code": "FR",
+          "latitude": 255.0,
+          "longitude": 255.0
+        },
+        "mac_address": "44:07:0B:D2:6F:36",
+        "name": "GoogleHome4983",
+        "opt_in": {
+          "crash": false,
+          "opencast": false,
+          "stats": false
+        },
+        "public_key": "MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB",
+        "release_track": "stable-channel",
+        "setup_state": 10,
+        "setup_stats": {
+          "historically_succeeded": true,
+          "num_check_connectivity": 0,
+          "num_connect_wifi": 0,
+          "num_connected_wifi_not_saved": 0,
+          "num_initial_eureka_info": 0,
+          "num_obtain_ip": 0
+        },
+        "ssdp_udn": "ad8442f8-f004-f4f4-44cb-ac11eb2d26f6",
+        "ssid": "",
+        "time_format": 1,
+        "tos_accepted": false,
+        "uptime": 15174.576395,
+        "version": 13,
+        "wpa_configured": false,
+        "wpa_state": 3
+      }
+    },
+    "/setup/eureka_info?options=detail&params=setup_state,device_info": {
+      "status": 200,
+      "len": 1904,
+      "json": {
+        "device_info": {
+          "4k_blocked": 0,
+          "capabilities": {
+            "assistant_supported": true,
+            "audio_hdr_supported": false,
+            "audio_surround_mode_supported": false,
+            "ble_supported": true,
+            "bluetooth_audio_sink_supported": true,
+            "bluetooth_audio_source_supported": true,
+            "bluetooth_supported": true,
+            "cloud_groups_supported": true,
+            "cloudcast_supported": true,
+            "content_filters_supported": true,
+            "display_supported": false,
+            "fdr_supported": false,
+            "hdmi_prefer_50hz_supported": false,
+            "hdmi_prefer_high_fps_supported": false,
+            "hotspot_supported": true,
+            "https_setup_supported": true,
+            "input_management_supported": true,
+            "keep_hotspot_until_connected_supported": true,
+            "multi_user_supported": true,
+            "multichannel_group_supported": true,
+            "multiplexed_connections_supported": true,
+            "multizone_supported": true,
+            "night_mode_supported": true,
+            "night_mode_supported_v2": true,
+            "opencast_supported": false,
+            "preview_channel_supported": true,
+            "reboot_supported": true,
+            "remote_ducking_supported": true,
+            "renaming_supported": true,
+            "set_network_supported": true,
+            "setup_supported": true,
+            "sleep_mode_supported": true,
+            "stats_supported": true,
+            "system_sound_effects_supported": false,
+            "ui_flipping_supported": true,
+            "user_eq_supported": true,
+            "wifi_auto_save_supported": true,
+            "wifi_supported": true
+          },
+          "cloud_device_id": "009CCF5F2B42B8E54BD50F2BB713692D",
+          "factory_country_code": "FR",
+          "hotspot_bssid": "FA:8F:CA:35:5C:46",
+          "mac_address": "44:07:0B:D2:6F:36",
+          "manufacturer": "Google Inc.",
+          "model_name": "Google Home Mini",
+          "product_name": "mushroom",
+          "public_key": "MIIBCgKCAQEA/tVvUlRi7rnbNlG8ZK5kjVr0NWlWvD0sAw1kVN3g0spCxbl4xflBKL92/9NlMiRQqwmYseSFBiCAYqiJMss36i1gJn/dxCRLNx3MlhHypj7FwOUeUVtxCVdbG4lGcKJqKybDnGJmsWodVWFO0bTb41hkwrAp4Pg3UuXjZczKLE5ZE4OomEF6rid8tdsRIKSjLympjwo79lLRqalKpg6sYQ73MKi3fk/pw+u5ey3z10CDYq1Dgd3IfcdS8nW9EcrFNUZ2t8itJe4PIXbC5uAuqoieL1Me6Fsp5uouGz67talX0tqsCeMh6VFUktaY56jImkNeg3xHTdo8OCZNEHZVYwIDAQAB",
+          "ssdp_udn": "ad8442f8-f004-f4f4-44cb-ac11eb2d26f6",
+          "uptime": 15174.648984,
+          "weave_device_id": ""
+        }
+      }
+    },
+    "/eureka_info": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/scan_results": {
+      "status": 200,
+      "len": 1192,
+      "json": [
+        {
+          "ap_list": [
+            {
+              "bssid": "5c:e9:31:ca:f6:89",
+              "frequency": 5220,
+              "signal_level": -66
+            },
+            {
+              "bssid": "5c:e9:31:ca:f6:88",
+              "frequency": 2462,
+              "signal_level": -56
+            }
+          ],
+          "bssid": "5c:e9:31:ca:f6:88",
+          "signal_level": -56,
+          "ssid": "AcquaProtectionWifi",
+          "wpa_auth": 7,
+          "wpa_cipher": 4
+        },
+        {
+          "ap_list": [
+            {
+              "bssid": "d8:b3:70:d8:0b:4d",
+              "frequency": 2412,
+              "signal_level": -71
+            }
+          ],
+          "bssid": "d8:b3:70:d8:0b:4d",
+          "signal_level": -71,
+          "ssid": "EAPNEU_WIFI",
+          "wpa_auth": 7,
+          "wpa_cipher": 4
+        },
+        {
+          "ap_list": [
+            {
+              "bssid": "e2:55:a8:23:ec:6f",
+              "frequency": 2412,
+              "signal_level": -85
+            }
+          ],
+          "bssid": "e2:55:a8:23:ec:6f",
+          "signal_level": -85,
+          "ssid": "KFC_LIV",
+          "wpa_auth": 7,
+          "wpa_cipher": 4
+        },
+        {
+          "ap_list": [
+            {
+              "bssid": "78:c2:13:ae:94:d1",
+              "frequency": 2462,
+              "signal_level": -87
+            }
+          ],
+          "bssid": "78:c2:13:ae:94:d1",
+          "signal_level": -87,
+          "ssid": "Livebox-94D0",
+          "wpa_auth": 7,
+          "wpa_cipher": 4
+        },
+        {
+          "ap_list": [
+            {
+              "bssid": "58:1d:d8:5a:c5:c4",
+              "frequency": 5540,
+              "signal_level": -44
+            },
+            {
+              "bssid": "58:1d:d8:5a:c5:c8",
+              "frequency": 2437,
+              "signal_level": -59
+            }
+          ],
+          "bssid": "58:1d:d8:5a:c5:c4",
+          "signal_level": -44,
+          "ssid": "Livebox-C5C0",
+          "wpa_auth": 7,
+          "wpa_cipher": 4
+        },
+        {
+          "ap_list": [
+            {
+              "bssid": "ee:55:a8:23:ec:6f",
+              "frequency": 2412,
+              "signal_level": -84
+            }
+          ],
+          "bssid": "ee:55:a8:23:ec:6f",
+          "signal_level": -84,
+          "ssid": "WIFI_KFC",
+          "wpa_auth": 1,
+          "wpa_cipher": 1
+        }
+      ]
+    },
+    "/setup/scan_wifi": {
+      "status": 405,
+      "len": 0
+    },
+    "/setup/supported_timezones": {
+      "status": 200,
+      "len": 15984,
+      "json": [
+        {
+          "display_string": "UTC\u221211:00 (Midway)",
+          "offset": -660,
+          "timezone": "Pacific/Midway"
+        },
+        {
+          "display_string": "UTC\u221210:00 (Honolulu)",
+          "offset": -600,
+          "timezone": "Pacific/Honolulu"
+        },
+        {
+          "display_string": "UTC\u221211:00 (Adak)",
+          "offset": -660,
+          "timezone": "America/Adak"
+        },
+        {
+          "display_string": "UTC\u221210:00 (Anchorage)",
+          "offset": -600,
+          "timezone": "America/Anchorage"
+        },
+        {
+          "display_string": "heure normale du Pacifique nord-am\u00e9ricain (Los Angeles)",
+          "offset": -480,
+          "timezone": "America/Los_Angeles"
+        },
+        {
+          "display_string": "heure normale du Pacifique nord-am\u00e9ricain (Vancouver)",
+          "offset": -480,
+          "timezone": "America/Vancouver"
+        },
+        {
+          "display_string": "heure normale du Pacifique nord-am\u00e9ricain (Tijuana)",
+          "offset": -480,
+          "timezone": "America/Tijuana"
+        },
+        {
+          "display_string": "heure normale des Rocheuses (Phoenix)",
+          "offset": -420,
+          "timezone": "America/Phoenix"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Chihuahua)",
+          "offset": -360,
+          "timezone": "America/Chihuahua"
+        },
+        {
+          "display_string": "heure normale des Rocheuses (Denver)",
+          "offset": -420,
+          "timezone": "America/Denver"
+        },
+        {
+          "display_string": "heure normale des Rocheuses (Edmonton)",
+          "offset": -420,
+          "timezone": "America/Edmonton"
+        },
+        {
+          "display_string": "heure normale du Pacifique nord-am\u00e9ricain (Mazatlan)",
+          "offset": -480,
+          "timezone": "America/Mazatlan"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Regina)",
+          "offset": -360,
+          "timezone": "America/Regina"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Costa Rica)",
+          "offset": -360,
+          "timezone": "America/Costa_Rica"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Chicago)",
+          "offset": -360,
+          "timezone": "America/Chicago"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Mexico City)",
+          "offset": -360,
+          "timezone": "America/Mexico_City"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Tegucigalpa)",
+          "offset": -360,
+          "timezone": "America/Tegucigalpa"
+        },
+        {
+          "display_string": "heure normale du centre nord-am\u00e9ricain (Winnipeg)",
+          "offset": -360,
+          "timezone": "America/Winnipeg"
+        },
+        {
+          "display_string": "heure d\u2019\u00e9t\u00e9 de l\u2019\u00eele de P\u00e2ques (Easter)",
+          "offset": -360,
+          "timezone": "Pacific/Easter"
+        },
+        {
+          "display_string": "heure normale de Colombie (Bogota)",
+          "offset": -300,
+          "timezone": "America/Bogota"
+        },
+        {
+          "display_string": "heure normale du P\u00e9rou (Lima)",
+          "offset": -300,
+          "timezone": "America/Lima"
+        },
+        {
+          "display_string": "heure normale de l\u2019Est nord-am\u00e9ricain (New York)",
+          "offset": -300,
+          "timezone": "America/New_York"
+        },
+        {
+          "display_string": "heure normale de l\u2019Est nord-am\u00e9ricain (Toronto)",
+          "offset": -300,
+          "timezone": "America/Toronto"
+        },
+        {
+          "display_string": "heure du Venezuela (Caracas)",
+          "offset": -240,
+          "timezone": "America/Caracas"
+        },
+        {
+          "display_string": "heure normale de l\u2019Atlantique (Barbados)",
+          "offset": -240,
+          "timezone": "America/Barbados"
+        },
+        {
+          "display_string": "heure normale de l\u2019Atlantique (Halifax)",
+          "offset": -240,
+          "timezone": "America/Halifax"
+        },
+        {
+          "display_string": "heure normale de l\u2019Amazonie (Manaus)",
+          "offset": -240,
+          "timezone": "America/Manaus"
+        },
+        {
+          "display_string": "heure d\u2019\u00e9t\u00e9 du Chili (Santiago)",
+          "offset": -180,
+          "timezone": "America/Santiago"
+        },
+        {
+          "display_string": "heure normale de Terre-Neuve (St Johns)",
+          "offset": -210,
+          "timezone": "America/St_Johns"
+        },
+        {
+          "display_string": "heure normale de Brasilia (Araguaina)",
+          "offset": -180,
+          "timezone": "America/Araguaina"
+        },
+        {
+          "display_string": "heure normale d\u2019Argentine (Buenos Aires)",
+          "offset": -180,
+          "timezone": "America/Argentina/Buenos_Aires"
+        },
+        {
+          "display_string": "heure normale d\u2019Argentine (San Luis)",
+          "offset": -180,
+          "timezone": "America/Argentina/San_Luis"
+        },
+        {
+          "display_string": "heure normale de l\u2019Uruguay (Montevideo)",
+          "offset": -180,
+          "timezone": "America/Montevideo"
+        },
+        {
+          "display_string": "heure normale de Brasilia (Sao Paulo)",
+          "offset": -180,
+          "timezone": "America/Sao_Paulo"
+        },
+        {
+          "display_string": "heure normale de l\u2019Ouest du Groenland (Godthab)",
+          "offset": -180,
+          "timezone": "America/Godthab"
+        },
+        {
+          "display_string": "heure de G\u00e9orgie du Sud (South Georgia)",
+          "offset": -120,
+          "timezone": "Atlantic/South_Georgia"
+        },
+        {
+          "display_string": "heure normale du Cap-Vert (Cape Verde)",
+          "offset": -120,
+          "timezone": "Atlantic/Cape_Verde"
+        },
+        {
+          "display_string": "heure normale des A\u00e7ores (Azores)",
+          "offset": -60,
+          "timezone": "Atlantic/Azores"
+        },
+        {
+          "display_string": "heure moyenne de Greenwich (Reykjavik)",
+          "offset": 0,
+          "timezone": "Atlantic/Reykjavik"
+        },
+        {
+          "display_string": "heure moyenne de Greenwich (St Helena)",
+          "offset": 0,
+          "timezone": "Atlantic/St_Helena"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Ouest (Casablanca)",
+          "offset": 0,
+          "timezone": "Africa/Casablanca"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Ouest (Faroe)",
+          "offset": 0,
+          "timezone": "Atlantic/Faroe"
+        },
+        {
+          "display_string": "UTC+01:00 (Dublin)",
+          "offset": 60,
+          "timezone": "Europe/Dublin"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Lisbon)",
+          "offset": 60,
+          "timezone": "Europe/Lisbon"
+        },
+        {
+          "display_string": "UTC+01:00 (London)",
+          "offset": 60,
+          "timezone": "Europe/London"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Amsterdam)",
+          "offset": 60,
+          "timezone": "Europe/Amsterdam"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Belgrade)",
+          "offset": 60,
+          "timezone": "Europe/Belgrade"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Berlin)",
+          "offset": 60,
+          "timezone": "Europe/Berlin"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Bratislava)",
+          "offset": 60,
+          "timezone": "Europe/Bratislava"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Brussels)",
+          "offset": 60,
+          "timezone": "Europe/Brussels"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Budapest)",
+          "offset": 60,
+          "timezone": "Europe/Budapest"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Copenhagen)",
+          "offset": 60,
+          "timezone": "Europe/Copenhagen"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Ljubljana)",
+          "offset": 60,
+          "timezone": "Europe/Ljubljana"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Madrid)",
+          "offset": 60,
+          "timezone": "Europe/Madrid"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Malta)",
+          "offset": 60,
+          "timezone": "Europe/Malta"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Oslo)",
+          "offset": 60,
+          "timezone": "Europe/Oslo"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Paris)",
+          "offset": 60,
+          "timezone": "Europe/Paris"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Prague)",
+          "offset": 60,
+          "timezone": "Europe/Prague"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Rome)",
+          "offset": 60,
+          "timezone": "Europe/Rome"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Stockholm)",
+          "offset": 60,
+          "timezone": "Europe/Stockholm"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Sarajevo)",
+          "offset": 60,
+          "timezone": "Europe/Sarajevo"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Tirane)",
+          "offset": 60,
+          "timezone": "Europe/Tirane"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Vaduz)",
+          "offset": 60,
+          "timezone": "Europe/Vaduz"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Vienna)",
+          "offset": 60,
+          "timezone": "Europe/Vienna"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Warsaw)",
+          "offset": 60,
+          "timezone": "Europe/Warsaw"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Zagreb)",
+          "offset": 60,
+          "timezone": "Europe/Zagreb"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe centrale (Zurich)",
+          "offset": 60,
+          "timezone": "Europe/Zurich"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique m\u00e9ridionale (Windhoek)",
+          "offset": 120,
+          "timezone": "Africa/Windhoek"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique de l\u2019Ouest (Lagos)",
+          "offset": 60,
+          "timezone": "Africa/Lagos"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique de l\u2019Ouest (Brazzaville)",
+          "offset": 60,
+          "timezone": "Africa/Brazzaville"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Cairo)",
+          "offset": 120,
+          "timezone": "Africa/Cairo"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique centrale (Harare)",
+          "offset": 120,
+          "timezone": "Africa/Harare"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique centrale (Maputo)",
+          "offset": 120,
+          "timezone": "Africa/Maputo"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique m\u00e9ridionale (Johannesburg)",
+          "offset": 120,
+          "timezone": "Africa/Johannesburg"
+        },
+        {
+          "display_string": "heure normale de Moscou (Kaliningrad)",
+          "offset": 180,
+          "timezone": "Europe/Kaliningrad"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Athens)",
+          "offset": 120,
+          "timezone": "Europe/Athens"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Bucharest)",
+          "offset": 120,
+          "timezone": "Europe/Bucharest"
+        },
+        {
+          "display_string": "heure normale de Moscou (Chisinau)",
+          "offset": 180,
+          "timezone": "Europe/Chisinau"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Helsinki)",
+          "offset": 120,
+          "timezone": "Europe/Helsinki"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Istanbul)",
+          "offset": 120,
+          "timezone": "Europe/Istanbul"
+        },
+        {
+          "display_string": "heure normale de Moscou (Kiev)",
+          "offset": 180,
+          "timezone": "Europe/Kiev"
+        },
+        {
+          "display_string": "heure normale de Moscou (Riga)",
+          "offset": 180,
+          "timezone": "Europe/Riga"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Sofia)",
+          "offset": 120,
+          "timezone": "Europe/Sofia"
+        },
+        {
+          "display_string": "heure normale de Moscou (Tallinn)",
+          "offset": 180,
+          "timezone": "Europe/Tallinn"
+        },
+        {
+          "display_string": "heure normale de Moscou (Vilnius)",
+          "offset": 180,
+          "timezone": "Europe/Vilnius"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Amman)",
+          "offset": 120,
+          "timezone": "Asia/Amman"
+        },
+        {
+          "display_string": "heure normale d\u2019Europe de l\u2019Est (Beirut)",
+          "offset": 120,
+          "timezone": "Asia/Beirut"
+        },
+        {
+          "display_string": "heure normale d\u2019Isra\u00ebl (Jerusalem)",
+          "offset": 120,
+          "timezone": "Asia/Jerusalem"
+        },
+        {
+          "display_string": "heure normale d\u2019Afrique de l\u2019Est (Nairobi)",
+          "offset": 180,
+          "timezone": "Africa/Nairobi"
+        },
+        {
+          "display_string": "heure normale de l\u2019Arabie (Baghdad)",
+          "offset": 180,
+          "timezone": "Asia/Baghdad"
+        },
+        {
+          "display_string": "heure normale de l\u2019Arabie (Riyadh)",
+          "offset": 180,
+          "timezone": "Asia/Riyadh"
+        },
+        {
+          "display_string": "heure normale de l\u2019Arabie (Kuwait)",
+          "offset": 180,
+          "timezone": "Asia/Kuwait"
+        },
+        {
+          "display_string": "heure normale de Moscou (Minsk)",
+          "offset": 180,
+          "timezone": "Europe/Minsk"
+        },
+        {
+          "display_string": "heure normale de Moscou (Moscow)",
+          "offset": 180,
+          "timezone": "Europe/Moscow"
+        },
+        {
+          "display_string": "heure normale d\u2019Iran (Tehran)",
+          "offset": 210,
+          "timezone": "Asia/Tehran"
+        },
+        {
+          "display_string": "UTC+04:00 (Samara)",
+          "offset": 240,
+          "timezone": "Europe/Samara"
+        },
+        {
+          "display_string": "heure du Golfe (Dubai)",
+          "offset": 240,
+          "timezone": "Asia/Dubai"
+        },
+        {
+          "display_string": "UTC+04:00 (Tbilisi)",
+          "offset": 240,
+          "timezone": "Asia/Tbilisi"
+        },
+        {
+          "display_string": "heure normale de Maurice (Mauritius)",
+          "offset": 240,
+          "timezone": "Indian/Mauritius"
+        },
+        {
+          "display_string": "UTC+04:00 (Baku)",
+          "offset": 240,
+          "timezone": "Asia/Baku"
+        },
+        {
+          "display_string": "UTC+04:00 (Yerevan)",
+          "offset": 240,
+          "timezone": "Asia/Yerevan"
+        },
+        {
+          "display_string": "heure de l\u2019Afghanistan (Kabul)",
+          "offset": 270,
+          "timezone": "Asia/Kabul"
+        },
+        {
+          "display_string": "UTC+05:00 (Karachi)",
+          "offset": 300,
+          "timezone": "Asia/Karachi"
+        },
+        {
+          "display_string": "UTC+05:00 (Aqtobe)",
+          "offset": 300,
+          "timezone": "Asia/Aqtobe"
+        },
+        {
+          "display_string": "UTC+05:00 (Ashgabat)",
+          "offset": 300,
+          "timezone": "Asia/Ashgabat"
+        },
+        {
+          "display_string": "UTC+05:00 (Oral)",
+          "offset": 300,
+          "timezone": "Asia/Oral"
+        },
+        {
+          "display_string": "heure de l\u2019Inde (Kolkata)",
+          "offset": 330,
+          "timezone": "Asia/Kolkata"
+        },
+        {
+          "display_string": "UTC+05:00 (Yekaterinburg)",
+          "offset": 300,
+          "timezone": "Asia/Yekaterinburg"
+        },
+        {
+          "display_string": "heure de l\u2019Inde (Calcutta)",
+          "offset": 330,
+          "timezone": "Asia/Calcutta"
+        },
+        {
+          "display_string": "heure de l\u2019Inde (Colombo)",
+          "offset": 330,
+          "timezone": "Asia/Colombo"
+        },
+        {
+          "display_string": "heure du N\u00e9pal (Katmandu)",
+          "offset": 330,
+          "timezone": "Asia/Katmandu"
+        },
+        {
+          "display_string": "heure du N\u00e9pal (Kathmandu)",
+          "offset": 330,
+          "timezone": "Asia/Kathmandu"
+        },
+        {
+          "display_string": "heure normale de Omsk (Omsk)",
+          "offset": 360,
+          "timezone": "Asia/Omsk"
+        },
+        {
+          "display_string": "heure normale d\u2019Alma Ata (Almaty)",
+          "offset": 360,
+          "timezone": "Asia/Almaty"
+        },
+        {
+          "display_string": "UTC+06:00 (Dhaka)",
+          "offset": 360,
+          "timezone": "Asia/Dhaka"
+        },
+        {
+          "display_string": "heure normale de Novossibirsk (Novosibirsk)",
+          "offset": 420,
+          "timezone": "Asia/Novosibirsk"
+        },
+        {
+          "display_string": "heure du Myanmar (Rangoon)",
+          "offset": 390,
+          "timezone": "Asia/Rangoon"
+        },
+        {
+          "display_string": "heure d\u2019Indochine (Bangkok)",
+          "offset": 420,
+          "timezone": "Asia/Bangkok"
+        },
+        {
+          "display_string": "heure de l\u2019Ouest indon\u00e9sien (Jakarta)",
+          "offset": 420,
+          "timezone": "Asia/Jakarta"
+        },
+        {
+          "display_string": "heure normale de Krasno\u00efarsk (Krasnoyarsk)",
+          "offset": 420,
+          "timezone": "Asia/Krasnoyarsk"
+        },
+        {
+          "display_string": "heure normale de Krasno\u00efarsk (Novokuznetsk)",
+          "offset": 420,
+          "timezone": "Asia/Novokuznetsk"
+        },
+        {
+          "display_string": "UTC+08:00 (Ho Chi Minh)",
+          "offset": 480,
+          "timezone": "Asia/Ho_Chi_Minh"
+        },
+        {
+          "display_string": "heure d\u2019Indochine (Phnom Penh)",
+          "offset": 420,
+          "timezone": "Asia/Phnom_Penh"
+        },
+        {
+          "display_string": "heure d\u2019Indochine (Vientiane)",
+          "offset": 420,
+          "timezone": "Asia/Vientiane"
+        },
+        {
+          "display_string": "heure normale de la Chine (Shanghai)",
+          "offset": 480,
+          "timezone": "Asia/Shanghai"
+        },
+        {
+          "display_string": "heure normale de Hong Kong (Hong Kong)",
+          "offset": 480,
+          "timezone": "Asia/Hong_Kong"
+        },
+        {
+          "display_string": "UTC+07:30 (Kuala Lumpur)",
+          "offset": 450,
+          "timezone": "Asia/Kuala_Lumpur"
+        },
+        {
+          "display_string": "heure de Singapour (Singapore)",
+          "offset": 450,
+          "timezone": "Asia/Singapore"
+        },
+        {
+          "display_string": "heure normale des Philippines (Manila)",
+          "offset": 480,
+          "timezone": "Asia/Manila"
+        },
+        {
+          "display_string": "heure normale de Taipei (Taipei)",
+          "offset": 480,
+          "timezone": "Asia/Taipei"
+        },
+        {
+          "display_string": "heure normale d\u2019Oulan-Bator (Ulaanbaatar)",
+          "offset": 420,
+          "timezone": "Asia/Ulaanbaatar"
+        },
+        {
+          "display_string": "heure du Centre indon\u00e9sien (Makassar)",
+          "offset": 480,
+          "timezone": "Asia/Makassar"
+        },
+        {
+          "display_string": "heure normale d\u2019Irkoutsk (Irkutsk)",
+          "offset": 480,
+          "timezone": "Asia/Irkutsk"
+        },
+        {
+          "display_string": "heure normale de Iakoutsk (Yakutsk)",
+          "offset": 540,
+          "timezone": "Asia/Yakutsk"
+        },
+        {
+          "display_string": "heure normale de l\u2019Ouest de l\u2019Australie (Perth)",
+          "offset": 480,
+          "timezone": "Australia/Perth"
+        },
+        {
+          "display_string": "heure normale du centre-ouest de l\u2019Australie (Eucla)",
+          "offset": 525,
+          "timezone": "Australia/Eucla"
+        },
+        {
+          "display_string": "heure normale de la Cor\u00e9e (Seoul)",
+          "offset": 540,
+          "timezone": "Asia/Seoul"
+        },
+        {
+          "display_string": "heure normale du Japon (Tokyo)",
+          "offset": 540,
+          "timezone": "Asia/Tokyo"
+        },
+        {
+          "display_string": "heure de l\u2019Est indon\u00e9sien (Jayapura)",
+          "offset": 540,
+          "timezone": "Asia/Jayapura"
+        },
+        {
+          "display_string": "heure normale de Sakhaline (Sakhalin)",
+          "offset": 660,
+          "timezone": "Asia/Sakhalin"
+        },
+        {
+          "display_string": "heure normale de Vladivostok (Vladivostok)",
+          "offset": 600,
+          "timezone": "Asia/Vladivostok"
+        },
+        {
+          "display_string": "heure normale de Magadan (Magadan)",
+          "offset": 660,
+          "timezone": "Asia/Magadan"
+        },
+        {
+          "display_string": "heure normale du centre de l\u2019Australie (Darwin)",
+          "offset": 570,
+          "timezone": "Australia/Darwin"
+        },
+        {
+          "display_string": "heure normale du centre de l\u2019Australie (Adelaide)",
+          "offset": 570,
+          "timezone": "Australia/Adelaide"
+        },
+        {
+          "display_string": "heure de Guam (Guam)",
+          "offset": 600,
+          "timezone": "Pacific/Guam"
+        },
+        {
+          "display_string": "heure normale de l\u2019Est de l\u2019Australie (Brisbane)",
+          "offset": 600,
+          "timezone": "Australia/Brisbane"
+        },
+        {
+          "display_string": "heure d\u2019\u00e9t\u00e9 de l\u2019Est de l\u2019Australie (Hobart)",
+          "offset": 660,
+          "timezone": "Australia/Hobart"
+        },
+        {
+          "display_string": "heure normale de l\u2019Est de l\u2019Australie (Sydney)",
+          "offset": 600,
+          "timezone": "Australia/Sydney"
+        },
+        {
+          "display_string": "heure normale d\u2019Anadyr (Anadyr)",
+          "offset": 780,
+          "timezone": "Asia/Anadyr"
+        },
+        {
+          "display_string": "heure de la Papouasie-Nouvelle-Guin\u00e9e (Port Moresby)",
+          "offset": 600,
+          "timezone": "Pacific/Port_Moresby"
+        },
+        {
+          "display_string": "heure normale de Petropavlovsk-Kamchatski (Kamchatka)",
+          "offset": 720,
+          "timezone": "Asia/Kamchatka"
+        },
+        {
+          "display_string": "heure normale des \u00eeles Fidji (Fiji)",
+          "offset": 720,
+          "timezone": "Pacific/Fiji"
+        },
+        {
+          "display_string": "heure des \u00eeles Marshall (Majuro)",
+          "offset": 720,
+          "timezone": "Pacific/Majuro"
+        },
+        {
+          "display_string": "heure normale de la Nouvelle-Z\u00e9lande (Auckland)",
+          "offset": 720,
+          "timezone": "Pacific/Auckland"
+        },
+        {
+          "display_string": "heure normale des Tonga (Tongatapu)",
+          "offset": 780,
+          "timezone": "Pacific/Tongatapu"
+        },
+        {
+          "display_string": "heure normale d\u2019Apia (Apia)",
+          "offset": -660,
+          "timezone": "Pacific/Apia"
+        },
+        {
+          "display_string": "heure des \u00eeles de la Ligne (Kiritimati)",
+          "offset": -640,
+          "timezone": "Pacific/Kiritimati"
+        },
+        {
+          "display_string": "UTC (Unknown)",
+          "offset": 0,
+          "timezone": "Etc/Unknown"
+        }
+      ]
+    },
+    "/setup/get_app_device_id": {
+      "status": 405,
+      "len": 0
+    },
+    "/setup/get_offer": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/offer": {
+      "status": 500,
+      "len": 0
+    },
+    "/setup/network_settings": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/check_connectivity": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/test_internet_connectivity": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/system_time": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/bluetooth_status": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/get_bluetooth_info": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/device_info": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/capabilities": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/setup_state": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/icon.png": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/devices": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/connected_devices": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/get_debug_info": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/debug_info": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/log": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/version": {
+      "status": 404,
+      "len": 0
+    },
+    "/setup/about": {
+      "status": 404,
+      "len": 0
+    }
+  }
+}
