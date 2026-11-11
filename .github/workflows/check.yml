@@ -1,0 +1,26 @@
+name: Syntax check
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python syntax check
+        run: |
+          find scripts reconstruction -name "*.py" -exec python3 -m py_compile {} \; && echo "All Python files OK"
+
+      - name: Shell syntax check
+        run: |
+          find scripts -name "*.sh" -exec bash -n {} \; && echo "All shell scripts OK"

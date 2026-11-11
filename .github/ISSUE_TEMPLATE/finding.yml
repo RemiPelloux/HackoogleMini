@@ -1,0 +1,41 @@
+name: New Finding
+description: Document a new discovery or evidence about the device
+title: "[finding] "
+labels: ["finding"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to document a new finding. Link to your evidence file.
+  - type: input
+    id: area
+    attributes:
+      label: Area
+      description: What part of the attack surface does this cover?
+      placeholder: "e.g. Cast protocol, BLE, firmware, Chrome/V8, NAND"
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Finding summary
+      description: What did you find? Be specific about versions, offsets, or behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste the command, output, or link to the evidence/ file.
+      render: shell
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact on shell-access goal
+      options:
+        - Directly enables shell access
+        - New attack vector
+        - Closes a dead end
+        - Background / provenance
+    validations:
+      required: true

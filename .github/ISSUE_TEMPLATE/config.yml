@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussion / Q&A
+    url: https://github.com/RemiPelloux/HackoogleMini/discussions
+    about: Ask questions, share findings, propose new attack vectors
