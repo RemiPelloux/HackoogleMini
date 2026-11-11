@@ -1,0 +1,13 @@
+.venv/
+work/
+target/*
+!target/README.md
+!target/.gitkeep
+evidence/*.log
+evidence/*.pcapng
+__pycache__/
+*.pyc
+*.pyc
+reconstruction/payload/payload_elf
+reconstruction/exploit/poisoned-cache.yaffs2
+reconstruction/exploit/wpa_spray.conf
