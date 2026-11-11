@@ -1,0 +1,38 @@
+name: Syntax check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  python-syntax:
+    name: Python syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Python syntax
+        run: |
+          find . -name "*.py" -not -path "./.git/*" \
+            -exec python3 -m py_compile {} \; \
+            -print
+          echo "All Python files passed syntax check."
+
+  shellcheck:
+    name: Shell syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check shell scripts
+        run: |
+          find . -name "*.sh" -not -path "./.git/*" \
+            -exec bash -n {} \; \
+            -print
+          echo "All shell scripts passed syntax check."

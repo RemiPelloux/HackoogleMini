@@ -1,0 +1,4 @@
+legit localhost POST (same-origin)                      Host=localhost:8088   -> >>> ACCEPTED (repoint reaches serveTailscaleUp) <<<
+DNS-REBOUND page: evil.com rebinds to 127.0.0.1, fetch('/api/up') Host=evil.com:8088    -> >>> ACCEPTED (repoint reaches serveTailscaleUp) <<<
+DNS-REBOUND, no Sec-Fetch, Origin==Host                 Host=evil.com:8088    -> >>> ACCEPTED (repoint reaches serveTailscaleUp) <<<
+plain cross-site CSRF (no rebinding)                    Host=localhost:8088   -> REJECTED

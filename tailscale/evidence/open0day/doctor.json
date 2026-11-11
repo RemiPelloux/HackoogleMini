@@ -1,0 +1,30 @@
+{
+  "host": {
+    "os": "linux",
+    "arch": "x86_64",
+    "python": "3.15.0",
+    "distro": "Omarchy"
+  },
+  "docker": {
+    "available": true,
+    "daemon": false,
+    "error": "failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+  },
+  "images": {
+    "open0day/lifter:amd64": false,
+    "open0day/wsolver:amd64": false
+  },
+  "rosetta": null,
+  "triage": {
+    "configured": true,
+    "base_url": "https://codex-easy.ai/v1",
+    "model": "deepseek-v4-pro"
+  },
+  "profile": "native-amd64",
+  "lift": "blocked",
+  "analyze": "blocked",
+  "advice": [
+    "install Docker and start the daemon"
+  ],
+  "ok": false
+}

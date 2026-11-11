@@ -1,0 +1,9 @@
+usage: open0day pipeline [-h] [--out OUT] [--timeout TIMEOUT] binary
+
+positional arguments:
+  binary             x86-64 ELF, PE, or Mach-O target
+
+options:
+  -h, --help         show this help message and exit
+  --out OUT
+  --timeout TIMEOUT  seconds before the solver container is killed

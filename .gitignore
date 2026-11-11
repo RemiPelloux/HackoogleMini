@@ -1,0 +1,46 @@
+# Upstream REA tool clone — not part of this workspace
+/rea/
+
+# Investigation artifacts — large binaries, firmware images, archives
+**/target/*.bin
+**/target/*.img
+**/target/*.zip
+**/target/*.tar
+**/target/*.tar.gz
+**/target/*.tar.bz2
+**/target/*.tar.xz
+**/target/*.gz
+**/target/tailscale
+**/target/tailscaled
+**/target/tailscale-src/
+
+# Raw REA evidence output (large JSON)
+**/evidence/*.json
+
+# Investigation scratch work
+**/work/
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/.venv/
+**/venv/
+**/.env
+
+# Node
+node_modules/
+
+# Logs & temp
+*.log
+*.tmp
+*.swp
+*~
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.iml

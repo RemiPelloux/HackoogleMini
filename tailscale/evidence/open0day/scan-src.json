@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "tree": "target/tailscale-src",
+  "count": 0,
+  "candidates": [],
+  "note": "Candidates only. Confirm shipped dest N and real-caller n before analyze. Do not file from this list."
+}

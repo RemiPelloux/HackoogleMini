@@ -1,0 +1,6 @@
+services:
+  ts-pocs:
+    build:
+      context: ..
+      dockerfile: env/Dockerfile
+    image: ts-pocs

@@ -1,0 +1,5 @@
+[READ ESCAPE] GET /link returned out-of-root file:
+  "TOP-SECRET: this file is OUTSIDE the share root\n"
+[CONTROL] '..' traversal correctly blocked: open /tmp/taildrive-share-3001678611/etc/hostname: no such file or directory
+[WRITE ESCAPE] out-of-root file now contains:
+  "OVERWRITTEN by a WebDAV peer through the symlink\n"

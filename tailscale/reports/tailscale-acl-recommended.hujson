@@ -1,0 +1,29 @@
+// Recommended Tailscale policy — personal tailnet (all devices owned by one account).
+// Paste this into https://login.tailscale.com/admin/acls/file (select-all, replace, Save).
+// It reverts the temporary test changes (allow-all Taildrive grant, SSH "accept",
+// drive nodeAttrs) and tightens a few defaults while keeping your devices working.
+{
+    // Access between your own devices. Tighter than the default "*"->"*":
+    // limits to your account's own member nodes (still covers pi5 exit node + phone).
+    // If you ever use node sharing with another tailnet, change these to ["*"].
+    "grants": [
+        {"src": ["autogroup:member"], "dst": ["autogroup:member"], "ip": ["*"]},
+    ],
+
+    // Tailscale SSH: "check" mode (periodic browser re-auth) into your own
+    // NON-root accounts only. More secure than "accept"; root SSH not allowed.
+    // (During testing this was temporarily "accept" + allowed root — reverted here.)
+    "ssh": [
+        {
+            "action": "check",
+            "src":    ["autogroup:member"],
+            "dst":    ["autogroup:self"],
+            "users":  ["autogroup:nonroot"],
+        },
+    ],
+
+    // Taildrive is OFF (no nodeAttrs / no drive grant). It was enabled only for the
+    // symlink-escape test and is removed here. To use Taildrive later, add back:
+    //   "nodeAttrs": [ { "target": ["autogroup:member"], "attr": ["drive:share","drive:access"] } ],
+    // plus a drive grant, and be aware of the symlink-escape issue reported to Tailscale.
+}
