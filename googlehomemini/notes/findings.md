@@ -734,7 +734,7 @@ available to an arbitrary Cast receiver for further attack surface research.
 
 ---
 
-## Network exploitation phase (2026-11-11)
+## Network exploitation phase
 
 > Device is now provisioned on the home LAN at **192.168.1.29**, firmware
 > **3.78.540761**, Chrome **92.0.4515.0**. The BLE/setup-AP surface is gone;
@@ -845,7 +845,7 @@ until root is obtained.**
 
 ---
 
-## Attack status (2026-11-13)
+## Attack status
 
 | Step | Status |
 | --- | --- |
@@ -863,11 +863,11 @@ until root is obtained.**
 | V8 (CVE-2021-30563) surface check | ⏳ blocked on JS |
 | Shell access | ⏳ blocked on exploit |
 
-**Revised ETA**: TLS registry path blocked without a CA-trusted cert. Next: monitor additional HTTP endpoints cast_shell uses after the 204 fix, or identify a media-parser CVE deliverable over the confirmed HTTP (port 8080) channel. JS execution: 1–3 days. Shell: 2–7 days after JS.
+**Next step**: Monitor additional HTTP endpoints cast_shell exposes after the 204 fix, or identify a media-parser CVE deliverable over the confirmed HTTP (port 8080) channel.
 
 ---
 
-### F26. Boot-time interception result — TLS cert rejected by cast_shell (2026-11-13)
+### F26. Boot-time interception result — TLS cert rejected by cast_shell
 
 User performed two power cycles with the full MITM stack live. Observations:
 
@@ -892,5 +892,5 @@ an alternative delivery mechanism for JS execution.
 - `exfil_server.py`: now returns `204 No Content` for `/generate_204` (previously 404 caused cast_shell to think it was offline, possibly suppressing subsequent HTTPS attempts)
 - `mitm_https_server.py`: added `handle_error()` override to log TLS failures with reason code; updated `TUNNEL` from dead cloudflare URL to `http://192.168.1.24:8080`
 
-**Next boot:** with the 204 fix live, monitor whether cast_shell makes additional HTTP requests beyond `generate_204`. The working HTTP channel (port 8080) is the remaining viable attack surface.
+**Next boot:** with the 204 fix live, monitor whether cast_shell makes additional HTTP requests beyond `generate_204`. The working HTTP channel (port 8080) is the remaining viable attack surface for JS delivery.
 

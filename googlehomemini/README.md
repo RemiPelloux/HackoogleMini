@@ -44,10 +44,7 @@ the TLS handshake — confirmed by two power cycles. TCP 443 connections reach o
 but no HTTP request is ever processed. The HTTP channel (port 8080) works and is confirmed
 via connectivity checks and media fetches.
 
-**Revised ETA:**
-- Alternative JS delivery: 1–3 days (investigate media-parser CVEs deliverable over HTTP, or additional HTTP endpoints cast_shell exposes)
-- Shell access: 2–7 days after JS execution
-- LLM replacement: 1–2 weeks post-shell
+**Next:** investigate media-parser CVEs deliverable over the confirmed HTTP (port 8080) channel, or enumerate additional HTTP endpoints cast_shell uses after the connectivity-check fix.
 
 See `notes/findings.md` F26 for full boot-monitoring evidence.
 
