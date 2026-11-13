@@ -861,9 +861,11 @@ until root is obtained.**
 | JS execution in cast_shell | ⏳ needs alternative delivery (HTTPS path blocked) |
 | SQLite version / Magellan probe | ⏳ blocked on JS |
 | V8 (CVE-2021-30563) surface check | ⏳ blocked on JS |
+| CVE-2021-30578 (Uninitialized Use in Media) | ⏳ APPLICABLE — Default Media Receiver JS satisfies "crafted HTML page" prereq; exact trigger unknown (crbug restricted) |
+| DASH MPD + crafted MP4 segments via port 8080 | ⏳ ready to test — `dash_media_fuzz.py` prepared |
 | Shell access | ⏳ blocked on exploit |
 
-**Next step**: Monitor additional HTTP endpoints cast_shell exposes after the 204 fix, or identify a media-parser CVE deliverable over the confirmed HTTP (port 8080) channel.
+**Next step**: Reconnect to 192.168.1.x subnet, restart MITM, then run `dash_media_fuzz.py` targeting the Default Media Receiver's media pipeline. Simultaneously test unknown AppID LAUNCH (`launch_unknown_appid.py`) for HTTP fallback.
 
 ---
 
@@ -893,4 +895,54 @@ an alternative delivery mechanism for JS execution.
 - `mitm_https_server.py`: added `handle_error()` override to log TLS failures with reason code; updated `TUNNEL` from dead cloudflare URL to `http://192.168.1.24:8080`
 
 **Next boot:** with the 204 fix live, monitor whether cast_shell makes additional HTTP requests beyond `generate_204`. The working HTTP channel (port 8080) is the remaining viable attack surface for JS delivery.
+
+---
+
+### F27. CVE-2021-30578 research — trigger unknown, crbug restricted
+
+**CVE:** CVE-2021-30578 — "Uninitialized use in Media in Google Chrome prior to
+92.0.4515.107 allowed a remote attacker to perform out of bounds memory access via a
+crafted HTML page."
+
+**Device exposure:** Chrome 92.0.4515.0 is **unpatched** (fixed in 92.0.4515.107, July
+20 2021). The device has never received an OTA.
+
+**Research methods tried:**
+- NVD + OSV APIs: description only, crbug.com/1201074 reference only — crbug is RESTRICTED
+- Chromium Gerrit search for CLs with bug:1201074 on branch-heads/4515: **0 results**
+- GitHub commit search for "1201074" in chromium/chromium: 2 results, neither is the fix
+  - `7dca464e` (May 2021): dav1d library roll citing "Bug: 1201074" (bug position number, not the bug ID). Pre-branch-point, already in 92.0.4515.0
+  - `4a18cd4b` (2023): unrelated VaapiVideoDecoder commit
+- Full commit log between 92.0.4515.0 (`0f57eedae5`) and 92.0.4515.107 (`c75e7f7f57`): 1134 commits scanned; no commit with "1201074", "uninit", "uninitialized use in media" or similar in its message
+- Exploit-db: no public exploit
+- Chrome release blog: confirms CVE exists in 92.0.4515.107 release, no additional detail
+- Chromium code search: no public write-up or PoC found
+
+**Conclusion:** The fix commit is not publicly identifiable. Chrome security fixes for
+HIGH-severity bugs are often submitted with intentionally vague or stripped commit
+messages (the crbug link carries the description, not the commit). Without the crbug
+content, the exact vulnerable file, function, and trigger input are unknown.
+
+**Attack angle still available via HTTP (port 8080):**
+The Default Media Receiver HTML page IS JavaScript running in cast_shell's renderer.
+When we `LOAD` a media URL:
+1. The receiver JS creates a `<video>` or `<audio>` element
+2. Chrome's media pipeline fetches and parses the content from our HTTP server
+3. If the media file triggers a parser bug (e.g. CVE-2021-30578), it crashes in the renderer
+
+This means Chrome's media parser bugs **are reachable** without first changing the
+receiver URL. The JS execution prerequisite is already satisfied by the Default Media
+Receiver app.
+
+**Formats cast_shell accepts via LOAD:**
+MP4 (video/mp4), WebM (video/webm), OGG (video/ogg), FLAC (audio/flac), WAV (audio/wav),
+DASH MPD (application/dash+xml), HLS (application/x-mpegURL).
+
+**Next steps:**
+- Serve crafted media files in each format via port 8080, observe crashes
+- DASH MPD specifically: MPD is XML parsed by Chrome, then each referenced MP4 segment
+  is parsed — two separate parser attack surfaces
+- Monitor cast_shell restart/crash via Cast device-status polling
+
+Evidence file: none (pure source research). Linked unknowns: CVE trigger unknown.
 
