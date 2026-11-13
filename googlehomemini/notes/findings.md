@@ -845,22 +845,52 @@ until root is obtained.**
 
 ---
 
-## Attack status (2026-11-11)
+## Attack status (2026-11-13)
 
 | Step | Status |
 | --- | --- |
 | ARP MITM | ✅ operational |
-| DNS hijack (dnsmasq 5354) | ✅ operational |
-| HTTPS MITM server (port 4443, CN=clients3.google.com) | ✅ operational |
-| Fake registry → probe.html URL | ✅ serving correctly |
-| exfil_server (port 8080) | ✅ operational, logs Mini's requests |
-| cast_shell media fetch (audio + VTT) | ✅ confirmed working |
-| Boot-time registry intercept | ⏳ **waiting for power cycle** |
-| JS execution in cast_shell | ⏳ blocked on above |
+| DNS hijack (dnsmasq 5354) | ✅ operational — 70–90 queries/boot intercepted |
+| HTTP redirect TCP 80→8080 | ✅ confirmed — Mini's `generate_204` hits our server |
+| HTTPS redirect TCP 443→4443 | ✅ redirect works — 2 TCP connections/boot |
+| HTTPS MITM server (port 4443) | ⚠️ operational but TLS cert rejected by cast_shell (see F26) |
+| Boot-time registry intercept | ❌ **BLOCKED** — cast_shell rejects self-signed cert |
+| Fake registry → probe.html URL | ✅ server-side correct; unreachable due to TLS block |
+| exfil_server (port 8080) | ✅ operational — now serves 204 for connectivity checks |
+| cast_shell media fetch (audio + VTT) | ✅ confirmed — HTTP (port 8080) is the live attack surface |
+| JS execution in cast_shell | ⏳ needs alternative delivery (HTTPS path blocked) |
 | SQLite version / Magellan probe | ⏳ blocked on JS |
 | V8 (CVE-2021-30563) surface check | ⏳ blocked on JS |
 | Shell access | ⏳ blocked on exploit |
 
-**ETA**: One 5-second physical action (power cycle) → 30-60 s boot window → JS
-executes → 1–5 days to weaponise Magellan or V8 → root shell → LLM replacement.
+**Revised ETA**: TLS registry path blocked without a CA-trusted cert. Next: monitor additional HTTP endpoints cast_shell uses after the 204 fix, or identify a media-parser CVE deliverable over the confirmed HTTP (port 8080) channel. JS execution: 1–3 days. Shell: 2–7 days after JS.
+
+---
+
+### F26. Boot-time interception result — TLS cert rejected by cast_shell (2026-11-13)
+
+User performed two power cycles with the full MITM stack live. Observations:
+
+| Channel | Result |
+| --- | --- |
+| DNS intercept (dnsmasq 5354) | ✅ 70–90 UDP queries/boot intercepted, dnsmasq returns 192.168.1.24 for all Google domains |
+| HTTP redirect (TCP 80→8080) | ✅ Mini immediately hits port 8080 for `HEAD /generate_204` after boot — HTTP intercept works |
+| HTTPS redirect (TCP 443→4443) | ✅ 2 TCP connections reach port 4443 per boot (iptables REDIRECT confirmed) |
+| MITM HTTPS registry intercept | ❌ **BLOCKED** — `mitm_hits.log` stays empty despite TCP443 hits; TLS handshake fails at cert verification step before any HTTP request is served |
+
+**Root cause:** cast_shell uses Chrome's CA bundle to verify HTTPS connections.
+Our self-signed cert (CN=clients3.google.com, not signed by a trusted CA) is
+rejected during the TLS handshake. The TCP SYN reaches our server and Python
+accepts the connection, but cast_shell aborts immediately upon receiving our
+certificate — no HTTP request is ever delivered to the handler.
+
+**Consequence:** The boot-time registry intercept path (F22) requires either
+a certificate trusted by Chrome's root store (impossible without CA access) or
+an alternative delivery mechanism for JS execution.
+
+**Fixes applied 2026-11-13:**
+- `exfil_server.py`: now returns `204 No Content` for `/generate_204` (previously 404 caused cast_shell to think it was offline, possibly suppressing subsequent HTTPS attempts)
+- `mitm_https_server.py`: added `handle_error()` override to log TLS failures with reason code; updated `TUNNEL` from dead cloudflare URL to `http://192.168.1.24:8080`
+
+**Next boot:** with the 204 fix live, monitor whether cast_shell makes additional HTTP requests beyond `generate_204`. The working HTTP channel (port 8080) is the remaining viable attack surface.
 

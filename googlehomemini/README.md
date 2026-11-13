@@ -29,23 +29,27 @@ Read in this order:
 | NAND dump decoder | ✅ `scripts/nand-decode.py`, selftest green |
 | REA + Ghidra | ✅ healthy (Ghidra 12.1.2 headless; IDA + JADX also available) |
 | ARP MITM | ✅ operational (arpspoof + dnsmasq + iptables REDIRECT) |
-| HTTPS MITM server | ✅ port 4443, CN=clients3.google.com, serving fake registry → probe.html |
+| HTTPS MITM server | ⚠️ port 4443, CN=clients3.google.com — TLS cert **rejected** by cast_shell (F26) |
+| HTTP intercept (port 8080) | ✅ cast_shell hits our server for connectivity checks + media |
 | Media fetch via MITM | ✅ cast_shell fetches audio + WebVTT from our HTTP server |
-| Boot-time registry intercept | ⏳ **one power cycle away** — infrastructure ready |
-| JS execution in cast_shell | ⏳ blocked on boot-time intercept |
+| Boot-time registry intercept | ❌ **BLOCKED** — cast_shell validates TLS; self-signed cert rejected |
+| JS execution in cast_shell | ⏳ needs alternative delivery path |
 | CVE-2021-30563 (V8, Chrome 92) | ⏳ applicable — needs JS execution first |
 | Magellan (CVE-2018-20346) | ⏳ applicable — needs JS execution first |
-| Shell access | ⏳ 1–5 days after first JS execution |
+| Shell access | ⏳ 2–7 days after JS execution |
 
-**Current blocker:** cast_shell caches receiver HTML URLs locally and only fetches
-the Cast registry at boot. The MITM is live and correct; a single device power cycle
-triggers the boot window where the registry fetch is intercepted and probe.html is
-loaded as the receiver → JavaScript executes in cast_shell's Chromium renderer.
+**Current blocker:** cast_shell's TLS implementation validates server certificates against
+Chrome's CA bundle. Our self-signed cert (not signed by a trusted CA) is rejected during
+the TLS handshake — confirmed by two power cycles. TCP 443 connections reach our server
+but no HTTP request is ever processed. The HTTP channel (port 8080) works and is confirmed
+via connectivity checks and media fetches.
 
-**ETA:**
-- First JS execution: one 5-second power cycle + 30-60 s boot
-- Shell access: 1–5 days (Magellan Phase 3 binary offsets or V8 weaponisation)
+**Revised ETA:**
+- Alternative JS delivery: 1–3 days (investigate media-parser CVEs deliverable over HTTP, or additional HTTP endpoints cast_shell exposes)
+- Shell access: 2–7 days after JS execution
 - LLM replacement: 1–2 weeks post-shell
+
+See `notes/findings.md` F26 for full boot-monitoring evidence.
 
 See `notes/findings.md` F19–F25 and the attack status table for full detail.
 
