@@ -36,7 +36,7 @@ Read in this order:
 | JS execution in cast_shell | ⏳ needs alternative delivery path |
 | CVE-2021-30563 (V8, Chrome 92) | ⏳ applicable — needs JS execution first |
 | Magellan (CVE-2018-20346) | ⏳ applicable — needs JS execution first |
-| Shell access | ⏳ 2–7 days after JS execution |
+| Shell access | ⏳ blocked on JS execution |
 
 **Current blocker:** cast_shell's TLS implementation validates server certificates against
 Chrome's CA bundle. Our self-signed cert (not signed by a trusted CA) is rejected during
